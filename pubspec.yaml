@@ -30,6 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Email Validator
+  email_validator: ^2.1.17
+
+  # hashed password , crypto
+  crypto: ^3.0.2
     
   # Firebase Stuff
   firebase_core: ^2.6.1
