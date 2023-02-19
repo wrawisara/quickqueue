@@ -14,7 +14,7 @@ Future<void> main() async{
    testWidgets('registerWithEmailAndPassword should create a new admin document in Firestore', (WidgetTester tester) async {
     runApp(MaterialApp(home: Scaffold()));
       await tester.runAsync(() async {
-        UserRegisterBackend check = UserRegisterBackend();
+        UserRegisterService check = UserRegisterService();
         await check.registerAdminWithEmailAndPassword('test@example.com', 'testuser', 'testpassword');
       });
       await Future.delayed(Duration(seconds: 1)); // wait for Firestore to update

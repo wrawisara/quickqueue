@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'cusChooseResPage.dart';
+import 'cusSignupPage.dart';
+import 'resRegisterPage.dart';
 
 //หน้า login
 class LoginPage extends StatefulWidget {
@@ -24,10 +26,13 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                   child: Text(
                     "Quick Queue",
-                    style: TextStyle(fontSize: 40, color: Colors.cyan),
+                    style: TextStyle(
+                        fontSize: 40,
+                        color: Colors.cyan,
+                        fontWeight: FontWeight.w500),
                   )),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -52,36 +57,50 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 40,
+              ),
               Container(
-                  height: 80,
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  height: 60,
+                  // padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
+                      minimumSize: Size(280, 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
-                    child: const Text('Log In',style: TextStyle(color: Colors.white)),
+                    child: const Text('Log In',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
                     onPressed: () {
                       navigateToCusChooseResPage(context);
                     },
                   )),
+              SizedBox(
+                height: 20,
+              ),
               Container(
-                  height: 80,
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
+                height: 60,
+                // padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    
+                    minimumSize: Size(280,5),
+                    shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.cyan),
+                    borderRadius: BorderRadius.circular(32.0)
                     ),
-                    child: const Text('Sign In',style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                     
-                    },
-                  )),
+                  ),
+                  child: const Text('Sign In',
+                      style: TextStyle(color: Colors.cyan, fontSize: 18)),
+                  onPressed: () {
+                    navigateToCusSignUpPage(context);
+                  },
+                ),
+
+              ),
               TextButton(
                 onPressed: () {
-                      showDialog(context: context, builder: (context) {
-                        return AlertDialog(content: Text(myController.text),
-                        );
-                      });
+                  navigateToResRegisterPage(context);
                 },
                 child: Text(
                   'or Register for Restaurant ',
@@ -100,5 +119,14 @@ navigateToCusChooseResPage(BuildContext context) {
   }));
 }
 
+navigateToCusSignUpPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return CusSignUpPage();
+  }));
+}
 
-
+navigateToResRegisterPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return ResRegisterPage();
+  }));
+}

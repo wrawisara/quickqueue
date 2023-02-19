@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../model/AllRestaurant.dart';
+import '../model/allRestaurant.dart';
+import 'cusBookingPage.dart';
 
 //หน้า CusChooseRes
 class CusChooseResPage extends StatefulWidget {
@@ -38,16 +39,16 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 subtitle: Text(("Queue " + restaurant.queueNum),
                     style: TextStyle(fontSize: 16)),
                 onTap: () {
-                  // print("choose" + restaurant.name);
-                  // navigateToSecondPage(context);
+                  print("choose" + restaurant.name);
+                  navigateToCusBookingPage(context);
                 });
           }),
     );
   }
 }
 
-// navigateToSecondPage(BuildContext context) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-   
-//   }));
-// }
+navigateToCusBookingPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return CusBookingPage();
+  }));
+}
