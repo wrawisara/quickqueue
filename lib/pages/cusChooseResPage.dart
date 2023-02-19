@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/AllRestaurant.dart';
+import '../model/allRestaurant.dart';
 
 //หน้า CusChooseRes
 class CusChooseResPage extends StatefulWidget {

@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 
-class UserRegisterBackend{
+class UserRegister{
 
 Future<void> registerAdminWithEmailAndPassword(String email, String username, String password) async {
   // validate Email 
@@ -42,7 +42,7 @@ Future<void> registerAdminWithEmailAndPassword(String email, String username, St
   }
 }
 
-Future<void> registerCustomerWithEmailAndPassword(String email, String username, String password, String phoneNum ) async {
+Future<void> registerCustomerWithEmailAndPassword(String email, String firstname, String lastname,  String password, String phoneNum ) async {
   if (EmailValidator.validate(email)){
   try {
     final checking_result = await FirebaseFirestore.instance
@@ -60,7 +60,8 @@ Future<void> registerCustomerWithEmailAndPassword(String email, String username,
           // Add data to customer collection
           await FirebaseFirestore.instance.collection('customer').doc(userCredential.user?.uid).set({
           'email': email,
-          'username': username,
+          'firstname': firstname,
+          'lastname': lastname,
           'cus_id': randomInt().toString(),
           'phone': phoneNum,
           });

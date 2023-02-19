@@ -41,6 +41,42 @@ Future<UserCredential?> adminSignInWithEmailAndPassword(
   } 
 }
 
+
+Future<UserCredential?> customerSignInWithEmailAndPassword(
+    String email, String password) async {
+  try {
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+  // This part use to perform CRUD operation Read, Create, Update, Delete
+    final customerDocs = await FirebaseFirestore.instance
+        .collection('customer')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+
+// check if customerDocs is Empty or not  then check if the password is correct
+    if (customerDocs.docs.isNotEmpty) {
+      bool isPasswordValid = await isPasswordCorrect(email, password);
+      if (isPasswordValid){
+          return userCredential;
+      } else {
+          throw FirebaseAuthException(
+          code: 'wrong-password',
+          message: 'Incorrect password',
+        );
+      }
+    }
+    // Exception 
+  } catch (e) {
+    throw FirebaseAuthException(code: 'something-went-wrong', message: 'Something went wrong');
+  } 
+}
+
 Future<bool> isPasswordCorrect(String email, String password) async{
   QuerySnapshot<Map<String, dynamic>> adminQuery =
       await FirebaseFirestore.instance
