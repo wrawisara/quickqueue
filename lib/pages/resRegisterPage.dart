@@ -194,6 +194,30 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               icon: Icons.image_outlined,
                               onClick: getImage,
                             ),
+                            SizedBox(height: 20,),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                // primary: Colors.green,
+                                // elevation: 3,
+                                minimumSize: Size(280, 50),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0)),
+                              ),
+                              child: const Text('Register',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white)),
+                              onPressed: () {
+                                //** ใส่ที่จะบันทึกข้อมูล */
+                                // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
+                                // showDialog<String>(
+                                //   context: context,
+                                //   builder: (BuildContext context) => AlertDialog(
+                                //     title: const Text('Sucess'),
+                                //     content: const Text('Your account has been successfully created.'),
+                                //   ),
+                                // );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -216,7 +240,7 @@ Widget CustomButton({
 }) {
   return Container(
     height: 50,
-    width: 280,
+    width: 200,
     child: ElevatedButton(
         onPressed: onClick,
         child: Row(
