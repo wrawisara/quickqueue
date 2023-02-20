@@ -96,6 +96,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              obscureText: true,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
