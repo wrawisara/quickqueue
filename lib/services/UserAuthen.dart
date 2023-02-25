@@ -6,7 +6,7 @@ import 'package:crypto/crypto.dart';
 class AuthenServices {
   // Create Firebase instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
-Future<UserCredential?> adminSignInWithEmailAndPassword(
+Future<UserCredential?> customerSignInWithEmailAndPassword(
     String email, String password) async {
   try {
     UserCredential userCredential =
@@ -17,7 +17,7 @@ Future<UserCredential?> adminSignInWithEmailAndPassword(
 
   // This part use to perform CRUD operation Read, Create, Update, Delete
     final adminDocs = await FirebaseFirestore.instance
-        .collection('admin')
+        .collection('customer')
         .where('email', isEqualTo: email)
         .limit(1)
         .get();
@@ -25,7 +25,7 @@ Future<UserCredential?> adminSignInWithEmailAndPassword(
 
 // check if adminDocs is Empty or not  then check if the password is correct
     if (adminDocs.docs.isNotEmpty) {
-      bool isPasswordValid = await isPasswordCorrect(email, password);
+      bool isPasswordValid = await isPasswordCorrect(email, password, 'customer');
       if (isPasswordValid){
           return userCredential;
       } else {
@@ -41,19 +41,20 @@ Future<UserCredential?> adminSignInWithEmailAndPassword(
   } 
 }
 
-Future<bool> isPasswordCorrect(String email, String password) async{
-  QuerySnapshot<Map<String, dynamic>> adminQuery =
+Future<bool> isPasswordCorrect(String email, String password, String collectionName) async{
+  QuerySnapshot<Map<String, dynamic>> collectionQuery =
       await FirebaseFirestore.instance
-          .collection('admin')
+          .collection(collectionName)
           .where('email', isEqualTo: email)
           .get();
 
 
     // Get the hashed password for the user from the document
-    String hashedPassword = adminQuery.docs[0].data()['password'];
+    String hashedPassword = collectionQuery.docs[0].data()['password'];
+    String salt = collectionQuery.docs[0].data()['salt'];
 
     // Hash the login password
-    String hashedLoginPassword = sha256.convert(utf8.encode(password)).toString();
+    String hashedLoginPassword = sha256.convert(utf8.encode(password + salt)).toString();
 
     // Check if the hashed login password matches the hashed password in the database
     if (hashedPassword != hashedLoginPassword) {

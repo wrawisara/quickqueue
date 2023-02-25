@@ -8,41 +8,7 @@ import 'package:crypto/crypto.dart';
 
 class UserRegisterService{
 
-Future<void> registerAdminWithEmailAndPassword(String email, String username, String password) async {
-  // validate Email 
-  if (EmailValidator.validate(email)){
-  try {
-    final emailCheck = await FirebaseFirestore.instance
-        .collection('admin')
-        .where('email', isEqualTo: email)
-        .get();
-    if (emailCheck.docs.isNotEmpty){
-      throw FirebaseAuthException(code: 'email-is-already-in-use', message: 'The email is aldreay use');
-    } else {
-      //UserCredential userCredential = await createUser(email, password);
-
-      int id = await randomInt();
-      bool isNotEmpty = await checkIdInCollection('admin', id.toString());
-      if (!isNotEmpty){
-        // Add data to admin collection
-        await FirebaseFirestore.instance.collection('admin').add({
-        'email': email,
-        'username': username,
-        'a_id': id.toString(),
-        });
-      }
-    }
-  } catch (e) {
-    throw FirebaseAuthException(code: 'somthing-wrong', message: 'Unknown error occur');
-  }
-  } 
-  // Invalid email
-  else {
-    throw FirebaseAuthException(code: 'invalid-email', message: 'The email is invalid');
-  }
-}
-
-Future<void> registerCustomerWithEmailAndPassword(String email, String username, String password, String phoneNum ) async {
+Future<void> registerCustomerWithEmailAndPassword(String email, String firstname, String lastname, String password, String phoneNum ) async {
   if (EmailValidator.validate(email)){
   try {
     final checkingResult = await FirebaseFirestore.instance
@@ -54,15 +20,21 @@ Future<void> registerCustomerWithEmailAndPassword(String email, String username,
     } else {
         //UserCredential userCredential = await createUser(email, password);
 
+        int salt = await randomInt();
+        String hashedPassword = await hashPassword(password, salt.toString());
         int id = await randomInt();
         bool isNotEmpty = await checkIdInCollection('customer', id.toString());
         if (!isNotEmpty){
           // Add data to customer collection
           await FirebaseFirestore.instance.collection('customer').add({
           'email': email,
-          'username': username,
-          'cus_id': id.toString(),
+          'password': hashedPassword,
+          'id': id.toString(),
+          'salt': salt,
+          'firstname': firstname,
+          'lastname': lastname,
           'phone': phoneNum,
+          'role': 'Customer',
           });
         }
       }
@@ -89,7 +61,8 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
     } else {
       //UserCredential userCredential = await createUser(email, password); 
 
-      String hashedPassword = await hashPassword(password);
+      int salt = await randomInt();
+      String hashedPassword = await hashPassword(password, salt.toString());
       int id = await randomInt();
       bool isNotEmpty = await checkIdInCollection('restaurant', id.toString());
       if (!isNotEmpty){
@@ -97,12 +70,13 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
         await FirebaseFirestore.instance.collection('restaurant').add({
         'email': email,
         'username': username,
-        'r_id': id.toString(),
+        'id': id.toString(),
         'phone': phoneNum,
         'address': address,
         'password': hashedPassword,
         'location': GeoPoint(latitude, longitude),
-        'salt': id.toString()
+        'salt': salt,
+        'role': 'Restaurant'
         });
 
       } 
@@ -127,12 +101,8 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
       //return userCredential;
 //}
 
-Future<String> hashPassword(String password) async{
-  int random = await randomInt();
-  var salt = random.toString();
-  var bytes = utf8.encode(password + salt);
-  var digest = sha256.convert(bytes);
-  return digest.toString();
+Future<String> hashPassword(String password, String salt) async{
+  return sha256.convert(utf8.encode(password + salt)).toString();
 }
 
 
@@ -142,11 +112,11 @@ Future<int> randomInt() async{
   return id;
 }
 
-// Have to change .where('r_id', isEqualTo: id) r_id to id to beable to use with all user
+
 Future<bool> checkIdInCollection(String collectionName, String id) async{
   final QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore.instance
       .collection(collectionName)
-      .where('r_id', isEqualTo: id)
+      .where('id', isEqualTo: id)
       .get();
   bool isNotEmpty = result.docs.isNotEmpty;
   if (isNotEmpty){
