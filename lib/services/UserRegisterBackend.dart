@@ -87,9 +87,9 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
     if (customerEmailResult.docs.isNotEmpty){
       throw FirebaseAuthException(code: 'email-is-already-in-use', message: 'The email is already use');
     } else {
-      //UserCredential userCredential = await createUser(email, password); to be removed : reserved for if have to use function set
+      //UserCredential userCredential = await createUser(email, password); 
 
-      String hashedPassword = hashPassword(password);
+      String hashedPassword = await hashPassword(password);
       int id = await randomInt();
       bool isNotEmpty = await checkIdInCollection('restaurant', id.toString());
       if (!isNotEmpty){
@@ -102,6 +102,7 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
         'address': address,
         'password': hashedPassword,
         'location': GeoPoint(latitude, longitude),
+        'salt': id.toString()
         });
 
       } 
@@ -119,15 +120,17 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
   }
 }
 
-Future<UserCredential> createUser(String email, String password) async{
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: hashPassword(password),);
-      return userCredential;
-}
+//Future<UserCredential> createUser(String email, String password) async{
+      //UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      //email: email,
+      //password: await hashPassword(password),);
+      //return userCredential;
+//}
 
-String hashPassword(String password) {
-  var bytes = utf8.encode(password);
+Future<String> hashPassword(String password) async{
+  int random = await randomInt();
+  var salt = random.toString();
+  var bytes = utf8.encode(password + salt);
   var digest = sha256.convert(bytes);
   return digest.toString();
 }
@@ -135,7 +138,7 @@ String hashPassword(String password) {
 
 Future<int> randomInt() async{
   final rand = Random();
-  int id = rand.nextInt(99999);
+  int id = rand.nextInt(999999);
   return id;
 }
 
