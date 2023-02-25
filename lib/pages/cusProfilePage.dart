@@ -12,8 +12,6 @@ import 'package:quickqueue/widgets/tapList.dart';
 import '../model/Customer.dart';
 import '../model/allRestaurant.dart';
 
-
-
 class CusProfilePage extends StatefulWidget {
   @override
   State<CusProfilePage> createState() => _CusProfilePageState();
@@ -25,13 +23,10 @@ class _CusProfilePageState extends State<CusProfilePage> {
 
   //เรียก List คูปองทั้งหมดมาใช้ selected ไล่ index
   var selected = 0;
-  
-
-  
 
   @override
   Widget build(BuildContext context) {
-     String cusName = customer.firstname + " " + customer.lastname;
+    String cusName = customer.firstname + " " + customer.lastname;
     double nameWidth = cusName.length.toDouble() + 250;
     print(nameWidth);
     return Scaffold(
@@ -127,26 +122,18 @@ class _CusProfilePageState extends State<CusProfilePage> {
               ],
             ),
           ),
-        Expanded(
-          
+          Expanded(
             child: CouponListView(
               selected,
-              (int index){
+              (int index) {
                 setState(() {
                   selected = index;
                 });
               },
-              
               customer,
-            
-          ),)
-
-        ]
-        
-       
-        
-        
-        ));
+            ),
+          )
+        ]));
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/pages/resMainpage.dart';
 
 import 'cusChooseResPage.dart';
 import 'cusSignupPage.dart';
@@ -91,7 +92,13 @@ class _LoginPageState extends State<LoginPage> {
                           //   ),
                           // );
                           
-                          navigateToCusChooseResPage(context);
+                          // ไปหน้า Customer
+                           Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CusChooseResPage()));
+
+                          // ไปหน้า Restaurant
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          // builder: (context) => ResMainPage()));
                         },
                       ),
                       SizedBox(height: 20.0),
@@ -108,7 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                                 TextStyle(fontSize: 20, color: Colors.white)),
                         onPressed: () {
                           //** ใส่ที่จะ check ข้อมูล */
-                          navigateToCusSignUpPage(context);
+                           Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CusSignUpPage()));
+                          
                         },
                       ),
                       SizedBox(
@@ -116,7 +125,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          navigateToResRegisterPage(context);
+                          
+                           Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ResRegisterPage()));
                         },
                         child: Text(
                           'or Register for Restaurant ',
@@ -135,20 +146,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-navigateToCusChooseResPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusChooseResPage();
-  }));
-}
+// navigateToCusChooseResPage(BuildContext context) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     return CusChooseResPage();
+//   }));
+// }
 
-navigateToCusSignUpPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusSignUpPage();
-  }));
-}
+// navigateToCusSignUpPage(BuildContext context) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     return CusSignUpPage();
+//   }));
+// }
 
-navigateToResRegisterPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return ResRegisterPage();
-  }));
-}
+// navigateToResRegisterPage(BuildContext context) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     return ResRegisterPage();
+//   }));
+// }

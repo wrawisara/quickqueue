@@ -7,7 +7,12 @@ import 'package:intl/intl.dart';
 import '../model/Customer.dart';
 import '../model/allRestaurant.dart';
 
-class CusBookedPage extends StatelessWidget {
+class CusBookedPage extends StatefulWidget {
+  @override
+  State<CusBookedPage> createState() => _CusBookedPageState();
+}
+
+class _CusBookedPageState extends State<CusBookedPage> {
   //คำสั่งรับ datenow ยังไม่ได้ใช้
   String cdate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
