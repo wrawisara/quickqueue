@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/allRestaurant.dart';
@@ -117,6 +118,7 @@ class CusBookingPage extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
+                
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       // primary: Colors.green,
@@ -127,15 +129,18 @@ class CusBookingPage extends StatelessWidget {
                     ),
                     child: const Text('Book',
                         style: TextStyle(fontSize: 20, color: Colors.white)),
+                  
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CusBookedPage()));
+
+                    
                       // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
                       // showDialog<String>(
                       //   context: context,
                       //   builder: (BuildContext context) => AlertDialog(
                       //     title: const Text('Sucess'),
-                      //     content: const Text('Your account has been successfully created.'),
+                      //     content: const Text('Your queue has been booked.'),
                       //   ),
                       // );
                     },
@@ -155,6 +160,7 @@ class NumOfPersons extends StatefulWidget {
   @override
   State<NumOfPersons> createState() => _NumOfPersonsState();
 }
+
 class _NumOfPersonsState extends State<NumOfPersons> {
   int numberPerson = 0;
   @override
@@ -165,12 +171,13 @@ class _NumOfPersonsState extends State<NumOfPersons> {
         children: <Widget>[
           IconButton(
             onPressed: () {
-              numberPerson > 0 ?   
-              setState(() {
-                numberPerson --;
-              }) : setState(() {
-                numberPerson =0;
-              });
+              numberPerson > 0
+                  ? setState(() {
+                      numberPerson--;
+                    })
+                  : setState(() {
+                      numberPerson = 0;
+                    });
             },
             icon: Icon(Icons.remove),
             color: Colors.black,
@@ -213,14 +220,9 @@ class _NumOfPersonsState extends State<NumOfPersons> {
   }
 }
 
-
-
-
-
 //เพิ่มลดจำนวนคนที่จอง
 // class NumOfPersons extends StatefulWidget {
 //   int numberPerson = 0;
-
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -271,8 +273,6 @@ class _NumOfPersonsState extends State<NumOfPersons> {
 //   }
 // }
 
-
-
 //  Column(children: [Image.asset(allRestaurantModel.img), Text(allRestaurantModel.name),Text(allRestaurantModel.queueNum.toString())]),
 
 // class CusBookingPage extends StatefulWidget {
@@ -298,7 +298,6 @@ class _NumOfPersonsState extends State<NumOfPersons> {
 //     );
 //   }
 // }
-
 
 // Stack(
 //         children: [

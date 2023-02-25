@@ -195,7 +195,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               icon: Icons.image_outlined,
                               onClick: getImage,
                             ),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 // primary: Colors.green,

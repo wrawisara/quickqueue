@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/pages/cusProfilePage.dart';
 import '../model/allRestaurant.dart';
 import 'cusBookingPage.dart';
 
@@ -11,12 +12,6 @@ class CusChooseResPage extends StatefulWidget {
 
 class _CusChooseResPageState extends State<CusChooseResPage> {
   //กลุ่มข้อมูล
-  // List<AllRestaurant> restaurants = [
-  //   AllRestaurant("On The Table", "1", "assets/img/onthetable.jpg"),
-  //   AllRestaurant("Fam Time Steak and Pasta", "15", "assets/img/fametime.jpg"),
-  //   AllRestaurant("Mo-Mo-Paradise", "30", "assets/img/momo.jpg"),
-  // ];
-  
   static List<String> restaurantName = [
     'On The Table',
     'Fam Time Steak and Pasta',
@@ -68,8 +63,20 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               ),
               // tooltip: 'Show Snackbar',
               onPressed: () {
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Want to go Profile')));
+                Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CusProfilePage()));
+              },
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.bookmark_add_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Want to go Profile')));
+                    const SnackBar(content: Text('Want to go Booking History')));
               },
             ),
           ]),
@@ -81,15 +88,15 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 child: ListTile(
                   title: Text(
                     restaurantData[index].name,
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 22),
                   ),
                   subtitle: Text(
-                      "Queue " + restaurantData[index].queueNum.toString()),
+                      "Queue " + restaurantData[index].queueNum.toString(), style: TextStyle(fontSize: 20)),
                   leading: SizedBox(
                     width: 50,
                     height: 60,
-                    child: Image.asset(restaurantData[index].img),
-                  ),
+                    child: Image.asset(restaurantData[index].img), ),
+                  
                   onTap: () {
                     print('Tapped');
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CusBookingPage(allRestaurantModel: restaurantData[index])));
