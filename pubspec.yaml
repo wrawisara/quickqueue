@@ -30,18 +30,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-   
+  intl: ^0.17.0
 
   # Email Validator
   email_validator: ^2.1.17
 
   # hashed password , crypto
   crypto: ^3.0.2
+
+  # Tuple
+  tuple: ^2.0.1
     
   # Firebase Stuff
   firebase_core: ^2.6.1
   firebase_auth: ^4.2.6
   cloud_firestore: ^4.3.1
+  firebase_storage: ^11.0.14
 
 
   # The following adds the Cupertino Icons font to your application.

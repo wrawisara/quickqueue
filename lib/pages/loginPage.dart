@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:quickqueue/services/UserAuthen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'cusChooseResPage.dart';
 import 'cusSignupPage.dart';
 import 'resRegisterPage.dart';
@@ -12,112 +13,158 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+final AuthenServices authenServices = AuthenServices();
+
 class _LoginPageState extends State<LoginPage> {
-  final myController = TextEditingController();
+  //ตัวแปร
+  String email = '';
+  String password = '';
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Login', style: TextStyle(color: Colors.white)),
-        ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                  child: Text(
-                    "Quick Queue",
-                    style: TextStyle(
-                        fontSize: 40,
-                        color: Colors.cyan,
-                        fontWeight: FontWeight.w500),
-                  )),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(90.0),
-                    ),
-                    labelText: 'Email',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+              padding: const EdgeInsets.fromLTRB(20, 180, 20, 20),
+              child: Text(
+                "Quick Queue",
+                style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.cyan,
+                    fontWeight: FontWeight.w500),
+              )),
+          Expanded(
+              child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Form(
+                    child: Column(children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(90.0),
+                          ),
+                          labelText: 'Email',
+                        ),
+                        // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(90.0),
+                          ),
+                          labelText: 'Password',
+                        ),
+                        // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          // primary: Colors.green,
+                          // elevation: 3,
+                          minimumSize: Size(280, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0)),
+                        ),
+                        child: const Text('Log In',
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white)),
+                        onPressed: () async{
+                          try {
+                          print(email);
+                          print(password);
+                          await loginChecker(context, email, password);
+                          } on FirebaseAuthException catch(e){
+                            throw FirebaseAuthException(code: e.code);
+                            // need pop up
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          // primary: Colors.green,
+                          // elevation: 3,
+                          minimumSize: Size(280, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0)),
+                        ),
+                        child: const Text('Sign Up',
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white)),
+                        onPressed: () {
+                          //** ใส่ที่จะ check ข้อมูล */
+                          navigateToCusSignUpPage(context);
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          navigateToResRegisterPage(context);
+                        },
+                        child: Text(
+                          'or Register for Restaurant ',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ),
+                    ]),
                   ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(90.0),
-                    ),
-                    labelText: 'Password',
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Container(
-                  height: 60,
-                  // padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(280, 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
-                    ),
-                    child: const Text('Log In',
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
-                    onPressed: () {
-                      navigateToCusChooseResPage(context);
-                    },
-                  )),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                height: 60,
-                // padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    
-                    minimumSize: Size(280,5),
-                    shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.cyan),
-                    borderRadius: BorderRadius.circular(32.0)
-                    ),
-                  ),
-                  child: const Text('Sign In',
-                      style: TextStyle(color: Colors.cyan, fontSize: 18)),
-                  onPressed: () {
-                    navigateToCusSignUpPage(context);
-                  },
-                ),
-
-              ),
-              TextButton(
-                onPressed: () {
-                  navigateToResRegisterPage(context);
-                },
-                child: Text(
-                  'or Register for Restaurant ',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-              ),
-            ],
-          ),
-        ));
+                )
+              ],
+            ),
+          ))
+        ],
+      ),
+    ));
   }
 }
+
+Future<void> loginChecker (BuildContext context, String email, String password) async {
+  String userType = await authenServices.getUserType(email, password);
+    Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(email: email, password: password, collectionName: userType);
+    User? user = await futureUser;
+    if (user != null) {
+      if (userType == 'customer'){
+          print('Login Success');
+          navigateToCusChooseResPage(context);
+          //navigateToCusChooseResPage(context, user);
+      } else if (userType == 'restaurant'){
+          // go to restaurant page
+      }
+    } else {
+      print('Login failed');
+    }
+}
+
 
 navigateToCusChooseResPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusChooseResPage();
   }));
 }
+
+//navigateToCusChooseResPage(BuildContext context, User signedInUser) {
+  //Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //return CusChooseResPage(currentCustomer: signedInUser);
+  //}));
+//}
 
 navigateToCusSignUpPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {

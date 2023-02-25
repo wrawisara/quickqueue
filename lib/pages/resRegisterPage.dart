@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:quickqueue/services/UserRegisterBackend.dart';
+import 'package:quickqueue/services/UserRegister.dart';
 
 //หน้า Register ร้านอาหาร
 class ResRegisterPage extends StatefulWidget {
@@ -100,6 +100,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              obscureText: true,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -198,7 +199,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               icon: Icons.image_outlined,
                               onClick: getImage,
                             ),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 // primary: Colors.green,
@@ -210,9 +213,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               child: const Text('Register',
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
-                              onPressed: () {
-
-                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, phone, address, double.parse(latitude), double.parse(longitude), branch);
+                              onPressed: () { 
+                                File img = logo ?? File('assets/img/quickqueue.jpg');
+                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, phone, address, double.parse(latitude), double.parse(longitude), branch, img);
                                 //** ใส่ที่จะบันทึกข้อมูล */
                                 // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
                                 // showDialog<String>(
