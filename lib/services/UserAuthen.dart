@@ -74,11 +74,6 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
           message: 'Incorrect password',
         );
       }
-    } else {
-      throw FirebaseAuthException(
-          code: 'invalid-email',
-          message: 'Invalid email',
-      );
     }
     // Exception 
   } on FirebaseAuthException catch (e) {
@@ -86,6 +81,8 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
     switch (e.code) {
       case 'user-not-found':
         throw FirebaseAuthException(code: e.code, message: 'User is not found');
+      case 'invalid-email':
+        throw FirebaseAuthException(code: e.code, message: 'Invalid email');
       case 'user-disabled':
         throw FirebaseAuthException(code: e.code, message: 'User is disabled');
     }
@@ -97,6 +94,7 @@ Future<bool> isPasswordCorrect(String email, String password, String collectionN
       await FirebaseFirestore.instance
           .collection(collectionName)
           .where('email', isEqualTo: email)
+          .limit(1)
           .get();
 
 
@@ -123,6 +121,7 @@ Future<String> getUserType(String email, String password) async {
       await FirebaseFirestore.instance
           .collection(c)
           .where('email', isEqualTo: email)
+          .limit(1)
           .get();
       if (collectionQuery.docs.isNotEmpty){
         return collectionQuery.docs[0].data()['role'];

@@ -17,6 +17,7 @@ Future<void> registerCustomerWithEmailAndPassword(String email, String firstname
     final checkingResult = await FirebaseFirestore.instance
         .collection('customer')
         .where('email', isEqualTo: email)
+        .limit(1)
         .get();
     if (checkingResult.docs.isNotEmpty){
         throw FirebaseAuthException(code: 'email-is-already-in-use', message: 'The email is already use');
@@ -44,12 +45,12 @@ Future<void> registerCustomerWithEmailAndPassword(String email, String firstname
           'point_c': 0, // coupon points
           'status': "", // booking status
           'reputation_points': 100, // reputation if cancel = go down
-          'role': 'Customer',
+          'role': 'customer',
           });
         }
       }
     } catch (e) {
-    throw FirebaseAuthException(code: 'Somthing wrong', message: 'Unknown error occur');
+    throw FirebaseAuthException(code: 'Somthing wrong', message: 'Unknown error occur: ${e.toString()}');
     } 
   } // Invalid email
   else {
@@ -65,6 +66,7 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
     final customerEmailResult = await FirebaseFirestore.instance
         .collection('restaurant')
         .where('email', isEqualTo: email)
+        .limit(1)
         .get();
     if (customerEmailResult.docs.isNotEmpty){
       throw FirebaseAuthException(code: 'email-is-already-in-use', message: 'The email is already use');
@@ -93,7 +95,7 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
         'location': GeoPoint(latitude, longitude),
         'salt': salt.toString(),
         'res_logo': imageUrl,
-        'role': 'Restaurant',
+        'role': 'restaurant',
         });
 
       } 
