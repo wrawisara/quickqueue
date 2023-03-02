@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:quickqueue/services/UserRegister.dart';
 
+
 //หน้า Register ร้านอาหาร
 class ResRegisterPage extends StatefulWidget {
   const ResRegisterPage({super.key});
@@ -214,8 +215,13 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
                               onPressed: () { 
-                                File img = logo ?? File('assets/img/quickqueue.jpg');
-                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, phone, address, double.parse(latitude), double.parse(longitude), branch, img);
+                                String defaultImageUrl = 'gs://quickqueue-17550.appspot.com/images/default.jpg';
+                                File img = logo ?? File(defaultImageUrl);
+
+                                //File img = File('assets/img/default.jpg');
+                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, 
+                                  phone, address, double.parse(latitude), double.parse(longitude), branch, img);
+                                  
                                 //** ใส่ที่จะบันทึกข้อมูล */
                                 // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
                                 // showDialog<String>(

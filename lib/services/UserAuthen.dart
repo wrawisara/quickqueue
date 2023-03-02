@@ -6,50 +6,7 @@ import 'package:crypto/crypto.dart';
 class AuthenServices {
   // Create Firebase instance
   //final FirebaseAuth _auth = FirebaseAuth.instance;
-
-Future<User?> customerSignInWithEmailAndPassword({required String email, required String password}) async {
-  try {
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    final cusDocs = await FirebaseFirestore.instance
-        .collection('customer')
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
-
-    if (cusDocs.docs.isNotEmpty) {
-      bool isPasswordValid = await isPasswordCorrect(email, password, 'customer');
-      if (isPasswordValid){
-          return userCredential.user;
-      } else {
-          throw FirebaseAuthException(
-          code: 'wrong-password',
-          message: 'Incorrect password',
-        );
-      }
-    } else {
-      throw FirebaseAuthException(
-          code: 'invalid-email',
-          message: 'Invalid email',
-      );
-    }
-    // Exception 
-  } on FirebaseAuthException catch (e) {
-    print(e.code);
-    switch (e.code) {
-      case 'user-not-found':
-        throw FirebaseAuthException(code: e.code, message: 'User is not found');
-      case 'user-disabled':
-        throw FirebaseAuthException(code: e.code, message: 'User is disabled');
-    }
-  } 
-}
-
-
+  
 Future<User?> userSignInWithEmailAndPassword({required String email, required String password, required String collectionName}) async {
   try {
     UserCredential userCredential =

@@ -1,9 +1,8 @@
 import 'dart:collection';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:quickqueue/model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
@@ -11,14 +10,18 @@ import '../widgets/resLogoImage.dart';
 
 import 'package:flutter/material.dart';
 
-class CusBookingPage extends StatelessWidget {
+class CusBookingPage extends StatefulWidget {
   final AllRestaurant allRestaurantModel;
   const CusBookingPage({Key? key, required this.allRestaurantModel})
       : super(key: key);
 
-  //อยากดึงข้อมูล Branch จาก Restaurant ?
-  // final Restaurant restaurantDetail;
+  @override
+  State<CusBookingPage> createState() => _CusBookingPageState();
 
+}
+
+class _CusBookingPageState extends State<CusBookingPage> {
+  //อยากดึงข้อมูล Branch จาก Restaurant ?
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +50,7 @@ class CusBookingPage extends StatelessWidget {
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: Image.asset(
-                    allRestaurantModel.img,
+                    widget.allRestaurantModel.img,
                     scale: 1.5,
                     fit: BoxFit.fitHeight,
                   ),
@@ -70,7 +73,7 @@ class CusBookingPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        allRestaurantModel.name,
+                        widget.allRestaurantModel.name,
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
@@ -83,7 +86,7 @@ class CusBookingPage extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         "Previous Queue : " +
-                            allRestaurantModel.queueNum.toString() +
+                            widget.allRestaurantModel.queueNum.toString() +
                             " Queue",
                         style: TextStyle(
                           fontSize: 20,

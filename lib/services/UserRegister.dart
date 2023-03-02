@@ -7,6 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'package:tuple/tuple.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
 
 
 class UserRegisterService{
@@ -63,12 +64,12 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
 , String address, double latitude, double longitude, String branch, File image) async {
   if (EmailValidator.validate(email)){
   try {
-    final customerEmailResult = await FirebaseFirestore.instance
+    final restaurantEmailResult = await FirebaseFirestore.instance
         .collection('restaurant')
         .where('email', isEqualTo: email)
         .limit(1)
         .get();
-    if (customerEmailResult.docs.isNotEmpty){
+    if (restaurantEmailResult.docs.isNotEmpty){
       throw FirebaseAuthException(code: 'email-is-already-in-use', message: 'The email is already use');
     } else {
       int randId = await randomInt();
@@ -77,12 +78,14 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
       String id = result.item2;
       if (!isNotEmpty){
         int salt = await randomInt();
+        // Upload image for logo
+        String imageUrl = "";
+        if (image != null){
+            imageUrl = await uploadImage(image);
+        } 
         // create User for authentication
         await createUser(email, password);
         String hashedPassword = await hashPassword(password, salt.toString());
-
-        // Upload image for logo
-        String imageUrl = uploadImage(image, 'restaurant');
 
         // Add data to restaurant collection
         await FirebaseFirestore.instance.collection('restaurant').add({
@@ -113,15 +116,19 @@ Future<void> registerRestaurantWithEmailAndPassword(String email, String usernam
   }
 }
 
-uploadImage(File image, String collectionName) async{
+Future<String> uploadImage(File image) async{
+  // debug
+  //final String imagePath = image.absolute.path;
+
+  // uploading code
   final String fileName = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-  final Reference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child(collectionName).child(fileName);
+  final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('images').child(fileName);
   final UploadTask task = firebaseStorageRef.putFile(image);
   final TaskSnapshot snapshot = await task.whenComplete(() => null);
   final String imageUrl = await snapshot.ref.getDownloadURL();
   return imageUrl;
 }
+
 
 Future<UserCredential> createUser(String email, String password) async{
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(

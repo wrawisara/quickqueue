@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quickqueue/services/UserAuthen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickqueue/pages/resMainpage.dart';
 import 'cusChooseResPage.dart';
 import 'cusSignupPage.dart';
 import 'resRegisterPage.dart';
@@ -19,7 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   //ตัวแปร
   String email = '';
   String password = '';
-
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
                           await loginChecker(context, email, password);
                           } on FirebaseAuthException catch(e){
                             throw FirebaseAuthException(code: e.code);
-                            // need pop up
                           }
                         },
                       ),
@@ -109,7 +108,9 @@ class _LoginPageState extends State<LoginPage> {
                                 TextStyle(fontSize: 20, color: Colors.white)),
                         onPressed: () {
                           //** ใส่ที่จะ check ข้อมูล */
-                          navigateToCusSignUpPage(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CusSignUpPage()));
+                          
                         },
                       ),
                       SizedBox(
@@ -117,7 +118,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          navigateToResRegisterPage(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ResRegisterPage()));
                         },
                         child: Text(
                           'or Register for Restaurant ',
@@ -143,37 +145,16 @@ Future<void> loginChecker (BuildContext context, String email, String password) 
     if (user != null) {
       if (userType == 'customer'){
           print('Login Success');
-          navigateToCusChooseResPage(context);
+          Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CusChooseResPage()));
           //navigateToCusChooseResPage(context, user);
       } else if (userType == 'restaurant'){
+          print('Login Success');
+          Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ResMainPage()));
           // go to restaurant page
       }
     } else {
       print('Login failed');
     }
-}
-
-
-navigateToCusChooseResPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusChooseResPage();
-  }));
-}
-
-//navigateToCusChooseResPage(BuildContext context, User signedInUser) {
-  //Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //return CusChooseResPage(currentCustomer: signedInUser);
-  //}));
-//}
-
-navigateToCusSignUpPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusSignUpPage();
-  }));
-}
-
-navigateToResRegisterPage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return ResRegisterPage();
-  }));
 }

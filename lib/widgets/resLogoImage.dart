@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:quickqueue/model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 
-class resLogoImage extends StatelessWidget {
+class resLogoImage extends StatefulWidget {
   final AllRestaurant restaurant;
   resLogoImage(this.restaurant);
 
+  @override
+  State<resLogoImage> createState() => _resLogoImageState();
+}
+
+class _resLogoImageState extends State<resLogoImage> {
   @override
   Widget build(BuildContext context) {
     return Container(

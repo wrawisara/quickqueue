@@ -3,10 +3,15 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/coupon.dart';
 
-class CouponItem extends StatelessWidget {
+class CouponItem extends StatefulWidget {
   final Coupon coupon;
   CouponItem(this.coupon);
 
+  @override
+  State<CouponItem> createState() => _CouponItemState();
+}
+
+class _CouponItemState extends State<CouponItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,7 +25,7 @@ class CouponItem extends StatelessWidget {
           padding: EdgeInsets.all(5),
           width: 110,
           height: 110,
-          child: Image.asset(coupon.img, fit: BoxFit.fitHeight),
+          child: Image.asset(widget.coupon.img, fit: BoxFit.fitHeight),
         ),
         Expanded(
             child: Container(
@@ -35,7 +40,7 @@ class CouponItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  coupon.name,
+                  widget.coupon.name,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -45,19 +50,20 @@ class CouponItem extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_outlined,
                   size: 15,
+              
                 ),
               ],
             ),
             SizedBox(
               height: 5,
             ),
-            Text(coupon.description == "-"
-                ? "ส่วนลด " + coupon.discount.toString() + " %"
-                : "แลกรับเมนู " + coupon.description),
+            Text(widget.coupon.description == "-"
+                ? "ส่วนลด " + widget.coupon.discount.toString() + " %"
+                : "แลกรับเมนู " + widget.coupon.description),
             SizedBox(
               height: 5,
             ),
-            Text(coupon.required_point.toString()+" points",
+            Text(widget.coupon.required_point.toString()+" points",
             style: TextStyle(
               color: Colors.cyan
             ),)

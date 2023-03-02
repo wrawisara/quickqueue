@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,11 +5,14 @@ import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
 import '../model/Customer.dart';
-import '../model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 
-class CusBookedPage extends StatelessWidget {
-  //final User currentCustomer;
-  //const CusBookedPage({Key? key, required this.currentCustomer}) : super(key: key);
+class CusBookedPage extends StatefulWidget {
+  @override
+  State<CusBookedPage> createState() => _CusBookedPageState();
+}
+
+class _CusBookedPageState extends State<CusBookedPage> {
   //คำสั่งรับ datenow ยังไม่ได้ใช้
   String cdate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
