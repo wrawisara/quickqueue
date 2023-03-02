@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/model/tableInfo.dart';
 
 class Restaurant{
   String restaurantName = '';
@@ -10,6 +11,7 @@ class Restaurant{
   String longitude = '';
   String branch = '';
   String logo = '';
+  // Map<String, List<TableInfo>> tableInfo;
 
   Restaurant(this.restaurantName,this.email,this.password,
   this.phone,this.address,this.latitude,this.longitude,this.branch,this.logo);

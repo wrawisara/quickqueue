@@ -93,12 +93,12 @@ class _LoginPageState extends State<LoginPage> {
                           // );
                           
                           // ไปหน้า Customer
-                           Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusChooseResPage()));
+                          //  Navigator.of(context).push(MaterialPageRoute(
+                          // builder: (context) => CusChooseResPage()));
 
                           // ไปหน้า Restaurant
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          // builder: (context) => ResMainPage()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ResMainPage()));
                         },
                       ),
                       SizedBox(height: 20.0),

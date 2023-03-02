@@ -186,7 +186,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 : Image.asset(
                                     'assets/img/quickqueue.jpg',
                                     scale: 5,
-                                  ),
+                                  ),  
                             SizedBox(
                               height: 20.0,
                             ),

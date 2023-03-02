@@ -78,7 +78,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                   width: 15,
                                 ),
                                 Text(
-                                  customer.point.toString() + " " + "point",
+                                  customer.point.toString() + " " + "points",
                                   style: TextStyle(
                                     color: Color.fromRGBO(72, 191, 145, 1.0),
                                     fontSize: 20,
@@ -118,7 +118,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
                               ),
                             ),
                           ),
-                        ]))
+                        ])),
               ],
             ),
           ),
@@ -136,6 +136,33 @@ class _CusProfilePageState extends State<CusProfilePage> {
         ]));
   }
 }
+
+class CouponText extends StatelessWidget {
+  const CouponText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: 40,
+        // padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Column(children: <Widget>[
+          Container(
+            color: Colors.white,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            child: Text(
+              'Coupon',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.cyan),
+            ),
+          )
+        ]));
+  }
+}
+
+
 
 //widget ทำ แถบเลือกด้านบน tapList ใส่ใน containner
 // padding: EdgeInsets.all(20.0),

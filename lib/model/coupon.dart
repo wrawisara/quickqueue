@@ -30,6 +30,10 @@ class Coupon {
           'เนื้อ Wagyu Brisket'),
       Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
           'เนื้อ Wagyu Brisket'),
+           Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
+          'เนื้อ Wagyu Brisket'),
+           Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
+          'เนื้อ Wagyu Brisket'),
     ];
   }
 }

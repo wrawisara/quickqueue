@@ -88,10 +88,10 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 child: ListTile(
                   title: Text(
                     restaurantData[index].name,
-                    style: TextStyle(fontSize: 22),
+                    style: TextStyle(fontSize: 20),
                   ),
                   subtitle: Text(
-                      "Queue " + restaurantData[index].queueNum.toString(), style: TextStyle(fontSize: 20)),
+                      "Queue " + restaurantData[index].queueNum.toString(), style: TextStyle(fontSize: 18)),
                   leading: SizedBox(
                     width: 50,
                     height: 60,

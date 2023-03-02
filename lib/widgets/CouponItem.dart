@@ -42,7 +42,7 @@ class _CouponItemState extends State<CouponItem> {
                 Text(
                   widget.coupon.name,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     height: 1.5,
                   ),

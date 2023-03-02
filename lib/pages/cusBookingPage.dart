@@ -7,7 +7,7 @@ import 'package:quickqueue/model/allRestaurant.dart';
 import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
-import '../widgets/resLogoImage.dart';
+import '../widgets/restaurantInfo.dart';
 
 import 'package:flutter/material.dart';
 
@@ -21,6 +21,7 @@ class CusBookingPage extends StatefulWidget {
 }
 
 class _CusBookingPageState extends State<CusBookingPage> {
+
   //อยากดึงข้อมูล Branch จาก Restaurant ?
   @override
   Widget build(BuildContext context) {
@@ -134,6 +135,13 @@ class _CusBookingPageState extends State<CusBookingPage> {
                         style: TextStyle(fontSize: 20, color: Colors.white)),
                   
                     onPressed: () {
+
+                      //save data ลง db 
+                      widget.allRestaurantModel.name;
+                      widget.allRestaurantModel.queueNum;
+                      NumOfPersons();
+
+
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CusBookedPage()));
 
