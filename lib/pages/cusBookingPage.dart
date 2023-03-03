@@ -1,9 +1,8 @@
 import 'dart:collection';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:quickqueue/model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
@@ -18,6 +17,7 @@ class CusBookingPage extends StatefulWidget {
 
   @override
   State<CusBookingPage> createState() => _CusBookingPageState();
+
 }
 
 class _CusBookingPageState extends State<CusBookingPage> {

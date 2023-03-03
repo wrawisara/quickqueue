@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
-import '../model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 import 'cusBookingPage.dart';
+import 'package:quickqueue/model/customer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 //หน้า CusChooseRes
 class CusChooseResPage extends StatefulWidget {
+  // Pass the current User
+  //final User currentCustomer;
+  //const CusChooseResPage({Key? key, required this.currentCustomer}) : super(key: key);
+
   const CusChooseResPage({super.key});
   @override
   State<CusChooseResPage> createState() => _CusChooseResPageState();

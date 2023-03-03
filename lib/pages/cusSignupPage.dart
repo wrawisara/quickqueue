@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/services/UserRegister.dart';
 
 //หน้า Sign up ลูกค้า
 class CusSignUpPage extends StatefulWidget {
@@ -15,6 +16,8 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
   String phone = '';
   String email = '';
   String password = '';
+
+  UserRegisterService registerService = UserRegisterService();
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +122,7 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white)),
                           onPressed: () {
+                            registerService.registerCustomerWithEmailAndPassword(email, firstname, lastname, password, phone);
                             // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
                             // showDialog<String>(
                             //   context: context,

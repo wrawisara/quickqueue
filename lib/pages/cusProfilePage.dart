@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/tapList.dart';
 import '../model/Customer.dart';
-import '../model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 
 class CusProfilePage extends StatefulWidget {
   @override

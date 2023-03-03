@@ -1,7 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:quickqueue/model/allRestaurant.dart';
+import 'package:quickqueue/model/restaurantList.dart';
 import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/model/tableInfo.dart';
 
@@ -13,49 +15,77 @@ class RestaurantInfo extends StatefulWidget {
 }
 
 class _RestaurantInfoState extends State<RestaurantInfo> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 40),
-      padding: EdgeInsets.symmetric(horizontal: 25),
+      height: 130,
+      width: 400,
+      margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+      padding: EdgeInsets.symmetric(horizontal: 35),
+      decoration: new BoxDecoration(
+        color: Colors.cyan.withOpacity(0.6),
+        border: Border.all(color: Colors.white, width: 3),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     widget.restaurant.restaurantName,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: [Text(widget.restaurant.branch),]
-                    
-                  ),
+                  Row(children: [
+                    Text(
+                      widget.restaurant.branch,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ]),
+                  SizedBox(height: 5,),
                   Row(
                     children: [
-                    Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.cyan.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(5)
-                      ),
-                      child: Text(widget.tableInfo.total_capacity.toString()+" tables"))],
+                      Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(
+                              widget.tableInfo.total_capacity.toString() +
+                                  " tables" ,style:TextStyle(color: Colors.cyan.shade800) ,)
+                                  )
+                    ],
                   ),
                 ],
               ),
-              ClipRect(
-                child: Image.asset(widget.restaurant.logo,width: 80,),
+              
+              Padding(
+                padding: const EdgeInsets.only(top:17.0),
+                child: ClipRect(
+                  child: Image.asset(
+                    widget.restaurant.logo,
+                    width: 80,
+                  ),
+                ),
               )
             ],
           ),
-          
+          SizedBox(
+            height: 20,
+          )
         ],
       ),
     );

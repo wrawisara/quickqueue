@@ -5,7 +5,7 @@ import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
 import '../model/Customer.dart';
-import '../model/allRestaurant.dart';
+import '../model/restaurantList.dart';
 
 class CusBookedPage extends StatefulWidget {
   @override

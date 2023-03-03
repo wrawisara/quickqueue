@@ -6,12 +6,24 @@ import 'package:quickqueue/model/tableInfo.dart';
 
 class AddTableItem extends StatefulWidget {
   //parameter จากหน้า resConfig
-  String type='';
-  int person = 0;
+   String type = '';
+   int person = 0;
+  // String capacity = '';
+  // String table_capacity = '';
+  final Function(int)? onCapacityChanged;
 
-  AddTableItem(this.type,this.person);
+  
 
-  //ใช้ส่งข้อมูล setstate ไปหน้า resConfig 
+  final Function(int) onTableCapacityChanged; // new callback function
+  AddTableItem(this.type,this.person,{required this.onTableCapacityChanged, this.onCapacityChanged});
+
+  
+
+  // String getTableCapacity(){
+  //   return table_capacity;
+  // }
+
+  //ใช้ส่งข้อมูล setstate ไปหน้า resConfig
   // final Function(String) onTextTbCpChanged;
   // AddTableItem(this.type,this.person, {Key? key, required this.onTextTbCpChanged}) : super(key: key);
 
@@ -21,17 +33,19 @@ class AddTableItem extends StatefulWidget {
 
 class _AddTableItemState extends State<AddTableItem> {
 
+  TextEditingController _tableCapacityController = TextEditingController();
 
   //นำค่าไป setstae ใน textfield
-  String capacity = '';
-  String table_capacity = '';
 
+ 
 
-  // Future _tableCapacityState(String val) {
-  //   setState(() => table_capacity = val);
-  // }
-
+  
   @override
+  void dispose() {
+    _tableCapacityController.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +55,7 @@ class _AddTableItemState extends State<AddTableItem> {
           height: 170,
           decoration: new BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Colors.cyan.withOpacity(0.3), width: 3),
+            border: Border.all(color: Colors.cyan.withOpacity(0.3), width: 2),
             borderRadius: BorderRadius.circular(40.0),
           ),
           margin: EdgeInsets.only(top: 5),
@@ -73,7 +87,10 @@ class _AddTableItemState extends State<AddTableItem> {
                               height: 5,
                             ),
                             Row(children: [
-                              Text(widget.person.toString() + " Guest",style: TextStyle(fontSize: 16),),
+                              Text(
+                                widget.person.toString() + " Seats",
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ]),
                           ],
                         ),
@@ -83,18 +100,21 @@ class _AddTableItemState extends State<AddTableItem> {
                       height: 10,
                     ),
                     Container(
-                        width: 150,
+                        width: 140,
                         height: 30,
                         child: TextField(
+                          controller: _tableCapacityController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(90.0),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
                             labelText: 'Number of table',
                           ),
-                          onChanged: (val) {
-                            setState(() => table_capacity = val);
-                            // widget.onTextTbCpChanged(table_capacity);
+                          onChanged: (value) {
+                            // setState(() => widget.table_capacity = val);
+                            widget.onTableCapacityChanged(int.tryParse(value) ?? 0);
+                            
                           },
                         )),
                   ],
@@ -119,8 +139,9 @@ class _AddTableItemState extends State<AddTableItem> {
                             Text(
                               "Table " + widget.type,
                               style: TextStyle(
-                                color: Colors.cyan,
-                                  fontSize: 22, fontWeight: FontWeight.bold),
+                                  color: Colors.cyan,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 5,
@@ -139,38 +160,37 @@ class _AddTableItemState extends State<AddTableItem> {
                         width: 150,
                         height: 30,
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(90.0),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            labelText: 'Number of guest',
+                            labelText: 'Number of seats',
                           ),
-                          onChanged: (val) {
-                            setState(() => capacity = val);
-                            // widget.onTextTbCpChanged(capacity);
+                          onChanged: (value) {
+                            // setState(() => widget.capacity = val);
+                            widget.onCapacityChanged!(int.tryParse(value) ?? 0);
                           },
                         )),
-                        SizedBox(
-                      height: 5,
+                    SizedBox(
+                      height: 6,
                     ),
-                        Container(
+                    Container(
                         width: 150,
                         height: 30,
                         child: TextField(
+                          controller: _tableCapacityController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(90.0),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
                             labelText: 'Number of table',
                           ),
-                          onChanged: (val) {
-                            setState(() => table_capacity = val);
-                            // widget.onTextTbCpChanged(table_capacity);
+                          onChanged: (value) {
+                            widget.onTableCapacityChanged(int.tryParse(value) ?? 0);
                           },
-                          
-                        )
-                         
-                        ),
+                        )),
                   ],
                 ),
         ),
@@ -180,5 +200,9 @@ class _AddTableItemState extends State<AddTableItem> {
 }
 
 // Future<String> getTableData(String type,String guest){
-//   return
+//   return 
 // }
+
+
+
+

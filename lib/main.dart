@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-
+import 'package:quickqueue/pages/resMainpage.dart';
 import './pages/cusChooseResPage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import './pages/loginPage.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -22,7 +25,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         fontFamily: "Metropolis",
         primarySwatch: Colors.cyan),
-        home: LoginPage(),
+        home: ResMainPage(),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/services/UserAuthen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/resMainpage.dart';
-
 import 'cusChooseResPage.dart';
 import 'cusSignupPage.dart';
 import 'resRegisterPage.dart';
@@ -12,6 +13,8 @@ class LoginPage extends StatefulWidget {
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
+
+final AuthenServices authenServices = AuthenServices();
 
 class _LoginPageState extends State<LoginPage> {
   //ตัวแปร
@@ -81,8 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text('Log In',
                             style:
                                 TextStyle(fontSize: 20, color: Colors.white)),
-                        onPressed: () {
-                          //** ใส่ที่จะ check ข้อมูล */
+                        onPressed: () async{
+                          
                           // alert แจ้งเตือนใส่ email/password ผิด
                           // showDialog<String>(
                           //   context: context,
@@ -91,14 +94,13 @@ class _LoginPageState extends State<LoginPage> {
                           //     content: const Text('Your email and password do not match. Please try again.'),
                           //   ),
                           // );
-                          
-                          // ไปหน้า Customer
-                          //  Navigator.of(context).push(MaterialPageRoute(
-                          // builder: (context) => CusChooseResPage()));
-
-                          // ไปหน้า Restaurant
-                          Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ResMainPage()));
+                          try {
+                          print(email);
+                          print(password);
+                          await loginChecker(context, email, password);
+                          } on FirebaseAuthException catch(e){
+                            throw FirebaseAuthException(code: e.code);
+                          }
                         },
                       ),
                       SizedBox(height: 20.0),
@@ -115,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                                 TextStyle(fontSize: 20, color: Colors.white)),
                         onPressed: () {
                           //** ใส่ที่จะ check ข้อมูล */
-                           Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CusSignUpPage()));
                           
                         },
@@ -125,8 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          
-                           Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ResRegisterPage()));
                         },
                         child: Text(
@@ -146,20 +147,23 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-// navigateToCusChooseResPage(BuildContext context) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//     return CusChooseResPage();
-//   }));
-// }
-
-// navigateToCusSignUpPage(BuildContext context) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//     return CusSignUpPage();
-//   }));
-// }
-
-// navigateToResRegisterPage(BuildContext context) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//     return ResRegisterPage();
-//   }));
-// }
+Future<void> loginChecker (BuildContext context, String email, String password) async {
+  String userType = await authenServices.getUserType(email, password);
+    Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(email: email, password: password, collectionName: userType);
+    User? user = await futureUser;
+    if (user != null) {
+      if (userType == 'customer'){
+          print('Login Success');
+          Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => CusChooseResPage()));
+          //navigateToCusChooseResPage(context, user);
+      } else if (userType == 'restaurant'){
+          print('Login Success');
+          Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ResMainPage()));
+          // go to restaurant page
+      }
+    } else {
+      print('Login failed');
+    }
+}

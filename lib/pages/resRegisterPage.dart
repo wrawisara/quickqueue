@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:quickqueue/services/UserRegister.dart';
+
 
 //หน้า Register ร้านอาหาร
 class ResRegisterPage extends StatefulWidget {
@@ -22,9 +25,11 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
   String branch = '';
   File? logo;
 
+  UserRegisterService registerService = UserRegisterService();
+
   @override
   Widget build(BuildContext context) {
-    //ใช้เพื่อ add image ตรง logo
+    //ใช้เพื่อ add image ตรง logo  
     Future getImage() async {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
@@ -209,7 +214,14 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               child: const Text('Register',
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
-                              onPressed: () {
+                              onPressed: () { 
+                                String defaultImageUrl = 'gs://quickqueue-17550.appspot.com/images/default.jpg';
+                                File img = logo ?? File(defaultImageUrl);
+
+                                //File img = File('assets/img/default.jpg');
+                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, 
+                                  phone, address, double.parse(latitude), double.parse(longitude), branch, img);
+                                  
                                 //** ใส่ที่จะบันทึกข้อมูล */
                                 // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
                                 // showDialog<String>(
