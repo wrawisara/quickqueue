@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
+import 'package:quickqueue/services/customerServices.dart';
 import '../model/restaurantList.dart';
 import 'cusBookingPage.dart';
-import 'package:quickqueue/model/customer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
 //หน้า CusChooseRes
 class CusChooseResPage extends StatefulWidget {
   // Pass the current User
-  //final User currentCustomer;
-  //const CusChooseResPage({Key? key, required this.currentCustomer}) : super(key: key);
+  const CusChooseResPage({Key? key}) : super(key: key);
 
-  const CusChooseResPage({super.key});
+  //const CusChooseResPage({super.key});
   @override
   State<CusChooseResPage> createState() => _CusChooseResPageState();
 }
 
 class _CusChooseResPageState extends State<CusChooseResPage> {
+  // Get data from Firebase
+  final CustomerServices customerServices = CustomerServices();
+  //late Future<List<Map<String, dynamic>>> restaurantData = customerServices.getAllRestaurants()
+
+
   //กลุ่มข้อมูล
   static List<String> restaurantName = [
     'On The Table',
@@ -31,6 +35,8 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
     'assets/img/momo.jpg'
   ];
 
+
+
   final List<AllRestaurant> restaurantData = List.generate(
       restaurantName.length,
       (index) => AllRestaurant(
@@ -39,6 +45,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
   //แสดงผลข้อมูล
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
           iconTheme: IconThemeData(

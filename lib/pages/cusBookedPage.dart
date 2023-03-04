@@ -5,11 +5,14 @@ import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
 import '../model/Customer.dart';
-import '../model/restaurantList.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CusBookedPage extends StatefulWidget {
+  // Pass the current User
+  const CusBookedPage({Key? key}) : super(key: key);
   @override
   State<CusBookedPage> createState() => _CusBookedPageState();
+
 }
 
 class _CusBookedPageState extends State<CusBookedPage> {
@@ -23,6 +26,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(

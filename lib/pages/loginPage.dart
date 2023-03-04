@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quickqueue/services/UserAuthen.dart';
+import 'package:quickqueue/services/userAuthen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/resMainpage.dart';
 import 'cusChooseResPage.dart';
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
 
 Future<void> loginChecker (BuildContext context, String email, String password) async {
   String userType = await authenServices.getUserType(email, password);
-    Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(email: email, password: password, collectionName: userType);
+    Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(email: email, password: password);
     User? user = await futureUser;
     if (user != null) {
       if (userType == 'customer'){

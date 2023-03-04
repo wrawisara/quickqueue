@@ -7,33 +7,17 @@ class AuthenServices {
   // Create Firebase instance
   //final FirebaseAuth _auth = FirebaseAuth.instance;
   
-Future<User?> userSignInWithEmailAndPassword({required String email, required String password, required String collectionName}) async {
+Future<User?> userSignInWithEmailAndPassword({required String email, required String password}) async {
   try {
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-
-    final resDocs = await FirebaseFirestore.instance
-        .collection(collectionName)
-        .where('email', isEqualTo: email)
-        .limit(1)
-        .get();
-
-    if (resDocs.docs.isNotEmpty) {
-      bool isPasswordValid = await isPasswordCorrect(email, password, collectionName);
-      if (isPasswordValid){
-          return userCredential.user;
-      } else {
-          throw FirebaseAuthException(
-          code: 'wrong-password',
-          message: 'Incorrect password',
-        );
-      }
+    return userCredential.user;
     }
     // Exception 
-  } on FirebaseAuthException catch (e) {
+     on FirebaseAuthException catch (e) {
     print(e.code);
     switch (e.code) {
       case 'user-not-found':
@@ -46,6 +30,7 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
   } 
 }
 
+// not used anymore
 Future<bool> isPasswordCorrect(String email, String password, String collectionName) async{
   QuerySnapshot<Map<String, dynamic>> collectionQuery =
       await FirebaseFirestore.instance

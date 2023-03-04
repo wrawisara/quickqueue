@@ -7,17 +7,22 @@ import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/model/coupon.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
+import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/tapList.dart';
 import '../model/Customer.dart';
-import '../model/restaurantList.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CusProfilePage extends StatefulWidget {
   @override
   State<CusProfilePage> createState() => _CusProfilePageState();
 }
 
-class _CusProfilePageState extends State<CusProfilePage> {
+class _CusProfilePageState extends State<CusProfilePage>{
+  // Firebase get Customer
+  CustomerServices customerServices = CustomerServices();
+  //late DocumentSnapshot<Map<String, dynamic>> customerInfo = await customerServices.getCurrentUserData();
+  
   //เรียกข้อมูลมาใช้
   final customer = Customer.generateCustomer();
 
@@ -26,6 +31,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     String cusName = customer.firstname + " " + customer.lastname;
     double nameWidth = cusName.length.toDouble() + 250;
     print(nameWidth);

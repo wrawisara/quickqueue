@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quickqueue/services/UserRegister.dart';
+import 'package:quickqueue/services/userRegister.dart';
 
 //หน้า Sign up ลูกค้า
 class CusSignUpPage extends StatefulWidget {
