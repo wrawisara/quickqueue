@@ -93,8 +93,8 @@ class CustomerServices{
   final currentPointsM = customerDoc.get('points_m');
   final currentPointsC = customerDoc.get('points_c');
   final currentTier = customerDoc.get('tier');
-  final newPointsM = currentPointsM + (numPersons > 2 ? (numPersons > 4 ? 6 : 2) : 0);
-  final newPointsC = currentPointsC + (numPersons > 2 ? (numPersons > 4 ? 6 : 2) : 0);
+  final newPointsM = currentPointsM + (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
+  final newPointsC = currentPointsC + (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
   final updateData = {
     'points_m': newPointsM,
     'points_c': newPointsC,
