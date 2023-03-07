@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 
 class UserRegisterService {
+  
   Future<void> registerCustomerWithEmailAndPassword(
       String email,
       String firstname,

@@ -1,4 +1,7 @@
 import 'dart:collection';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -11,9 +14,14 @@ import '../widgets/restaurantInfo.dart';
 import 'package:flutter/material.dart';
 
 class CusBookingPage extends StatefulWidget {
-  final AllRestaurant allRestaurantModel;
-  const CusBookingPage({Key? key, required this.allRestaurantModel})
+
+
+final Map<String, dynamic> restaurant;
+  const CusBookingPage({Key? key, required this.restaurant})
       : super(key: key);
+
+// final List<Map<String, dynamic>> allRestaurantModel;
+  
 
   @override
   State<CusBookingPage> createState() => _CusBookingPageState();
@@ -50,8 +58,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: Image.asset(
-                    widget.allRestaurantModel.img,
+                  child: Image.network(
+                    widget.restaurant['res_logo'],
                     scale: 1.5,
                     fit: BoxFit.fitHeight,
                   ),
@@ -74,7 +82,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        widget.allRestaurantModel.name,
+                        widget.restaurant['username'],
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
@@ -87,7 +95,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     children: <Widget>[
                       Text(
                         "Previous Queue : " +
-                            widget.allRestaurantModel.queueNum.toString() +
+                          //  "widget.allRestaurantModel.queueNum.toString()" +
                             " Queue",
                         style: TextStyle(
                           fontSize: 20,
@@ -137,8 +145,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     onPressed: () {
 
                       //save data ลง db 
-                      widget.allRestaurantModel.name;
-                      widget.allRestaurantModel.queueNum;
+                      widget.restaurant['username'];
+                      //widget.allRestaurantModel.queueNum;
                       NumOfPersons();
 
 
@@ -163,6 +171,10 @@ class _CusBookingPageState extends State<CusBookingPage> {
         ));
   }
 }
+
+
+
+
 
 //เพิ่มลดจำนวนคนที่จอง
 class NumOfPersons extends StatefulWidget {

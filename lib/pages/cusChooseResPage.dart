@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
+import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import '../model/restaurantList.dart';
 import 'cusBookingPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 //หน้า CusChooseRes
 class CusChooseResPage extends StatefulWidget {
@@ -19,28 +19,32 @@ class CusChooseResPage extends StatefulWidget {
 class _CusChooseResPageState extends State<CusChooseResPage> {
   // Get data from Firebase
   final CustomerServices customerServices = CustomerServices();
-  //late Future<List<Map<String, dynamic>>> restaurantData = customerServices.getAllRestaurants()
 
+  late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
 
   //กลุ่มข้อมูล
-  static List<String> restaurantName = [
-    'On The Table',
-    'Fam Time Steak and Pasta',
-    'Mo-Mo-Paradise'
-  ];
-  static List<int> queueNum = [1, 2, 3];
-  static List<String> img = [
-    'assets/img/onthetable.jpg',
-    'assets/img/fametime.jpg',
-    'assets/img/momo.jpg'
-  ];
+  // static List<String> restaurantName = [
+  //   'On The Table',
+  //   'Fam Time Steak and Pasta',
+  //   'Mo-Mo-Paradise'
+  // ];
+  // static List<int> queueNum = [1, 2, 3];
+  // static List<String> img = [
+  //   'assets/img/onthetable.jpg',
+  //   'assets/img/fametime.jpg',
+  //   'assets/img/momo.jpg'
+  // ];
 
+  // final List<AllRestaurant> restaurantData = List.generate(
+  //     restaurantName.length,
+  //     (index) => AllRestaurant(
+  //         '${restaurantName[index]}', queueNum[index], '${img[index]}'));
 
-
-  final List<AllRestaurant> restaurantData = List.generate(
-      restaurantName.length,
-      (index) => AllRestaurant(
-          '${restaurantName[index]}', queueNum[index], '${img[index]}'));
+  @override
+  void initState() {
+    super.initState();
+    _restaurantDataFuture = customerServices.getAllRestaurants();
+  }
 
   //แสดงผลข้อมูล
   @override
@@ -51,6 +55,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
+          automaticallyImplyLeading: false, // Disable the back icon
           title: Text('Restaurant', style: TextStyle(color: Colors.white)),
           actions: <Widget>[
             IconButton(
@@ -79,8 +84,8 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               onPressed: () {
                 // ScaffoldMessenger.of(context).showSnackBar(
                 //     const SnackBar(content: Text('Want to go Profile')));
-                Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusProfilePage()));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CusProfilePage()));
               },
             ),
             IconButton(
@@ -89,40 +94,154 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Want to go Booking History')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Want to go Booking History')));
+              },
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.logout_outlined,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                showAlertDialog(context);
               },
             ),
           ]),
-      body: Container(
-        child: ListView.builder(
-            itemCount: restaurantData.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-                  title: Text(
-                    restaurantData[index].name,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  subtitle: Text(
-                      "Queue " + restaurantData[index].queueNum.toString(), style: TextStyle(fontSize: 18)),
-                  leading: SizedBox(
-                    width: 50,
-                    height: 60,
-                    child: Image.asset(restaurantData[index].img), ),
-                  
-                  onTap: () {
-                    print('Tapped');
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CusBookingPage(allRestaurantModel: restaurantData[index])));
-                  },
-                ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _restaurantDataFuture,
+          builder: (BuildContext context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
               );
-            }),
-      ),
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Error fetching data'),
+              );
+            }
+
+            if (snapshot.data?.isEmpty ?? true) {
+              return Center(
+                child: Text('No restaurants found'),
+              );
+            }
+
+            List<Map<String, dynamic>> restaurantData = snapshot.data ?? [];
+            return ListView.builder(
+              itemCount: restaurantData.length,
+              itemBuilder: (BuildContext context, int index) {
+                Map<String, dynamic> restaurant = restaurantData[index];
+                print("Heelo" + restaurant['username']);
+                return Card(
+                  child: ListTile(
+                    title: Text(
+                      restaurant['username'],
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    subtitle: Text(
+                      restaurant['address'],
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    leading: SizedBox(
+                      width: 50,
+                      height: 60,
+                      child: Image.network(
+                        restaurant['res_logo'],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    onTap: () {
+                      print('Tapped');
+                      // TODO: navigate to booking page
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CusBookingPage(restaurant: restaurant)));
+                    },
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 }
 
+
+navigateToLoginPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return LoginPage();
+  }));
+}
+
+  showAlertDialog(BuildContext context) {
+    Widget continueButton = TextButton(
+      child: Text("Yes"),
+      onPressed: () {
+        navigateToLoginPage(context);
+      },
+    );
+    Widget cancelButton = TextButton(
+      child: Text("No"),
+      onPressed: () {
+         Navigator.pop(context, false);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Sign Out"),
+      content: Text("Would you like to sign out ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+// navigateToCusBookingPage(BuildContext context) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CusBookingPage(allRestaurantModel: restaurantData[index])));
+//   }));
+// }
+
+
+
+// body เดิม ใช้ได่
+// Container(
+//         child: ListView.builder(
+//             itemCount: restaurantData.length,
+//             itemBuilder: (BuildContext context, int index) {
+//               return Card(
+//                 child: ListTile(
+//                   title: Text(
+//                     restaurantData[index].name,
+//                     style: TextStyle(fontSize: 20),
+//                   ),
+//                   subtitle: Text(
+//                       "Queue " + restaurantData[index].queueNum.toString(), style: TextStyle(fontSize: 18)),
+//                   leading: SizedBox(
+//                     width: 50,
+//                     height: 60,
+//                     child: Image.asset(restaurantData[index].img), ),
+                  
+//                   onTap: () {
+//                     print('Tapped');
+//                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CusBookingPage(allRestaurantModel: restaurantData[index])));
+//                   },
+//                 ),
+//               );
 
 
 
@@ -217,10 +336,4 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
 //       ),
 //     );
 //   }
-// }
-
-// navigateToCusBookingPage(BuildContext context) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//     return CusBookingPage();
-//   }));
 // }
