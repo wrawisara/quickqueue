@@ -37,8 +37,8 @@ class CustomerServices {
     } catch (e) {
       print('Error fetching data: $e');
       throw e;
-    }
-  }
+    } 
+}
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     DocumentSnapshot<Map<String, dynamic>> userInfoSnapshot =
@@ -77,7 +77,6 @@ class CustomerServices {
     } else {
       tier = 'Bronze';
     }
-
     // Update the customer's tier in the database
     await FirebaseFirestore.instance
         .collection('customer')
@@ -106,6 +105,7 @@ class CustomerServices {
     await customerDocRef.update(updateData);
     updateCustomerTier(cusId, newPointsM);
   }
+    
 
   Future<void> useCoupon(String cusId, double requiredPoints) async {
     final customerDocRef =

@@ -28,9 +28,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  
   flutter:
     sdk: flutter
+   
+  dropdown_button2: ^2.0.0
+
   intl: ^0.17.0
+  # bottom_navy_bar: ^5.6.0
 
   # Email Validator
   email_validator: ^2.1.17

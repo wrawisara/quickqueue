@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 class UserRegisterService {
+  
   Future<void> registerCustomerWithEmailAndPassword(
       String email,
       String firstname,

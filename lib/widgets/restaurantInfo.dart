@@ -55,7 +55,9 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ]),
-                  SizedBox(height: 5,),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Row(
                     children: [
                       Container(
@@ -64,16 +66,16 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                               color: Colors.white.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
-                              widget.tableInfo.total_capacity.toString() +
-                                  " tables" ,style:TextStyle(color: Colors.cyan.shade800) ,)
-                                  )
+                            widget.tableInfo.total_capacity.toString() +
+                                " tables",
+                            style: TextStyle(color: Colors.cyan.shade800),
+                          ))
                     ],
                   ),
                 ],
               ),
-              
               Padding(
-                padding: const EdgeInsets.only(top:17.0),
+                padding: const EdgeInsets.only(top: 17.0),
                 child: ClipRect(
                   child: Image.asset(
                     widget.restaurant.logo,

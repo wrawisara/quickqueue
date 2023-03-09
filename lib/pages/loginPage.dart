@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/pages/resHomePage.dart';
 import 'package:quickqueue/services/userAuthen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/resMainpage.dart';
@@ -81,11 +82,10 @@ class _LoginPageState extends State<LoginPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(32.0)),
                         ),
-                        child: const Text('Log In',
+                        child: const Text('Sign In',
                             style:
                                 TextStyle(fontSize: 20, color: Colors.white)),
-                        onPressed: () async{
-                          
+                        onPressed: () async {
                           // alert แจ้งเตือนใส่ email/password ผิด
                           // showDialog<String>(
                           //   context: context,
@@ -95,10 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                           //   ),
                           // );
                           try {
-                          print(email);
-                          print(password);
-                          await loginChecker(context, email, password);
-                          } on FirebaseAuthException catch(e){
+                            print(email);
+                            print(password);
+                            await loginChecker(context, email, password);
+                          } on FirebaseAuthException catch (e) {
                             throw FirebaseAuthException(code: e.code);
                           }
                         },
@@ -118,8 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {
                           //** ใส่ที่จะ check ข้อมูล */
                           Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusSignUpPage()));
-                          
+                              builder: (context) => CusSignUpPage()));
                         },
                       ),
                       SizedBox(
@@ -128,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ResRegisterPage()));
+                              builder: (context) => ResRegisterPage()));
                         },
                         child: Text(
                           'or Register for Restaurant ',
@@ -147,23 +146,25 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Future<void> loginChecker (BuildContext context, String email, String password) async {
+Future<void> loginChecker(
+    BuildContext context, String email, String password) async {
   String userType = await authenServices.getUserType(email, password);
-    Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(email: email, password: password);
-    User? user = await futureUser;
-    if (user != null) {
-      if (userType == 'customer'){
-          print('Login Success');
-          Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => CusChooseResPage()));
-          //navigateToCusChooseResPage(context, user);
-      } else if (userType == 'restaurant'){
-          print('Login Success');
-          Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ResMainPage()));
-          // go to restaurant page
-      }
-    } else {
-      print('Login failed');
+  Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(
+      email: email, password: password);
+  User? user = await futureUser;
+  if (user != null) {
+    if (userType == 'customer') {
+      print('Login Success');
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => CusChooseResPage()));
+      //navigateToCusChooseResPage(context, user);
+    } else if (userType == 'restaurant') {
+      print('Login Success');
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ResHomePage()));
+      // go to restaurant page
     }
+  } else {
+    print('Login failed');
+  }
 }
