@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import '../model/restaurantList.dart';
-import 'package:quickqueue/model/restaurant.dart';
+import 'package:quickqueue/services/customerServices.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
 import '../widgets/restaurantInfo.dart';
@@ -11,8 +11,8 @@ import '../widgets/restaurantInfo.dart';
 import 'package:flutter/material.dart';
 
 class CusBookingPage extends StatefulWidget {
-  final AllRestaurant allRestaurantModel;
-  const CusBookingPage({Key? key, required this.allRestaurantModel})
+  final Map<String, dynamic> restaurant;
+  const CusBookingPage({Key? key, required this.restaurant})
       : super(key: key);
 
   @override
@@ -22,9 +22,12 @@ class CusBookingPage extends StatefulWidget {
 
 class _CusBookingPageState extends State<CusBookingPage> {
 
+  final CustomerServices customerServices = CustomerServices();
+
   //อยากดึงข้อมูล Branch จาก Restaurant ?
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -50,8 +53,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                 child: Card(
                   semanticContainer: true,
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: Image.asset(
-                    widget.allRestaurantModel.img,
+                  child: Image.network(
+                    widget.restaurant['res_logo'],
                     scale: 1.5,
                     fit: BoxFit.fitHeight,
                   ),
@@ -74,7 +77,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        widget.allRestaurantModel.name,
+                        widget.restaurant['username'],
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
@@ -87,7 +90,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     children: <Widget>[
                       Text(
                         "Previous Queue : " +
-                            widget.allRestaurantModel.queueNum.toString() +
+                           "widget.allRestaurantModel.queueNum.toString()" +
                             " Queue",
                         style: TextStyle(
                           fontSize: 20,
@@ -137,10 +140,9 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     onPressed: () {
 
                       //save data ลง db 
-                      widget.allRestaurantModel.name;
-                      widget.allRestaurantModel.queueNum;
+                      widget.restaurant['username'];
+                      //widget.allRestaurantModel.queueNum;
                       NumOfPersons();
-
 
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CusBookedPage()));
