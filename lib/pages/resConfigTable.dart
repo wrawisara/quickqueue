@@ -39,6 +39,7 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
             color: Colors.white,
           ),
           title: Text('Configuration', style: TextStyle(color: Colors.white)),
+           automaticallyImplyLeading: false, // Disable the back icon
         ),
         backgroundColor: Colors.white,
         body: Column(

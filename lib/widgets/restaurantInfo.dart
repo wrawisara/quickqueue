@@ -18,7 +18,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 130,
+      height: 150,
       width: 400,
       margin: EdgeInsets.only(top: 20, left: 10, right: 10),
       padding: EdgeInsets.symmetric(horizontal: 35),
@@ -60,28 +60,43 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                   ),
                   Row(
                     children: [
+                      Text(
+                        widget.tableInfo.total_capacity.toString() + " tables",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
                       Container(
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
-                            widget.tableInfo.total_capacity.toString() +
-                                " tables",
-                            style: TextStyle(color: Colors.cyan.shade800),
+                            " Close Queue",
+                            style: TextStyle(
+                                color: Colors.cyan.shade800, fontSize: 12),
                           ))
                     ],
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 17.0),
-                child: ClipRect(
-                  child: Image.asset(
-                    widget.restaurant.logo,
-                    width: 80,
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 17.0),
+                    child: ClipRect(
+                      child: Image.asset(
+                        widget.restaurant.logo,
+                        width: 90,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               )
             ],
           ),
@@ -93,40 +108,3 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
     );
   }
 }
-
-
-
-//เกือบเป็นรูปร่าง
-// Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                     children: [
-//                       Container(
-//                         height: 200,
-//                         width: 380,
-//                         child: Card(
-//                           semanticContainer: true,
-//                           clipBehavior: Clip.antiAliasWithSaveLayer,
-//                           child: Column(
-//                             children: <Widget>[
-//                               Row(
-//                                 children: [
-//                                   Image.asset(
-//                                     booking.img,
-//                                     scale: 2.7,
-//                                     fit: BoxFit.fitHeight,
-//                                   ),
-                                  
-//                                 ],
-//                               ),
-                              
-//                             ],
-//                           ),
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(3.0),
-//                           ),
-//                           elevation: 1,
-//                           margin: EdgeInsets.all(5),
-//                         ),
-//                       ),
-//                     ],
-//                   ),

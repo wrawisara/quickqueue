@@ -5,8 +5,9 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/pages/resAddCouponPage.dart';
 import 'package:quickqueue/pages/resMainpage.dart';
 import 'package:quickqueue/pages/resManageQueue.dart';
+import 'package:quickqueue/pages/resConfigTable.dart';
 
-import 'resConfigTable.dart';
+
 
 class ResHomePage extends StatefulWidget {
   const ResHomePage({super.key});
@@ -22,9 +23,10 @@ class _ResHomePageState extends State<ResHomePage> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     GoResMainPage(),
-    Page2(),
     GoResManageQueuePage(),
     GoAddCouponPage(),
+    GoResConfigTablePage(),
+    
   ];
   void _onItemTapped(int index) {
     setState(() {
@@ -45,10 +47,6 @@ class _ResHomePageState extends State<ResHomePage> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.power_settings_new_rounded),
-              label: 'Open/Close',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.people),
               label: 'Reservation',
             ),
@@ -56,6 +54,11 @@ class _ResHomePageState extends State<ResHomePage> {
               icon: Icon(Icons.add_card_rounded),
               label: 'Add Coupon',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Table Config',
+            ),
+            
           ],
           currentIndex: _selectedIndex,
           unselectedItemColor: Colors.grey,
@@ -74,12 +77,11 @@ class GoResMainPage extends StatelessWidget {
   }
 }
 
-class Page2 extends StatelessWidget {
+class GoResConfigTablePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Page 2'),
-    );
+    return ResConfigTablePage();
+  
   }
 }
 
@@ -99,11 +101,11 @@ class GoAddCouponPage extends StatelessWidget {
   }
 }
 
-navigateToResConfigTablePage(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return ResConfigTablePage();
-  }));
-}
+// navigateToResConfigTablePage(BuildContext context) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     return ResConfigTablePage();
+//   }));
+// }
 
 
 
