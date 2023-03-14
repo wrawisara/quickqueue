@@ -1,12 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:quickqueue/model/booking.dart';
-import 'package:quickqueue/model/coupon.dart';
-import 'package:quickqueue/pages/cusChooseResPage.dart';
-import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/tapList.dart';
@@ -21,16 +16,30 @@ class CusProfilePage extends StatefulWidget {
 class _CusProfilePageState extends State<CusProfilePage>{
   // Firebase get Customer
   CustomerServices customerServices = CustomerServices();
+  late Future<List<Map<String, dynamic>>> _couponDataFuture;
+  late Future<DocumentSnapshot<Map<String, dynamic>>> currentUserInfoFuture;
   //late DocumentSnapshot<Map<String, dynamic>> customerInfo = await customerServices.getCurrentUserData();
   
   //เรียกข้อมูลมาใช้
   final customer = Customer.generateCustomer();
 
+
   //เรียก List คูปองทั้งหมดมาใช้ selected ไล่ index
   var selected = 0;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null && currentUser.uid != null) {
+    _couponDataFuture = customerServices.getAllCurrentTierCoupon(currentUser.uid);
+    currentUserInfoFuture = customerServices.getCurrentUserData();
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context){
     
     String cusName = customer.firstname + " " + customer.lastname;
     double nameWidth = cusName.length.toDouble() + 250;
@@ -74,7 +83,8 @@ class _CusProfilePageState extends State<CusProfilePage>{
                                   scale: 22,
                                 ),
                                 Text(
-                                  customer.tier,
+                                  //currentUserInfo['tier'],
+                                  "tier placeholder",
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w400,
@@ -84,7 +94,8 @@ class _CusProfilePageState extends State<CusProfilePage>{
                                   width: 15,
                                 ),
                                 Text(
-                                  customer.point.toString() + " " + "points",
+                                  //currentUserInfo['points_c'] + " " + "points",
+                                  "points placeholder",
                                   style: TextStyle(
                                     color: Color.fromRGBO(72, 191, 145, 1.0),
                                     fontSize: 20,
@@ -93,7 +104,8 @@ class _CusProfilePageState extends State<CusProfilePage>{
                                 ),
                               ]),
                           Text(
-                            customer.phone,
+                            //currentUserInfo['phone'],
+                            "phone placeholder",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w400,
@@ -115,7 +127,8 @@ class _CusProfilePageState extends State<CusProfilePage>{
                               ),
                               child: Center(
                                 child: Text(
-                                  cusName,
+                                  //currentUserInfo['firstname'] + ' ' + currentUserInfo['lastname'],
+                                  "name placeholder",
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w400,

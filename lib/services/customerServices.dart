@@ -40,6 +40,37 @@ class CustomerServices {
     } 
 }
 
+  Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(String cusId) async {
+     DocumentSnapshot customerSnapshot = await FirebaseFirestore.instance
+      .collection('customer')
+      .doc(cusId)
+      .get();
+
+    String customerTier = customerSnapshot['tier'];
+
+    QuerySnapshot couponQuery = await FirebaseFirestore.instance
+      .collection('coupons')
+      .where('tier', isEqualTo: customerTier)
+      .get();
+    
+    List<Map<String, dynamic>> coupons = [];
+    couponQuery.docs.forEach((doc) { 
+      String code = doc.get('code');
+      String couponName = doc.get('couponName');
+      String cusId = doc.get('cus_id');
+      String discount = doc.get('discount');
+      Timestamp endDate = doc.get('end_date');
+      String img = doc.get('img');
+      String menu = doc.get('menu');
+      String requiredPoint = doc.get('required_point');
+      String resId = doc.get('res_id');
+      String tier = doc.get('tier');
+    });
+  
+  // Return the list of coupon documents
+  return coupons;
+  }
+
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     DocumentSnapshot<Map<String, dynamic>> userInfoSnapshot =
         await _firestore.collection('customer').doc(uid).get();

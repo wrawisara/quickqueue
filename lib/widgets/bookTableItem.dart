@@ -8,21 +8,19 @@ import 'package:quickqueue/utils/horizontalLine.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
 
 class BookTableItem extends StatefulWidget {
-  String type = '';
-  int person = 0;
-  int available = 0;
+  String type;
+  int capacity;
+  int available;
 
-  BookTableItem(this.type, this.person, this.available);
+  BookTableItem(this.type, this.capacity, this.available);
 
   @override
   State<BookTableItem> createState() => _BookTableItemState();
 }
 
 class _BookTableItemState extends State<BookTableItem> {
-  String capacity = '';
-  int table_capacity = 0;
 
-  final TableInfo tableInfo = TableInfo.generateTableInfo();
+  //final TableInfo tableInfo = TableInfo.generateTableInfo();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,7 @@ class _BookTableItemState extends State<BookTableItem> {
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "(" + widget.person.toString() + " Seats)",
+                        "(" + widget.capacity.toString() + " Seats)",
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w400),
                       ),
@@ -88,7 +86,7 @@ class _BookTableItemState extends State<BookTableItem> {
                             width: 30,
                           ),
                           Text(
-                            "Max " + tableInfo.capacity.toString(),
+                            "Max " + widget.capacity.toString(),
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w400),
                           ),

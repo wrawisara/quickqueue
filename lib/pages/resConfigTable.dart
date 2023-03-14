@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/model/tableInfo.dart';
 import 'package:quickqueue/widgets/addTableItem.dart';
-import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
-import 'package:quickqueue/widgets/restaurantInfo.dart';
-import 'package:quickqueue/widgets/tooltipButton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickqueue/services/restaurantServices.dart';
 
 class ResConfigTablePage extends StatefulWidget {
   var selected = 0;
@@ -21,17 +18,22 @@ class ResConfigTablePage extends StatefulWidget {
 class _ResConfigTablePageState extends State<ResConfigTablePage> {
   //เรียกข้อมูลมาใช้
   final customer = Customer.generateCustomer();
+  final RestaurantServices restaurantServices = RestaurantServices();
+
 
   // static const String _title = 'Tooltip Sample';
 
   //เรียก List คูปองทั้งหมดมาใช้ selected ไล่ index
   var selected = 0;
+  var eSeats = null;
+  var eTableNum = null;
 
   // เรียกข้อมูล tableinfo มาใช้
   final TableInfo tableInfo = TableInfo.generateTableInfo();
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -151,12 +153,13 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
                             10,
                             onTableCapacityChanged: (tablecapacity) {
                               setState(() {
-                                widget.tableCapacities['E'] = tablecapacity;
+                                eTableNum = tablecapacity;
                               });
                             },
                             onCapacityChanged: (capacity){
                               setState(() {
                                 widget.e_capacities['E'] = capacity;
+                                eSeats = capacity;
                               });
                             },
                           ),
@@ -170,9 +173,18 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
                       width: 230,
                       height: 50,
                       borderRadius: BorderRadius.circular(32),
+                      child: const Text('Save',
+                          style: TextStyle(fontSize: 20, color: Colors.white)),
                       onPressed: () {
                         print(widget.tableCapacities);
                         print(widget.e_capacities);
+                        if (currentUser != null  && currentUser.uid != null ){
+                          if (eSeats == null || eSeats == 0 && eTableNum == null || eTableNum == 0){
+                            restaurantServices.setTableInfo(currentUser.uid, widget.tableCapacities);
+                          } else {
+                            restaurantServices.setTableInfoForTableE(currentUser.uid, widget.e_capacities, eTableNum, widget.tableCapacities);
+                          }
+                        }
                         // if (int.tryParse(table_capacity) == null) {
                         //   showDialog<String>(
                         //     context: context,
@@ -202,8 +214,6 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
                         //   ),
                         // );
                       },
-                      child: const Text('Save',
-                          style: TextStyle(fontSize: 20, color: Colors.white)),
                     ),
                     SizedBox(
                       height: 20,

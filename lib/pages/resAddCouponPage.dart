@@ -45,17 +45,18 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   }
 
   // text field state
-  String coupon_Name = '';
-  int required_point = 0;
+  String couponName = '';
+  int requiredPoint = 0;
   String tier = '';
   // String date = '';
   String menu = '';
   double discount = 0;
-  File? coupon_image;
+  File? couponImage;
 
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
+    final RestaurantServices restaurantServices = RestaurantServices();
     //ใช้เพื่อ add image ตรง logo
     Future getImage() async {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -64,7 +65,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
       final imageTemporary = File(image.path);
 
       setState(() {
-        this.coupon_image = imageTemporary;
+        this.couponImage = imageTemporary;
       });
     }
 
@@ -115,7 +116,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 labelText: 'Coupon Name',
                               ),
                               onChanged: (val) {
-                                setState(() => coupon_Name = val);
+                                setState(() => couponName = val);
                               },
                             ),
                             SizedBox(height: 20.0),
@@ -132,7 +133,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                               onChanged: (val) {
                                 int newRqPoint = int.tryParse(val) ?? 0;
 
-                                setState(() => required_point = newRqPoint);
+                                setState(() => requiredPoint = newRqPoint);
                               },
                             ),
                             SizedBox(height: 20.0),
@@ -160,14 +161,10 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         ),
                                       ))
                                   .toList(),
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Please select tier';
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                //Do something when changing the item if you want.
+                               onChanged: (value) {
+                                setState(() {
+                                  tier = value!;
+                                });
                               },
                               onSaved: (value) {
                                 selectedValue = value.toString();
@@ -294,9 +291,9 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             SizedBox(
                               height: 20.0,
                             ),
-                            coupon_image != null
+                            couponImage != null
                                 ? Image.file(
-                                    coupon_image!,
+                                    couponImage!,
                                     width: 250,
                                     height: 250,
                                     fit: BoxFit.cover,
@@ -331,16 +328,10 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 String defaultImageUrl =
                                     'gs://quickqueue-17550.appspot.com/images/default.jpg';
                                 File img =
-                                    coupon_image ?? File(defaultImageUrl);
-                                print(coupon_Name +
-                                    "," +
-                                    required_point.toString() +
-                                    "," +
-                                    _selectedDate.toString() +
-                                    "," +
-                                    menu +
-                                    "," +
-                                    discount.toString());
+                                    couponImage ?? File(defaultImageUrl);
+                                if (currentUser != null && currentUser.uid != null){
+                                    restaurantServices.addCoupon(couponName, menu, discount, requiredPoint, tier, currentUser.uid, img, _selectedDate);
+                                }
 
                                 //File img = File('assets/img/default.jpg');
                                 // registerService

@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 
 class AuthenServices {
   // Create Firebase instance
-  //final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   
 Future<User?> userSignInWithEmailAndPassword({required String email, required String password}) async {
   try {
@@ -74,4 +74,9 @@ Future<String> getUserType(String email, String password) async {
     message: 'User not found',
   );
 }
+  
+  
+  Future<void> logout() async {
+    await _auth.signOut();
+  }
 }

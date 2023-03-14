@@ -4,13 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:quickqueue/model/restaurant.dart';
 import 'package:tuple/tuple.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
 class UserRegisterService {
-  
   Future<void> registerCustomerWithEmailAndPassword(
       String email,
       String firstname,
@@ -29,25 +29,12 @@ class UserRegisterService {
               code: 'email-is-already-in-use',
               message: 'The email is already use');
         } else {
-          //int randId = await randomInt();
-          //Tuple2<bool, String> result =
-          //await checkIdInCollection('customer', randId.toString());
-          //bool isNotEmpty = result.item1;
-          //String id = result.item2;
-          //if (!isNotEmpty) {
-          //int salt = await randomInt();
-          // create User for authentication
           await createUser(email, password);
-          //String hashedPassword =
-          //await hashPassword(password, salt.toString());
 
           // Add data to customer collection
           final customerDocRef =
               await FirebaseFirestore.instance.collection('customer').add({
             'email': email,
-            //'password': hashedPassword,
-            //'id': id.toString(),
-            //'salt': salt.toString(),
             'firstname': firstname,
             'lastname': lastname,
             'phone': phoneNum,
@@ -100,7 +87,7 @@ class UserRegisterService {
     }
   }
 
-  // create with 10 coupons
+  // create with 4 universal coupons
   Future<void> createCouponsSampleCollection(String cusId) async {
     CollectionReference<Map<String, dynamic>> couponsCollectionRef =
         FirebaseFirestore.instance.collection('coupons');
@@ -125,16 +112,18 @@ class UserRegisterService {
         'code': couponCode,
         'discount': discount,
         'description': description,
+        'tier': 'bronze',
         'required_point': requiredPoint,
         'start_date': Timestamp.fromDate(startDate),
         'end_date': Timestamp.fromDate(endDate),
         'img': imageUrl,
         'cus_id': cusId,
+        'res_id': null,
       });
     }
   }
 
-  Future<void> createBookingInfoForTest(String resId, String? cusId) async {
+  Future<void> createBookingInfo(String resId) async {
     CollectionReference<Map<String, dynamic>> bookingCollectionRef =
         FirebaseFirestore.instance.collection("bookings");
     DocumentReference<Map<String, dynamic>> bookingDocRef =
@@ -143,13 +132,11 @@ class UserRegisterService {
     Timestamp timestamp = Timestamp.now();
     DateTime dateTime = timestamp.toDate();
     String timeString = DateFormat('H.mm').format(dateTime);
-    
-    for (var i = 0; i < 4; i ++){
 
     await bookingDocRef.set({
-      'cus_id': cusId,
+      'cus_id': '',
       'r_id': resId,
-      'booking_queue': i,
+      'booking_queue': null,
       'date': timestamp,
       'time': timeString,
       'guest': null,
@@ -157,6 +144,38 @@ class UserRegisterService {
       'created_at': FieldValue.serverTimestamp(),
       'updated_at': FieldValue.serverTimestamp()
     });
+    //}
+  }
+
+  Future<void> createCollectionIfNotExists(String collectionName) async {
+    CollectionReference<Map<String, dynamic>> collectionRef =
+        FirebaseFirestore.instance.collection(collectionName);
+    DocumentReference<Map<String, dynamic>> docRef = collectionRef.doc('dummy');
+    await docRef.set({'created': true});
+    await docRef.delete();
+  }
+
+  Future<void> createTableInfoWhenRegister(String resId) async {
+    final tableInfoCollectionRef =
+        FirebaseFirestore.instance.collection("tableInfo");
+    for (var tableType in ['A', 'B', 'C', 'D', 'E']) {
+      final querySnapshot = await tableInfoCollectionRef
+          .where('r_id', isEqualTo: resId)
+          .where('table_type', isEqualTo: tableType)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.size == 0) {
+        // Collection does not exist, create it
+        await createCollectionIfNotExists('tableInfo');
+      }
+      
+      await FirebaseFirestore.instance.collection('tableInfo').add({
+            'r_id': resId,
+            'available': 0,
+            'capacity': 0,
+            'table_type': tableType,
+          });
     }
   }
 
@@ -182,37 +201,29 @@ class UserRegisterService {
               code: 'email-is-already-in-use',
               message: 'The email is already use');
         } else {
-          int randId = await randomInt();
-          Tuple2<bool, String> result =
-              await checkIdInCollection('restaurant', randId.toString());
-          bool isNotEmpty = result.item1;
-          String id = result.item2;
-          if (!isNotEmpty) {
-            int salt = await randomInt();
-            // Upload image for logo
-            String imageUrl = "";
-            if (image != null) {
-              imageUrl = await uploadImage(image);
-            }
-            // create User for authentication
-            await createUser(email, password);
-            String hashedPassword =
-                await hashPassword(password, salt.toString());
-
-            // Add data to restaurant collection
-            await FirebaseFirestore.instance.collection('restaurant').add({
-              'email': email,
-              'username': username,
-              'id': id.toString(),
-              'phone': phoneNum,
-              'address': address,
-              'password': hashedPassword,
-              'location': GeoPoint(latitude, longitude),
-              'salt': salt.toString(),
-              'res_logo': imageUrl,
-              'role': 'restaurant',
-            });
+          String imageUrl = "";
+          if (image != null) {
+            imageUrl = await uploadImage(image);
           }
+          // create User for authentication
+          final userCrendential = await createUser(email, password);
+          final id = userCrendential.user!.uid;
+
+          // Add data to restaurant collection
+          final docRef =
+              await FirebaseFirestore.instance.collection('restaurant').add({
+            'r_id': id,
+            'email': email,
+            'username': username,
+            'phone': phoneNum,
+            'address': address,
+            'location': GeoPoint(latitude, longitude),
+            'res_logo': imageUrl,
+            'role': 'restaurant',
+          });
+          createTableInfoWhenRegister(id);
+          createBookingInfo(id);
+          //}
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
@@ -230,9 +241,6 @@ class UserRegisterService {
   }
 
   Future<String> uploadImage(File image) async {
-    // debug
-    //final String imagePath = image.absolute.path;
-
     // uploading code
     final String fileName =
         '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
