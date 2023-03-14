@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
-import '../model/restaurantList.dart';
 import 'cusBookingPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -133,7 +132,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               itemCount: restaurantData.length,
               itemBuilder: (BuildContext context, int index) {
                 Map<String, dynamic> restaurant = restaurantData[index];
-                print("Heelo" + restaurant['username']);
                 return Card(
                   child: ListTile(
                     title: Text(
@@ -153,7 +151,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                       ),
                     ),
                     onTap: () {
-                      print('Tapped');
                       // TODO: navigate to booking page
                       Navigator.push(
                           context,
