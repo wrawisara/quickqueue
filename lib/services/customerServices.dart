@@ -110,8 +110,8 @@ class CustomerServices {
       List<Map<String, dynamic>> userData = [
         {
           'tier': currentUserInfo['tier'],
-          'points_c': currentUserInfo['points_c'],
-          'points_m': currentUserInfo['points_m'],
+          'point_c': currentUserInfo['point_c'],
+          'point_m': currentUserInfo['point_m'],
           'reputation_points': currentUserInfo['reputation_points'],
           'status': currentUserInfo['status'],
           'email': currentUserInfo['email'],
