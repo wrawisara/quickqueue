@@ -43,6 +43,9 @@ dependencies:
   # hashed password , crypto
   crypto: ^3.0.2
 
+  #uuid
+  uuid: ^3.0.7
+
   # Tuple
   tuple: ^2.0.1
     
