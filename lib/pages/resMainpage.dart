@@ -176,7 +176,7 @@ showAlertDialog(BuildContext context) {
   Widget continueButton = TextButton(
     child: Text("Yes"),
     onPressed: () {
-      authenServices.logout;
+      // authenServices.;
       navigateToLoginPage(context);
     },
   );

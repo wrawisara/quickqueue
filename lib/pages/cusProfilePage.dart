@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/services/customerServices.dart';
@@ -10,21 +8,22 @@ import 'package:quickqueue/widgets/tapList.dart';
 import '../model/Customer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'cusReDeemCouponPage.dart';
+
 class CusProfilePage extends StatefulWidget {
   @override
   State<CusProfilePage> createState() => _CusProfilePageState();
 }
 
-class _CusProfilePageState extends State<CusProfilePage>{
+class _CusProfilePageState extends State<CusProfilePage> {
   // Firebase get Customer
   CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _couponDataFuture;
   late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
   //late DocumentSnapshot<Map<String, dynamic>> customerInfo = await customerServices.getCurrentUserData();
-  
+
   //เรียกข้อมูลมาใช้
   final customer = Customer.generateCustomer();
-
 
   //เรียก List คูปองทั้งหมดมาใช้ selected ไล่ index
   var selected = 0;
@@ -34,37 +33,40 @@ class _CusProfilePageState extends State<CusProfilePage>{
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
-    _couponDataFuture = customerServices.getAllCurrentTierCoupon(currentUser.uid);
-    currentUserInfoFuture = customerServices.getCurrentUserData();
+      _couponDataFuture =
+          customerServices.getAllCurrentTierCoupon(currentUser.uid);
+      currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
 
-
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-      title: Text(
-        "Profile",
-        style: TextStyle(color: Colors.white),
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.bookmark_add_rounded,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Want to go Booking History')));
-          },
+  Widget build(BuildContext context) {
+    // String cusName = widget.customer.firstname + " " + widget.customer.lastname;
+    // double nameWidth = cusName.length.toDouble() + 220;
+    // print(nameWidth);
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white,
         ),
-      ],
-    ),
-    body: FutureBuilder<List<Map<String, dynamic>>>(
+        title: Text(
+          "Profile",
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.bookmark_add_rounded,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Want to go Booking History')));
+            },
+          ),
+        ],
+      ),
+      body:FutureBuilder<List<Map<String, dynamic>>>(
       future: currentUserInfoFuture,
       builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.hasData) {
@@ -166,31 +168,109 @@ Widget build(BuildContext context) {
 }
 }
 
-class CouponText extends StatelessWidget {
-  const CouponText({super.key});
+// Column(
+//   children: <Widget>[
+//     Container(
+//       child: Column(
+//         children: [
+//           CustomerInfo(),
+//         ],
+//       ),
+//     ),
+//     Expanded(
+//       child: FutureBuilder<List<Map<String, dynamic>>>(
+//           future: _restaurantDataFuture,
+//           builder: (BuildContext context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return Center(
+//                 child: CircularProgressIndicator(),
+//               );
+//             }
+//             if (snapshot.hasError) {
+//               return Center(
+//                 child: Text('Error fetching data'),
+//               );
+//             }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 40,
-        // padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-        child: Column(children: <Widget>[
-          Container(
-            color: Colors.white,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-            child: Text(
-              'Coupon',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.cyan),
-            ),
-          )
-        ]));
-  }
-}
+//             if (snapshot.data?.isEmpty ?? true) {
+//               return Center(
+//                 child: Text('No restaurants found'),
+//               );
+//             }
 
+//             List<Map<String, dynamic>> restaurantData =
+//                 snapshot.data ?? [];
+//             return ListView.builder(
+//               itemCount: restaurantData.length,
+//               itemBuilder: (BuildContext context, int index) {
+//                 Map<String, dynamic> restaurant = restaurantData[index];
+//                 print("Hello" + restaurant['username']);
+//                 return Card(
+//                   child: ListTile(
+//                     title: Text(
+//                       // ใส่ CouponName
+//                       restaurant['username'],
+//                       style: TextStyle(fontSize: 20),
+//                     ),
+//                     subtitle: Text(
+//                       //ใส่เป็น requied point
+//                       restaurant['address'] + " point",
+//                       style: TextStyle(fontSize: 18),
+//                     ),
+//                     leading: SizedBox(
+//                       width: 50,
+//                       height: 60,
+//                       child: Image.network(
+//                         restaurant['res_logo'],
+//                         fit: BoxFit.cover,
+//                       ),
+//                     ),
+//                     onTap: () {
+//                       print('Tapped');
+//                       showDialog(
+//                         context: context,
+//                         builder: (BuildContext context) {
+//                           return AlertDialog(
+//                             title: Row(children: [
+//                               Image.network(
+//                                 restaurant['res_logo'],
+//                                 width: 80,
+//                                 height: 80,
+//                                 fit: BoxFit.contain,
+//                               ),
+//                               // ใส่ CouponName
+//                               Text(restaurant['username'])
+//                             ]),
+//                             content: Text(
+//                                 "Are You Sure Want To Redeem Coupon?"),
+//                             actions: <Widget>[
+//                               TextButton(
+//                                 child: Text("YES"),
+//                                 onPressed: () {
+//                                   generateRandomString(10);
+//                                   navigateToCusRedeemCouponPage(context);
+//                                 },
+//                               ),
+//                               TextButton(
+//                                 child: Text("CANCEL"),
+//                                 onPressed: () {},
+//                               ),
+//                             ],
+//                           );
+//                         },
+//                       );
+//                     },
+//                   ),
+//                 );
+//               },
+//             );
+//           }),
+//     ),
+//   ],
+// ),
+//     );
+//   }
+// }
 
 
 //widget ทำ แถบเลือกด้านบน tapList ใส่ใน containner
