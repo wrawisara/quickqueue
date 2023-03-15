@@ -74,7 +74,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                       child: Image.asset(
                         coupon.img,
                         scale: 1.5,
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.fill,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(3.0),
