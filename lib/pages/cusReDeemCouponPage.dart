@@ -27,6 +27,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
   final customer = Customer.generateCustomer();
   final coupon = Coupon.generateCoupon();
 
+  // String coupon_code = generateRandomString(10);
 
   @override
   Widget build(BuildContext context) {

@@ -121,6 +121,7 @@ class CustomerServices {
           'lastname': currentUserInfo['lastname'],
         }
       ];
+      print(currentUserInfo['point_c']);
       return userData;
     } catch (e) {
       print('Error when getting UserInfo');
@@ -178,12 +179,12 @@ class CustomerServices {
     final customerDocRef =
         FirebaseFirestore.instance.collection('customer').doc(cusId);
     final customerDoc = await customerDocRef.get();
-    final currentPointsC = customerDoc.get('points_c');
+    final currentPointsC = customerDoc.get('point_c');
     final newPointsC = currentPointsC - requiredPoints;
     if (newPointsC < 0) {
       throw Exception('Insufficient points to use this coupon');
     }
-    final updateData = {'points_c': newPointsC};
+    final updateData = {'point_c': newPointsC};
     await customerDocRef.update(updateData);
   }
 
