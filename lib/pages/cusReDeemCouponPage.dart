@@ -78,11 +78,13 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                   ),
                   Container(
                     height: 250,
+                    width: 200,
                     child: Card(
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Image.asset(
-                        widget.coupon['img'],
+                        'assets\img\fametime.jpg',
+                        // widget.coupon['img'],
                         scale: 1.5,
                         fit: BoxFit.fill,
                       ),
@@ -112,7 +114,8 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "Expiration Date : " + widget.coupon['end_date'].toString(),
+                        "Expiration Date : " ,
+                        // + widget.coupon['end_date'].toString(),
                             //formattedEndDate,
                         style: TextStyle(
                           fontSize: 20,

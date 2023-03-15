@@ -66,262 +66,211 @@ class _CusProfilePageState extends State<CusProfilePage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          FutureBuilder<List<Map<String, dynamic>>>(
-              future: currentUserInfoFuture,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-                if (snapshot.hasData) {
-                  List<Map<String, dynamic>> userData = snapshot.data!;
-                  String cusName = (userData[0]['firstname'] ?? '') +
-                      " " +
-                      (userData[0]['lastname'] ?? '');
-                  double nameWidth = cusName.length.toDouble() + 250;
-                  print(userData);
-                  return Column(children: <Widget>[
+      body:FutureBuilder<List<Map<String, dynamic>>>(
+      future: currentUserInfoFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+        if (snapshot.hasData) {
+          List<Map<String, dynamic>> userData = snapshot.data!;
+          String cusName = (userData[0]['firstname'] ?? '') + " " + (userData[0]['lastname'] ?? '');
+          double nameWidth = cusName.length.toDouble() + 250;
+
+          return Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: <Widget>[
                     Container(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                              height: 230,
-                              color: Colors.white,
-                              alignment: Alignment.center,
-                              child: Column(
+                        height: 230,
+                        color: Colors.white,
+                        alignment: Alignment.center,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.asset(
+                                'assets/img/profile2.png',
+                                scale: 3.5,
+                                fit: BoxFit.fitHeight,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Image.asset(
-                                      'assets/img/profile2.png',
-                                      scale: 3.5,
-                                      fit: BoxFit.fitHeight,
+                                      'assets/img/crown.png',
+                                      scale: 22,
                                     ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Image.asset(
-                                            'assets/img/crown.png',
-                                            scale: 22,
-                                          ),
-                                          Text(
-                                            userData[0]['tier'],
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Text(
-                                            (userData[0]['point_c']
-                                                    .toString()) +
-                                                (" ") +
-                                                "points",
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  72, 191, 145, 1.0),
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ]),
                                     Text(
-                                      userData[0]['phone'],
+                                      userData[0]['tier'],
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 5,
+                                      width: 15,
                                     ),
-                                    InkWell(
-                                      onTap: () {},
-                                      child: Container(
-                                        width: nameWidth,
-                                        height: 40,
-                                        decoration: new BoxDecoration(
-                                          color: Colors.cyan.withOpacity(0.2),
-                                          border: Border.all(
-                                              color: Colors.white, width: 3),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            (userData[0]['firstname'] ?? '') +
-                                                (" ") +
-                                                userData[0]['lastname'],
-                                            style: TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
+                                    Text(
+                                      (userData[0]['points_c'] ?? '') + (" ") + "points",
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(72, 191, 145, 1.0),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                  ])),
-                        ],
-                      ),
-                    ),
-                  ]);
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-          Expanded(
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _couponDataFuture,
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error fetching data'),
-                    );
-                  }
-
-                  if (snapshot.data?.isEmpty ?? true) {
-                    return Center(
-                      child: Text('No restaurants found'),
-                    );
-                  }
-
-                  List<Map<String, dynamic>> couponData = snapshot.data ?? [];
-
-                  return ListView.builder(
-                    itemCount: couponData.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Map<String, dynamic> coupon = couponData[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(
-                            // ใส่ CouponName
-                            coupon['couponName'],
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Text(
-                            //ใส่เป็น requied point
-                            coupon['requiredPoint'].toString() + " point",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          leading: SizedBox(
-                            width: 50,
-                            height: 60,
-                            child: Image.network(
-                              coupon['img'],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          onTap: () {
-                            print('Tapped');
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Row(children: [
-                                    Image.network(
-                                      coupon['img'],
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    // ใส่ CouponName
-                                    Text(coupon['couponName'])
                                   ]),
-                                  content: Text(
-                                      "Are You Sure Want To Redeem Coupon?"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text("YES"),
-                                      onPressed: () async {
-                                        try {
-                                          print("bigmuang");
-                                          final currentUser =
-                                              FirebaseAuth.instance.currentUser;
-                                          if (currentUser != null &&
-                                              currentUser.uid != null) {
-                                            await customerServices.useCoupon(
-                                                currentUser.uid,
-                                                coupon['requiredPoint'], coupon['coupon_id']);
-                                            navigateToCusRedeemCouponPage(
-                                                context, coupon);
-                                          }
-                                        } catch (e) {
-                                          print("bigmuang error");
-                                          if (e.toString() ==
-                                              'Exception: Insufficient points to use this coupon') {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text("Error"),
-                                                  content: Text(e.toString()),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text("OK"),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  content: Text(e.toString()),
-                                                  actions: [],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        }
-                                      },
+                              Text(
+                                userData[0]['phone'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  width: nameWidth,
+                                  height: 40,
+                                  decoration: new BoxDecoration(
+                                    color: Colors.cyan.withOpacity(0.2),
+                                    border: Border.all(color: Colors.white, width: 3),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text( 
+                                      (userData[0]['firstname'] ?? '') + (" ") + userData[0]['lastname'],
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
-                                    TextButton(
-                                      child: Text("CANCEL"),
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }),
-          ),
-        ],
-      ),
-    );
-  }
+                                  ),
+                                ),
+                              ),
+                            ])),
+                  ],
+                ),
+              ),
+            ]
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      }
+    ),
+  );
+}
 }
 
-navigateToCusRedeemCouponPage(BuildContext context, Map<String, dynamic> coupon) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusRedeemCouponPage(coupon: coupon);
-  }));
-}
+// Column(
+//   children: <Widget>[
+//     Container(
+//       child: Column(
+//         children: [
+//           CustomerInfo(),
+//         ],
+//       ),
+//     ),
+//     Expanded(
+//       child: FutureBuilder<List<Map<String, dynamic>>>(
+//           future: _restaurantDataFuture,
+//           builder: (BuildContext context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return Center(
+//                 child: CircularProgressIndicator(),
+//               );
+//             }
+//             if (snapshot.hasError) {
+//               return Center(
+//                 child: Text('Error fetching data'),
+//               );
+//             }
 
+//             if (snapshot.data?.isEmpty ?? true) {
+//               return Center(
+//                 child: Text('No restaurants found'),
+//               );
+//             }
 
-
-
-
+//             List<Map<String, dynamic>> restaurantData =
+//                 snapshot.data ?? [];
+//             return ListView.builder(
+//               itemCount: restaurantData.length,
+//               itemBuilder: (BuildContext context, int index) {
+//                 Map<String, dynamic> restaurant = restaurantData[index];
+//                 print("Hello" + restaurant['username']);
+//                 return Card(
+//                   child: ListTile(
+//                     title: Text(
+//                       // ใส่ CouponName
+//                       restaurant['username'],
+//                       style: TextStyle(fontSize: 20),
+//                     ),
+//                     subtitle: Text(
+//                       //ใส่เป็น requied point
+//                       restaurant['address'] + " point",
+//                       style: TextStyle(fontSize: 18),
+//                     ),
+//                     leading: SizedBox(
+//                       width: 50,
+//                       height: 60,
+//                       child: Image.network(
+//                         restaurant['res_logo'],
+//                         fit: BoxFit.cover,
+//                       ),
+//                     ),
+//                     onTap: () {
+//                       print('Tapped');
+//                       showDialog(
+//                         context: context,
+//                         builder: (BuildContext context) {
+//                           return AlertDialog(
+//                             title: Row(children: [
+//                               Image.network(
+//                                 restaurant['res_logo'],
+//                                 width: 80,
+//                                 height: 80,
+//                                 fit: BoxFit.contain,
+//                               ),
+//                               // ใส่ CouponName
+//                               Text(restaurant['username'])
+//                             ]),
+//                             content: Text(
+//                                 "Are You Sure Want To Redeem Coupon?"),
+//                             actions: <Widget>[
+//                               TextButton(
+//                                 child: Text("YES"),
+//                                 onPressed: () {
+//                                   generateRandomString(10);
+//                                   navigateToCusRedeemCouponPage(context);
+//                                 },
+//                               ),
+//                               TextButton(
+//                                 child: Text("CANCEL"),
+//                                 onPressed: () {},
+//                               ),
+//                             ],
+//                           );
+//                         },
+//                       );
+//                     },
+//                   ),
+//                 );
+//               },
+//             );
+//           }),
+//     ),
+//   ],
+// ),
+//     );
+//   }
+// }
 
 
 //widget ทำ แถบเลือกด้านบน tapList ใส่ใน containner
