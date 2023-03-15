@@ -37,55 +37,58 @@ class CustomerServices {
     } catch (e) {
       print('Error fetching data: $e');
       throw e;
-    } 
-}
+    }
+  }
 
-  Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(String cusId) async {
+  Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(
+      String cusId) async {
     try {
-     final collectionRef = FirebaseFirestore.instance.collection('customer');
+      final collectionRef = FirebaseFirestore.instance.collection('customer');
       final querySnapshot =
           await collectionRef.where('c_id', isEqualTo: cusId).get();
 
+      String customerTier = querySnapshot.docs[0]['tier'];
 
-    String customerTier = querySnapshot.docs[0]['tier'];
+      QuerySnapshot couponQuery = await FirebaseFirestore.instance
+          .collection('coupons')
+          .where('tier', isEqualTo: customerTier)
+          .get();
 
-    QuerySnapshot couponQuery = await FirebaseFirestore.instance
-      .collection('coupons')
-      .where('tier', isEqualTo: customerTier)
-      .get();
-    
-    List<Map<String, dynamic>> coupons = [];
-    couponQuery.docs.forEach((doc) { 
-      String code = doc.get('code');
-      String couponName = doc.get('couponName');
-      String? cusId = doc.get('cus_id');
-      double discount = doc.get('discount');
-      Timestamp endDate = doc.get('end_date');
-      Timestamp startDate = doc.get('start_date');
-      String img = doc.get('img');
-      String menu = doc.get('menu');
-      int requiredPoint = doc.get('required_point');
-      String? resId = doc.get('res_id');
-      String tier = doc.get('tier');
+      List<Map<String, dynamic>> coupons = [];
+      couponQuery.docs.forEach((doc) {
+        String code = doc.get('code');
+        String couponName = doc.get('couponName');
+        String? cusId = doc.get('c_id');
+        double discount = doc.get('discount');
+        Timestamp endDate = doc.get('end_date');
+        Timestamp startDate = doc.get('start_date');
+        String img = doc.get('img');
+        String menu = doc.get('menu');
+        int requiredPoint = doc.get('required_point');
+        String? resId = doc.get('r_id');
+        String tier = doc.get('tier');
+        // to be changed
+        String? couponId = doc.get('coupon_id');
 
-      coupons.add({
+        coupons.add({
           'code': code,
           'couponName': couponName,
-          'cus_id': cusId,
+          'c_id': cusId,
           'discount': discount,
           'end_date': endDate,
           'start_date': startDate,
           'img': img,
           'requiredPoint': requiredPoint,
-          'res_id': resId,
+          'r_id': resId,
+          'coupon_id': couponId,
           'menu': menu,
           'tier': tier,
         });
       });
-  
-  // Return the list of coupon documents
-  return coupons;
-    } catch (e){
+
+      // Return the list of coupon documents
+      return coupons;
+    } catch (e) {
       print('Error fetching data: $e');
       throw e;
     }
@@ -93,44 +96,44 @@ class CustomerServices {
 
   Future<QuerySnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     final collectionRef = FirebaseFirestore.instance.collection('customer');
-      final querySnapshot =
-          await collectionRef.where('c_id', isEqualTo: uid).get();
+    final querySnapshot =
+        await collectionRef.where('c_id', isEqualTo: uid).get();
     return querySnapshot;
   }
 
   Future<List<Map<String, dynamic>>> getCurrentUserData() async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    // User is signed in
-    String uid = user.uid;
-    QuerySnapshot<Map<String, dynamic>> userInfoSnapshot;
-    try {
-      userInfoSnapshot = await getUserInfo(uid);
-      Map<String, dynamic> currentUserInfo = userInfoSnapshot.docs.first.data();
-      List<Map<String, dynamic>> userData = [
-        {
-          'tier': currentUserInfo['tier'],
-          'point_c': currentUserInfo['point_c'],
-          'point_m': currentUserInfo['point_m'],
-          'reputation_points': currentUserInfo['reputation_points'],
-          'status': currentUserInfo['status'],
-          'email': currentUserInfo['email'],
-
-          'phone': currentUserInfo['phone'],
-          'firstname': currentUserInfo['firstname'],
-          'lastname': currentUserInfo['lastname'],
-        }
-      ];
-      print(currentUserInfo['point_c']);
-      return userData;
-    } catch (e) {
-      print('Error when getting UserInfo');
-      rethrow;
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // User is signed in
+      String uid = user.uid;
+      QuerySnapshot<Map<String, dynamic>> userInfoSnapshot;
+      try {
+        userInfoSnapshot = await getUserInfo(uid);
+        Map<String, dynamic> currentUserInfo =
+            userInfoSnapshot.docs.first.data();
+        List<Map<String, dynamic>> userData = [
+          {
+            'tier': currentUserInfo['tier'],
+            'point_c': currentUserInfo['point_c'],
+            'point_m': currentUserInfo['point_m'],
+            'reputation_points': currentUserInfo['reputation_points'],
+            'status': currentUserInfo['status'],
+            'email': currentUserInfo['email'],
+            'phone': currentUserInfo['phone'],
+            'firstname': currentUserInfo['firstname'],
+            'lastname': currentUserInfo['lastname'],
+          }
+        ];
+        print(currentUserInfo['point_c']);
+        return userData;
+      } catch (e) {
+        print('Error when getting UserInfo');
+        rethrow;
+      }
+    } else {
+      throw Exception('No user is signed in');
     }
-  } else {
-    throw Exception('No user is signed in');
   }
-}
 
   // Points Update
 
@@ -156,36 +159,48 @@ class CustomerServices {
     final customerDocRef =
         FirebaseFirestore.instance.collection('customer').doc(cusId);
     final customerDoc = await customerDocRef.get();
-    final currentPointsM = customerDoc.get('points_m');
-    final currentPointsC = customerDoc.get('points_c');
+    final currentPointsM = customerDoc.get('point_m');
+    final currentPointsC = customerDoc.get('point_c');
     final currentTier = customerDoc.get('tier');
     final newPointsM = currentPointsM +
         (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
     final newPointsC = currentPointsC +
         (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
     final updateData = {
-      'points_m': newPointsM,
-      'points_c': newPointsC,
+      'point_m': newPointsM,
+      'point_c': newPointsC,
     };
     if (currentTier == 'Gold' && currentPointsM > 40) {
-      updateData['points_c'] = newPointsC * 2;
+      updateData['point_c'] = newPointsC * 2;
     }
     await customerDocRef.update(updateData);
     updateCustomerTier(cusId, newPointsM);
   }
-    
 
-  Future<void> useCoupon(String cusId, double requiredPoints) async {
-    final customerDocRef =
-        FirebaseFirestore.instance.collection('customer').doc(cusId);
-    final customerDoc = await customerDocRef.get();
+  Future<void> useCoupon(
+      String cusId, int requiredPoints, String couponId) async {
+        print(couponId);
+    QuerySnapshot<Map<String, dynamic>> couponQuery = await FirebaseFirestore
+        .instance
+        .collection('coupons')
+        .where('coupon_id', isEqualTo: couponId)
+        .get();
+
+        QuerySnapshot<Map<String, dynamic>> customerQuery = await FirebaseFirestore
+        .instance
+        .collection('customer')
+        .where('c_id', isEqualTo: cusId)
+        .get();
+
+    final couponDoc = couponQuery.docs.first;
+    final customerDoc = customerQuery.docs.first;
     final currentPointsC = customerDoc.get('point_c');
     final newPointsC = currentPointsC - requiredPoints;
     if (newPointsC < 0) {
       throw Exception('Insufficient points to use this coupon');
     }
     final updateData = {'point_c': newPointsC};
-    await customerDocRef.update(updateData);
+    await customerDoc.reference.update(updateData);
   }
 
   Future<void> createBookings(String cusId, String resId, int guests) async {
@@ -215,7 +230,8 @@ class CustomerServices {
     createBookingDoc(resId, cusId, bookingQueue, guests);
   }
 
-  Future<void> createBookingDoc(String resId, String? cusId, String bookingQueue,int guests) async {
+  Future<void> createBookingDoc(
+      String resId, String? cusId, String bookingQueue, int guests) async {
     CollectionReference<Map<String, dynamic>> bookingCollectionRef =
         FirebaseFirestore.instance.collection("bookings");
     DocumentReference<Map<String, dynamic>> bookingDocRef =

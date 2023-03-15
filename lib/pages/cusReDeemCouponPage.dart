@@ -3,35 +3,45 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:intl/intl.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/model/booking.dart';
-import 'package:quickqueue/model/coupon.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 
 class CusRedeemCouponPage extends StatefulWidget {
-  const CusRedeemCouponPage({Key? key}) : super(key: key);
+  final Map<String, dynamic> coupon;
+
+  const CusRedeemCouponPage({Key? key, required this.coupon}) : super(key: key);
 
   @override
   State<CusRedeemCouponPage> createState() => _CusRedeemCouponPageState();
 }
 
 class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
- //คำสั่งรับ datenow ยังไม่ได้ใช้
+  //คำสั่งรับ datenow ยังไม่ได้ใช้
   String cdate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
 
   //เรียกข้อมูลมาใช้
   final booking = Booking.generateBooking();
   final customer = Customer.generateCustomer();
-  final coupon = Coupon.generateCoupon();
+  //final coupon = Coupon.generateCoupon();
 
   // String coupon_code = generateRandomString(10);
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    //final currentUser = FirebaseAuth.instance.currentUser;
+    Timestamp endDateTimestamp = widget.coupon['end_date'];
+
+// Convert Timestamp to DateTime
+    //DateTime endDate = endDateTimestamp.toDate();
+
+// Format DateTime to display date and time as string
+    //String formattedEndDate =
+        //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
+
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -44,14 +54,14 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
           ),
           actions: [
             IconButton(
-            icon: const Icon(
-              Icons.clear_rounded,
-              color: Colors.white,
+              icon: const Icon(
+                Icons.clear_rounded,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                navigateToCusProfilePage(context);
+              },
             ),
-            onPressed: () {
-             navigateToCusProfilePage(context);
-            },
-          ),
           ],
         ),
         body: Container(
@@ -72,7 +82,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Image.asset(
-                        coupon.img,
+                        widget.coupon['img'],
                         scale: 1.5,
                         fit: BoxFit.fitHeight,
                       ),
@@ -87,7 +97,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        coupon.name,
+                        widget.coupon['couponName'],
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
@@ -95,18 +105,22 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                    Text(
-                        "Expiration Date : 13/04/2023",
+                      Text(
+                        "Expiration Date : " + widget.coupon['end_date'].toString(),
+                            //formattedEndDate,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                  ],),
+                    ],
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -140,7 +154,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                           ),
                           child: Center(
                             child: Text(
-                              'kjfgjdjfk',// couponcode จากหน้าทก่อน
+                              widget.coupon['code'], // couponcode จากหน้าทก่อน
                               style: new TextStyle(
                                   fontSize: 30,
                                   color: Colors.white,
@@ -157,17 +171,16 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                    Text(
+                      Text(
                         "Promo discount coupon code \nfor QuickQueue member only",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                  ],),
-                 
-                 
-                SizedBox(
+                    ],
+                  ),
+                  SizedBox(
                     height: 20,
                   ),
                   ElevatedButton(
@@ -178,9 +191,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                     ),
                     child: const Text('OK',
                         style: TextStyle(fontSize: 20, color: Colors.white)),
-                    onPressed: () {
-                     
-                    },
+                    onPressed: () {},
                   )
                 ],
               )
@@ -189,9 +200,9 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
         ));
   }
 }
+
 navigateToCusProfilePage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusProfilePage();
   }));
 }
-

@@ -252,9 +252,9 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                               currentUser.uid != null) {
                                             await customerServices.useCoupon(
                                                 currentUser.uid,
-                                                coupon['requiredPoint']);
+                                                coupon['requiredPoint'], coupon['coupon_id']);
                                             navigateToCusRedeemCouponPage(
-                                                context);
+                                                context, coupon);
                                           }
                                         } catch (e) {
                                           print("bigmuang error");
@@ -312,9 +312,9 @@ class _CusProfilePageState extends State<CusProfilePage> {
   }
 }
 
-navigateToCusRedeemCouponPage(BuildContext context) {
+navigateToCusRedeemCouponPage(BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusRedeemCouponPage();
+    return CusRedeemCouponPage(coupon: coupon);
   }));
 }
 

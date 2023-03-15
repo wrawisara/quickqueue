@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class RestaurantServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,19 +28,21 @@ class RestaurantServices {
       //DateTime expiredDate = now.add(Duration(days: 7));
       String imageUrl = await uploadImage(image);
       String couponCode = generateCouponCode();
+      String couponId = Uuid().v4();
       //check
       print(couponName);
 
       await _firestore.collection('coupons').add({
         'couponName': couponName,
         'code': couponCode,
-        'cus_id': null,
-        'res_id': resId,
+        'c_id': null,
+        'r_id': resId,
+        'coupon_id': couponId,
         'menu': couponMenuName,
         'discount': discount,
         'required_point': requiredPoint,
         'tier': tier,
-        'start_date': Timestamp.fromDate(now),
+        'start_date': now,
         'end_date': expiredDate,
         'img': imageUrl,
       });
