@@ -29,11 +29,13 @@ class UserRegisterService {
               code: 'email-is-already-in-use',
               message: 'The email is already use');
         } else {
-          await createUser(email, password);
+          final userCrendential = await createUser(email, password);
+          final id = userCrendential.user!.uid;
 
           // Add data to customer collection
           final customerDocRef =
               await FirebaseFirestore.instance.collection('customer').add({
+            'c_id': id,
             'email': email,
             'firstname': firstname,
             'lastname': lastname,
@@ -100,7 +102,7 @@ class UserRegisterService {
       String couponName = 'Coupon ${i + 1}';
       String couponCode = 'CODE${i + 1}';
       double discount = (i + 1) * 2.0;
-      String description = 'Description for Coupon ${i + 1}';
+      String menu = 'Description for Coupon ${i + 1}';
       int requiredPoint = (i + 1) * 20;
       String imageUrl = 'https://via.placeholder.com/150';
 
@@ -111,7 +113,7 @@ class UserRegisterService {
         'name': couponName,
         'code': couponCode,
         'discount': discount,
-        'description': description,
+        'menu': menu,
         'tier': 'bronze',
         'required_point': requiredPoint,
         'start_date': Timestamp.fromDate(startDate),

@@ -29,7 +29,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   String couponType = 'Food Menu';
 
   //date picker
-  late DateTime _selectedDate = DateTime.now();
+  late DateTime _expirationDate = DateTime.now();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -37,9 +37,9 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && picked != _expirationDate) {
       setState(() {
-        _selectedDate = picked;
+        _expirationDate = picked;
       });
     }
   }
@@ -197,8 +197,8 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                       borderRadius: BorderRadius.circular(30)),
                                 ),
                                 child: Text(
-                                  _selectedDate != null
-                                      ? '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'
+                                  _expirationDate != null
+                                      ? '${_expirationDate.day}/${_expirationDate.month}/${_expirationDate.year}'
                                       : '',
                                   style: TextStyle(fontSize: 17),
                                 ),
@@ -330,7 +330,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 File img =
                                     couponImage ?? File(defaultImageUrl);
                                 if (currentUser != null && currentUser.uid != null){
-                                    restaurantServices.addCoupon(couponName, menu, discount, requiredPoint, tier, currentUser.uid, img, _selectedDate);
+                                    restaurantServices.addCoupon(couponName, menu, discount, requiredPoint, tier, currentUser.uid, img, _expirationDate);
                                 }
 
                                 //File img = File('assets/img/default.jpg');

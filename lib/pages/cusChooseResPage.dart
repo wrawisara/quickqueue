@@ -21,24 +21,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
 
   late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
 
-  //กลุ่มข้อมูล
-  // static List<String> restaurantName = [
-  //   'On The Table',
-  //   'Fam Time Steak and Pasta',
-  //   'Mo-Mo-Paradise'
-  // ];
-  // static List<int> queueNum = [1, 2, 3];
-  // static List<String> img = [
-  //   'assets/img/onthetable.jpg',
-  //   'assets/img/fametime.jpg',
-  //   'assets/img/momo.jpg'
-  // ];
-
-  // final List<AllRestaurant> restaurantData = List.generate(
-  //     restaurantName.length,
-  //     (index) => AllRestaurant(
-  //         '${restaurantName[index]}', queueNum[index], '${img[index]}'));
-
   @override
   void initState() {
     super.initState();
@@ -85,16 +67,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 //     const SnackBar(content: Text('Want to go Profile')));
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => CusProfilePage()));
-              },
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.bookmark_add_rounded,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Want to go Booking History')));
               },
             ),
             IconButton(

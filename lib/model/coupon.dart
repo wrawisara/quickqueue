@@ -20,7 +20,12 @@ class Coupon {
   Coupon(this.name, this.img, this.code, this.discount, this.required_point,
       this.description);
 
-  static List<Coupon> generateCoupon() {
+  static Coupon generateCoupon() {
+    return Coupon(
+        'momo discount 10%', 'assets/img/momo.jpg', 'jhflsp', 10.0, 30, '-');
+  }
+
+  static List<Coupon> generateCouponList() {
     return [
       Coupon(
           'On the table', 'assets/img/onthetable.jpg', 'jhflsp', 10.0, 30, '-'),
@@ -30,9 +35,9 @@ class Coupon {
           'เนื้อ Wagyu Brisket'),
       Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
           'เนื้อ Wagyu Brisket'),
-           Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
+      Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
           'เนื้อ Wagyu Brisket'),
-           Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
+      Coupon('MOMO-Paradise', 'assets/img/momo.jpg', 'mdulgw', 0.0, 60,
           'เนื้อ Wagyu Brisket'),
     ];
   }

@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/pages/resConfigTable.dart';
@@ -8,6 +11,7 @@ import 'package:quickqueue/widgets/bookTableItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quickqueue/widgets/numberOfQueue.dart';
 import 'package:quickqueue/widgets/restaurantInfo.dart';
+import 'package:material_dialogs/material_dialogs.dart';
 
 class ResMainPage extends StatefulWidget {
   const ResMainPage({Key? key}) : super(key: key);
@@ -43,12 +47,37 @@ class _ResMainPageState extends State<ResMainPage> {
           automaticallyImplyLeading: false, // Disable the back icon
           actions: <Widget>[
             IconButton(
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.power_settings_new_outlined,
+                  color: Colors.white),
               onPressed: () {
-                navigateToResConfigTablePage(context);
+                //กดเปิดปิดคิว
+                Dialogs.materialDialog(
+                    msg: 'Press on the button to open or close the queue',
+                    title: "Open or Close the queue",
+                    color: Colors.white,
+                    context: context,
+                    actions: [
+                      IconsButton(
+                        onPressed: () {
+                          //ใส่ action
+                        },
+                        text: 'Open Queue',
+                        iconData: Icons.check_circle_outline,
+                        color: Colors.tealAccent[700],
+                        textStyle: TextStyle(color: Colors.white),
+                        iconColor: Colors.white,
+                      ),
+                      IconsButton(
+                        onPressed: () {
+                          //ใส่ action
+                        },
+                        text: 'Close Queue',
+                        iconData: Icons.cancel_outlined,
+                        color: Colors.red[400],
+                        textStyle: TextStyle(color: Colors.white),
+                        iconColor: Colors.white,
+                      ),
+                    ]);
               },
             ),
             IconButton(
@@ -57,7 +86,7 @@ class _ResMainPageState extends State<ResMainPage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                showAlertDialog(context);
+                //showLogoutAlertDialog(context);
               },
             ),
           ]),

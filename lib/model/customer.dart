@@ -20,7 +20,7 @@ class Customer{
       'Chanon', 'Limvongrujirat', '0812345678', 'kaiza@gmail.com', '1234','Gold',80,
     
       {
-        'Coupon' : Coupon.generateCoupon()
+        'Coupon' : Coupon.generateCouponList()
       },
     );
   }
