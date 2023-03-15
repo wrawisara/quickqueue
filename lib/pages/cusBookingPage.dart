@@ -5,8 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import '../model/restaurantList.dart';
-import 'package:quickqueue/model/restaurant.dart';
+import 'package:quickqueue/services/customerServices.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
 import '../widgets/restaurantInfo.dart';
@@ -14,9 +14,7 @@ import '../widgets/restaurantInfo.dart';
 import 'package:flutter/material.dart';
 
 class CusBookingPage extends StatefulWidget {
-
-
-final Map<String, dynamic> restaurant;
+  final Map<String, dynamic> restaurant;
   const CusBookingPage({Key? key, required this.restaurant})
       : super(key: key);
 
@@ -30,9 +28,12 @@ final Map<String, dynamic> restaurant;
 
 class _CusBookingPageState extends State<CusBookingPage> {
 
+  final CustomerServices customerServices = CustomerServices();
+
   //อยากดึงข้อมูล Branch จาก Restaurant ?
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -148,7 +149,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       widget.restaurant['username'];
                       //widget.allRestaurantModel.queueNum;
                       NumOfPersons();
-
 
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => CusBookedPage()));

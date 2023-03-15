@@ -1,13 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class CustomerServices {
-  // final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref("https://quickqueue-17550-default-rtdb.asia-southeast1.firebasedatabase.app");
 
-Future<List<Map<String, dynamic>>> getAllRestaurants() async {
+  Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     try {
       QuerySnapshot restaurantQuerySnapshot =
           await _firestore.collection('restaurant').get();
@@ -38,9 +37,8 @@ Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     } catch (e) {
       print('Error fetching data: $e');
       throw e;
-    }
+    } 
 }
-
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     DocumentSnapshot<Map<String, dynamic>> userInfoSnapshot =
@@ -79,7 +77,6 @@ Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     } else {
       tier = 'Bronze';
     }
-
     // Update the customer's tier in the database
     await FirebaseFirestore.instance
         .collection('customer')
@@ -108,6 +105,7 @@ Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     await customerDocRef.update(updateData);
     updateCustomerTier(cusId, newPointsM);
   }
+    
 
   Future<void> useCoupon(String cusId, double requiredPoints) async {
     final customerDocRef =
@@ -121,66 +119,68 @@ Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     final updateData = {'points_c': newPointsC};
     await customerDocRef.update(updateData);
   }
+
+  Future<void> createBookings(String cusId, String resId, int guests) async {
+    Timestamp timestamp = Timestamp.now();
+    DateTime dateTime = timestamp.toDate();
+    String timeString = DateFormat('H.mm').format(dateTime);
+
+    Timestamp bookingDate = timestamp;
+    String bookingTime = timeString;
+
+    String tableType = getTableType(guests);
+
+    int numBookings = await FirebaseFirestore.instance
+        .collection('bookings')
+        .where('r_id', isEqualTo: resId)
+        .where('date', isEqualTo: bookingDate)
+        .where('time', isEqualTo: bookingTime)
+        .where('status', isEqualTo: 'confirmed')
+        .where('booking_queue', isGreaterThanOrEqualTo: tableType)
+        .where('booking_queue', isLessThan: tableType + 'z')
+        .get()
+        .then((querySnapshot) => querySnapshot.docs.length);
+
+// Format booking queue number with leading zeros
+    String bookingQueue =
+        '${tableType}${(numBookings + 1).toString().padLeft(3, '0')}';
+    createBookingDoc(resId, cusId, bookingQueue, guests);
+  }
+
+  Future<void> createBookingDoc(String resId, String? cusId, String bookingQueue,int guests) async {
+    CollectionReference<Map<String, dynamic>> bookingCollectionRef =
+        FirebaseFirestore.instance.collection("bookings");
+    DocumentReference<Map<String, dynamic>> bookingDocRef =
+        bookingCollectionRef.doc();
+
+    Timestamp timestamp = Timestamp.now();
+    DateTime dateTime = timestamp.toDate();
+    String timeString = DateFormat('H.mm').format(dateTime);
+
+    await bookingDocRef.set({
+      'cus_id': cusId,
+      'r_id': resId,
+      'booking_queue': bookingQueue,
+      'date': timestamp,
+      'time': timeString,
+      'guest': guests,
+      'status': 'รอคิว',
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp()
+    });
+  }
+
+  String getTableType(int guests) {
+    if (guests <= 2) {
+      return 'A';
+    } else if (guests <= 4) {
+      return 'B';
+    } else if (guests <= 6) {
+      return 'C';
+    } else if (guests <= 8) {
+      return 'D';
+    } else {
+      return 'E';
+    }
+  }
 }
-
-
-
-
-//อันเก่าใช้ไม่ได้
-  // Future<List<Map<String, dynamic>>> getAllRestaurants() async {
-  //   //บันทึกข้อมูลลง firebase ได้
-  //   DatabaseReference restaurantReference =
-  //       _databaseReference.child('restaurant');
-  //   DatabaseEvent databaseEvent = await restaurantReference.once();
-  //   //เขียนเพิ่ม
-  //   // QuerySnapshot restaurantSnapshot =
-  //   //     await _firestore.collection('restaurant').get();
-  //   List<Map<String, dynamic>> restaurants = [];
-
-  //   //snapshot เอา event ตอนนั้นมา
-  //   if (databaseEvent.snapshot.value != null) {
-  //     (databaseEvent.snapshot.value as Map).forEach((key, value) {
-  //       String address = value['address'];
-  //       GeoPoint location = value['location'];
-  //       String username = value['username'];
-  //       String phone = value['phone'];
-  //       String res_logo = value['res_logo'];
-  //       // use something like this for display imageUrl to image
-  //       // Image.network(
-  //       //  res_logo,
-  //       //  fit: BoxFit.cover,
-  //       //  width: 100,
-  //       //  height: 100,
-  //       //  ),
-
-  //   // if (restaurantSnapshot.docs.isNotEmpty) {
-  //   //   (databaseEvent.snapshot.value as Map).forEach((key, value) {
-  //   //     for (var document in restaurantSnapshot.docs) {
-  //   //       Map<String, dynamic>? restaurantData =
-  //   //           document.data() as Map<String, dynamic>?;
-  //   //       String address = restaurantData!['address'];
-  //   //       GeoPoint location = restaurantData['location'];
-  //   //       String username = restaurantData['username'];
-  //   //       String phone = restaurantData['phone'];
-  //   //       String res_logo = restaurantData['res_logo'];
-  //   //       // use something like this for display imageUrl to image
-  //   //       // Image.network(
-  //   //       //  res_logo,
-  //   //       //  fit: BoxFit.cover,
-  //   //       //  width: 100,
-  //   //       //  height: 100,
-  //   //       //  ),
-
-  //         restaurants.add({
-  //           'address': address,
-  //           'location': location,
-  //           'username': username,
-  //           'phone': phone,
-  //           'res_logo': res_logo,
-  //         });
-  //       }
-  //     );
-  //   }
-  //   return restaurants;
-    
-  // }

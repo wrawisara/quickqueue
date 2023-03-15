@@ -7,7 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'package:tuple/tuple.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class UserRegisterService {
   
@@ -31,35 +31,36 @@ class UserRegisterService {
         } else {
           //int randId = await randomInt();
           //Tuple2<bool, String> result =
-              //await checkIdInCollection('customer', randId.toString());
+          //await checkIdInCollection('customer', randId.toString());
           //bool isNotEmpty = result.item1;
           //String id = result.item2;
           //if (!isNotEmpty) {
-            //int salt = await randomInt();
-            // create User for authentication
-            await createUser(email, password);
-            //String hashedPassword =
-                //await hashPassword(password, salt.toString());
+          //int salt = await randomInt();
+          // create User for authentication
+          await createUser(email, password);
+          //String hashedPassword =
+          //await hashPassword(password, salt.toString());
 
-            // Add data to customer collection
-            final customerDocRef = await FirebaseFirestore.instance.collection('customer').add({
-              'email': email,
-              //'password': hashedPassword,
-              //'id': id.toString(),
-              //'salt': salt.toString(),
-              'firstname': firstname,
-              'lastname': lastname,
-              'phone': phoneNum,
-              'tier': 'Bronze',
-              'point_m': 0, //  membership points
-              'point_c': 0, // coupon points
-              'status': "", // booking status
-              'reputation_points': 100, // reputation if cancel = go down
-              'role': 'customer',
-            });
+          // Add data to customer collection
+          final customerDocRef =
+              await FirebaseFirestore.instance.collection('customer').add({
+            'email': email,
+            //'password': hashedPassword,
+            //'id': id.toString(),
+            //'salt': salt.toString(),
+            'firstname': firstname,
+            'lastname': lastname,
+            'phone': phoneNum,
+            'tier': 'Bronze',
+            'point_m': 0, //  membership points
+            'point_c': 0, // coupon points
+            'status': "", // booking status
+            'reputation_points': 100, // reputation if cancel = go down
+            'role': 'customer',
+          });
 
-            // create coupon for this customer
-            await createCouponsSampleCollection(customerDocRef.id);
+          // create coupon for this customer
+          await createCouponsSampleCollection(customerDocRef.id);
           //}
         }
       } catch (e) {
@@ -101,37 +102,63 @@ class UserRegisterService {
 
   // create with 10 coupons
   Future<void> createCouponsSampleCollection(String cusId) async {
-  CollectionReference<Map<String, dynamic>> couponsCollectionRef =
-      FirebaseFirestore.instance.collection('coupons');
-  
-  for (var i = 0; i < 10; i++) {
-    DateTime now = DateTime.now();
-    DateTime startDate = now.add(Duration(days: i));
-    DateTime endDate = startDate.add(Duration(days: 7));
+    CollectionReference<Map<String, dynamic>> couponsCollectionRef =
+        FirebaseFirestore.instance.collection('coupons');
 
-    String couponName = 'Coupon ${i + 1}';
-    String couponCode = 'CODE${i + 1}';
-    double discount = (i + 1) * 2.0;
-    String description = 'Description for Coupon ${i + 1}';
-    int requiredPoint = (i + 1) * 20;
-    String imageUrl = 'https://via.placeholder.com/150';
+    for (var i = 0; i < 4; i++) {
+      DateTime now = DateTime.now();
+      DateTime startDate = now.add(Duration(days: i));
+      DateTime endDate = startDate.add(Duration(days: 7));
 
-    DocumentReference<Map<String, dynamic>> couponDocRef =
-        couponsCollectionRef.doc();
-    
-    await couponDocRef.set({
-      'name': couponName,
-      'code': couponCode,
-      'discount': discount,
-      'description': description,
-      'required_point': requiredPoint,
-      'start_date': Timestamp.fromDate(startDate),
-      'end_date': Timestamp.fromDate(endDate),
-      'img': imageUrl,
-      'cus_id': cusId,
-    });
+      String couponName = 'Coupon ${i + 1}';
+      String couponCode = 'CODE${i + 1}';
+      double discount = (i + 1) * 2.0;
+      String description = 'Description for Coupon ${i + 1}';
+      int requiredPoint = (i + 1) * 20;
+      String imageUrl = 'https://via.placeholder.com/150';
+
+      DocumentReference<Map<String, dynamic>> couponDocRef =
+          couponsCollectionRef.doc();
+
+      await couponDocRef.set({
+        'name': couponName,
+        'code': couponCode,
+        'discount': discount,
+        'description': description,
+        'required_point': requiredPoint,
+        'start_date': Timestamp.fromDate(startDate),
+        'end_date': Timestamp.fromDate(endDate),
+        'img': imageUrl,
+        'cus_id': cusId,
+      });
+    }
   }
-}
+
+  Future<void> createBookingInfoForTest(String resId, String? cusId) async {
+    CollectionReference<Map<String, dynamic>> bookingCollectionRef =
+        FirebaseFirestore.instance.collection("bookings");
+    DocumentReference<Map<String, dynamic>> bookingDocRef =
+        bookingCollectionRef.doc();
+
+    Timestamp timestamp = Timestamp.now();
+    DateTime dateTime = timestamp.toDate();
+    String timeString = DateFormat('H.mm').format(dateTime);
+    
+    for (var i = 0; i < 4; i ++){
+
+    await bookingDocRef.set({
+      'cus_id': cusId,
+      'r_id': resId,
+      'booking_queue': i,
+      'date': timestamp,
+      'time': timeString,
+      'guest': null,
+      'status': null,
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp()
+    });
+    }
+  }
 
   Future<void> registerRestaurantWithEmailAndPassword(
       String email,

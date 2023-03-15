@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:intl/intl.dart';
+import 'package:quickqueue/services/restaurantServices.dart';
 import 'package:quickqueue/services/userRegister.dart';
 import 'package:quickqueue/utils/horizontalLine.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
@@ -20,6 +21,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   final List<String> tierList = <String>['Bronze', 'Silver', 'Gold'];
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
+  final RestaurantServices restaurantServices = RestaurantServices();
 
   //set unpress textfield
   bool couponMenu = true;
@@ -53,6 +55,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
     //ใช้เพื่อ add image ตรง logo
     Future getImage() async {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
