@@ -1,16 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:material_dialogs/material_dialogs.dart';
-import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:quickqueue/model/booking.dart';
-import 'package:quickqueue/model/coupon.dart';
-import 'package:quickqueue/model/restaurant.dart';
-import 'package:quickqueue/pages/cusChooseResPage.dart';
-import 'package:intl/intl.dart';
-import 'package:quickqueue/pages/cusReDeemCouponPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
@@ -19,43 +8,50 @@ import 'package:quickqueue/widgets/tapList.dart';
 import '../model/Customer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'cusReDeemCouponPage.dart';
+
 class CusProfilePage extends StatefulWidget {
   @override
   State<CusProfilePage> createState() => _CusProfilePageState();
   //เรียกข้อมูลมาใช้
-  final customer = Customer.generateCustomer();
-  final coupon = Coupon.generateCoupon();
+  // final customer = Customer.generateCustomer();
+  // final coupon = Coupon.generateCoupon();
 }
-String generateRandomString(int lenght) {
-  //สร้าง code ให้ลูกค้ากด
-  var coupon_code = Random();
-  return String.fromCharCodes(List.generate(lenght, (index) => coupon_code.nextInt(33) + 89));
-}
-
-
+// String generateRandomString(int lenght) {
+//   //สร้าง code ให้ลูกค้ากด
+//   var coupon_code = Random();
+//   return String.fromCharCodes(List.generate(lenght, (index) => coupon_code.nextInt(33) + 89));
+// }
 
 class _CusProfilePageState extends State<CusProfilePage> {
-  // Get data from Firebase
-  final CustomerServices customerServices = CustomerServices();
+  // Firebase get Customer
+  CustomerServices customerServices = CustomerServices();
+  late Future<List<Map<String, dynamic>>> _couponDataFuture;
+  late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
+  //late DocumentSnapshot<Map<String, dynamic>> customerInfo = await customerServices.getCurrentUserData();
 
-  late Future<List<Map<String, dynamic>>> _restaurantDataFuture =
-      Future.value([]);
-
-  @override
-  void initState() {
-    super.initState();
-    _restaurantDataFuture = customerServices.getAllRestaurants();
-  }
-
+  //เรียกข้อมูลมาใช้
+  final customer = Customer.generateCustomer();
 
   //เรียก List คูปองทั้งหมดมาใช้ selected ไล่ index
   var selected = 0;
 
   @override
+  void initState() {
+    super.initState();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null && currentUser.uid != null) {
+      _couponDataFuture =
+          customerServices.getAllCurrentTierCoupon(currentUser.uid);
+      currentUserInfoFuture = customerServices.getCurrentUserData();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String cusName = widget.customer.firstname + " " + widget.customer.lastname;
-    double nameWidth = cusName.length.toDouble() + 220;
-    print(nameWidth);
+    // String cusName = widget.customer.firstname + " " + widget.customer.lastname;
+    // double nameWidth = cusName.length.toDouble() + 220;
+    // print(nameWidth);
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -78,110 +74,211 @@ class _CusProfilePageState extends State<CusProfilePage> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: [
-                CustomerInfo(),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _restaurantDataFuture,
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error fetching data'),
-                    );
-                  }
+      body:FutureBuilder<List<Map<String, dynamic>>>(
+      future: currentUserInfoFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+        if (snapshot.hasData) {
+          List<Map<String, dynamic>> userData = snapshot.data!;
+          String cusName = (userData[0]['firstname'] ?? '') + " " + (userData[0]['lastname'] ?? '');
+          double nameWidth = cusName.length.toDouble() + 250;
 
-                  if (snapshot.data?.isEmpty ?? true) {
-                    return Center(
-                      child: Text('No restaurants found'),
-                    );
-                  }
-
-                  List<Map<String, dynamic>> restaurantData =
-                      snapshot.data ?? [];
-                  return ListView.builder(
-                    itemCount: restaurantData.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Map<String, dynamic> restaurant = restaurantData[index];
-                      print("Hello" + restaurant['username']);
-                      return Card(
-                        child: ListTile(
-                          title: Text(
-                            // ใส่ CouponName
-                            restaurant['username'],
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Text(
-                            //ใส่เป็น requied point
-                            restaurant['address'] + " point",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          leading: SizedBox(
-                            width: 50,
-                            height: 60,
-                            child: Image.network(
-                              restaurant['res_logo'],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          onTap: () {
-                            print('Tapped');
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Row(children: [
-                                    Image.network(
-                                      restaurant['res_logo'],
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.contain,
+          return Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        height: 230,
+                        color: Colors.white,
+                        alignment: Alignment.center,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.asset(
+                                'assets/img/profile2.png',
+                                scale: 3.5,
+                                fit: BoxFit.fitHeight,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      'assets/img/crown.png',
+                                      scale: 22,
                                     ),
-                                    // ใส่ CouponName
-                                    Text(restaurant['username'])
+                                    Text(
+                                      userData[0]['tier'],
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      (userData[0]['points_c'] ?? '') + (" ") + "points",
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(72, 191, 145, 1.0),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ]),
-                                  content: Text(
-                                      "Are You Sure Want To Redeem Coupon?"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text("YES"),
-                                      onPressed: () {
-                                        generateRandomString(10);
-                                        navigateToCusRedeemCouponPage(context);
-                                      },
+                              Text(
+                                userData[0]['phone'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  width: nameWidth,
+                                  height: 40,
+                                  decoration: new BoxDecoration(
+                                    color: Colors.cyan.withOpacity(0.2),
+                                    border: Border.all(color: Colors.white, width: 3),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text( 
+                                      (userData[0]['firstname'] ?? '') + (" ") + userData[0]['lastname'],
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
-                                    TextButton(
-                                      child: Text("CANCEL"),
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }),
-          ),
-        ],
-      ),
-    );
-  }
+                                  ),
+                                ),
+                              ),
+                            ])),
+                  ],
+                ),
+              ),
+            ]
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      }
+    ),
+  );
+}
 }
 
+// Column(
+//   children: <Widget>[
+//     Container(
+//       child: Column(
+//         children: [
+//           CustomerInfo(),
+//         ],
+//       ),
+//     ),
+//     Expanded(
+//       child: FutureBuilder<List<Map<String, dynamic>>>(
+//           future: _restaurantDataFuture,
+//           builder: (BuildContext context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return Center(
+//                 child: CircularProgressIndicator(),
+//               );
+//             }
+//             if (snapshot.hasError) {
+//               return Center(
+//                 child: Text('Error fetching data'),
+//               );
+//             }
+
+//             if (snapshot.data?.isEmpty ?? true) {
+//               return Center(
+//                 child: Text('No restaurants found'),
+//               );
+//             }
+
+//             List<Map<String, dynamic>> restaurantData =
+//                 snapshot.data ?? [];
+//             return ListView.builder(
+//               itemCount: restaurantData.length,
+//               itemBuilder: (BuildContext context, int index) {
+//                 Map<String, dynamic> restaurant = restaurantData[index];
+//                 print("Hello" + restaurant['username']);
+//                 return Card(
+//                   child: ListTile(
+//                     title: Text(
+//                       // ใส่ CouponName
+//                       restaurant['username'],
+//                       style: TextStyle(fontSize: 20),
+//                     ),
+//                     subtitle: Text(
+//                       //ใส่เป็น requied point
+//                       restaurant['address'] + " point",
+//                       style: TextStyle(fontSize: 18),
+//                     ),
+//                     leading: SizedBox(
+//                       width: 50,
+//                       height: 60,
+//                       child: Image.network(
+//                         restaurant['res_logo'],
+//                         fit: BoxFit.cover,
+//                       ),
+//                     ),
+//                     onTap: () {
+//                       print('Tapped');
+//                       showDialog(
+//                         context: context,
+//                         builder: (BuildContext context) {
+//                           return AlertDialog(
+//                             title: Row(children: [
+//                               Image.network(
+//                                 restaurant['res_logo'],
+//                                 width: 80,
+//                                 height: 80,
+//                                 fit: BoxFit.contain,
+//                               ),
+//                               // ใส่ CouponName
+//                               Text(restaurant['username'])
+//                             ]),
+//                             content: Text(
+//                                 "Are You Sure Want To Redeem Coupon?"),
+//                             actions: <Widget>[
+//                               TextButton(
+//                                 child: Text("YES"),
+//                                 onPressed: () {
+//                                   generateRandomString(10);
+//                                   navigateToCusRedeemCouponPage(context);
+//                                 },
+//                               ),
+//                               TextButton(
+//                                 child: Text("CANCEL"),
+//                                 onPressed: () {},
+//                               ),
+//                             ],
+//                           );
+//                         },
+//                       );
+//                     },
+//                   ),
+//                 );
+//               },
+//             );
+//           }),
+//     ),
+//   ],
+// ),
+//     );
+//   }
+// }
 
 navigateToCusRedeemCouponPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {

@@ -40,29 +40,96 @@ class CustomerServices {
     } 
 }
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
-    DocumentSnapshot<Map<String, dynamic>> userInfoSnapshot =
-        await _firestore.collection('customer').doc(uid).get();
-    return userInfoSnapshot;
-  }
+  Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(String cusId) async {
+    try {
+     final collectionRef = FirebaseFirestore.instance.collection('customer');
+      final querySnapshot =
+          await collectionRef.where('c_id', isEqualTo: cusId).get();
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getCurrentUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // User is signed in
-      String uid = user.uid;
-      DocumentSnapshot<Map<String, dynamic>> userInfoSnapshot;
-      try {
-        userInfoSnapshot = await getUserInfo(uid);
-        return userInfoSnapshot;
-      } catch (e) {
-        print('Error when getting UserInfo');
-        rethrow;
-      }
-    } else {
-      throw Exception('No user is signed in');
+
+    String customerTier = querySnapshot.docs[0]['tier'];
+
+    QuerySnapshot couponQuery = await FirebaseFirestore.instance
+      .collection('coupons')
+      .where('tier', isEqualTo: customerTier)
+      .get();
+    
+    List<Map<String, dynamic>> coupons = [];
+    couponQuery.docs.forEach((doc) { 
+      String code = doc.get('code');
+      String couponName = doc.get('couponName');
+      String? cusId = doc.get('cus_id');
+      double discount = doc.get('discount');
+      Timestamp endDate = doc.get('end_date');
+      Timestamp startDate = doc.get('start_date');
+      String img = doc.get('img');
+      String menu = doc.get('menu');
+      int requiredPoint = doc.get('required_point');
+      String? resId = doc.get('res_id');
+      String tier = doc.get('tier');
+
+      coupons.add({
+          'code': code,
+          'couponName': couponName,
+          'cus_id': cusId,
+          'discount': discount,
+          'end_date': endDate,
+          'start_date': startDate,
+          'img': img,
+          'requiredPoint': requiredPoint,
+          'res_id': resId,
+          'menu': menu,
+          'tier': tier,
+        });
+      });
+  
+  // Return the list of coupon documents
+  return coupons;
+    } catch (e){
+      print('Error fetching data: $e');
+      throw e;
     }
   }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
+    final collectionRef = FirebaseFirestore.instance.collection('customer');
+      final querySnapshot =
+          await collectionRef.where('c_id', isEqualTo: uid).get();
+    return querySnapshot;
+  }
+
+  Future<List<Map<String, dynamic>>> getCurrentUserData() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    // User is signed in
+    String uid = user.uid;
+    QuerySnapshot<Map<String, dynamic>> userInfoSnapshot;
+    try {
+      userInfoSnapshot = await getUserInfo(uid);
+      Map<String, dynamic> currentUserInfo = userInfoSnapshot.docs.first.data();
+      List<Map<String, dynamic>> userData = [
+        {
+          'tier': currentUserInfo['tier'],
+          'points_c': currentUserInfo['points_c'],
+          'points_m': currentUserInfo['points_m'],
+          'reputation_points': currentUserInfo['reputation_points'],
+          'status': currentUserInfo['status'],
+          'email': currentUserInfo['email'],
+
+          'phone': currentUserInfo['phone'],
+          'firstname': currentUserInfo['firstname'],
+          'lastname': currentUserInfo['lastname'],
+        }
+      ];
+      return userData;
+    } catch (e) {
+      print('Error when getting UserInfo');
+      rethrow;
+    }
+  } else {
+    throw Exception('No user is signed in');
+  }
+}
 
   // Points Update
 
