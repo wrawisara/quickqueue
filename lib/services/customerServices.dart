@@ -230,6 +230,15 @@ class CustomerServices {
     createBookingDoc(resId, cusId, bookingQueue, guests);
   }
 
+  Future<List<DocumentSnapshot>> getBookingQueue(String resId) async {
+  QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+      .collection('bookings')
+      .where('r_id', isEqualTo: resId)
+      .orderBy('created_at', descending: false)
+      .get();
+  return snapshot.docs;
+}
+
   Future<void> createBookingDoc(
       String resId, String? cusId, String bookingQueue, int guests) async {
     CollectionReference<Map<String, dynamic>> bookingCollectionRef =

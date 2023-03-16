@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 class RestaurantServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -200,4 +201,36 @@ class RestaurantServices {
     final String imageUrl = await snapshot.ref.getDownloadURL();
     return imageUrl;
   }
+
+  // Booking 
+
+  Future<String> getBookingQueue(String restaurantId, String tableType) async {
+  final bookingRef =
+      FirebaseFirestore.instance.collection('booking');
+
+  final currentDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+  final querySnapshot = await bookingRef
+      .where('r_id', isEqualTo: restaurantId)
+      .where('table_type', isEqualTo: tableType)
+      .where('date', isEqualTo: currentDate)
+      .orderBy('booking_queue', descending: true)
+      .limit(1)
+      .get();
+
+  if (querySnapshot.docs.isEmpty) {
+    return tableType + '001';
+  } else {
+    final lastBookingQueue = querySnapshot.docs[0]['booking_queue'];
+    final lastTableType = lastBookingQueue.substring(0, 1);
+    final lastNumber =
+        int.parse(lastBookingQueue.substring(1, lastBookingQueue.length));
+    if (lastTableType != tableType) {
+      return tableType + '001';
+    } else {
+      final newNumber = lastNumber + 1;
+      final newBookingQueue = tableType + newNumber.toString().padLeft(3, '0');
+      return newBookingQueue;
+    }
+  }
+}
 }

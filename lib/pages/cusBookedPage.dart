@@ -4,16 +4,20 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
+import 'package:quickqueue/services/bookingServices.dart';
 import '../model/Customer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CusBookedPage extends StatefulWidget {
+  final Map<String, dynamic> restaurant;
   // Pass the current User
-  const CusBookedPage({Key? key}) : super(key: key);
+  const CusBookedPage({Key? key, required this.restaurant}) : super(key: key);
   @override
   State<CusBookedPage> createState() => _CusBookedPageState();
 
 }
+
+
 
 class _CusBookedPageState extends State<CusBookedPage> {
   //คำสั่งรับ datenow ยังไม่ได้ใช้
@@ -23,6 +27,14 @@ class _CusBookedPageState extends State<CusBookedPage> {
   //เรียกข้อมูลมาใช้
   final booking = Booking.generateBooking();
   final customer = Customer.generateCustomer();
+  final BookingServices bookingServices = BookingServices();
+  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookingDataFuture = bookingServices.getBookingData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +66,9 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     child: Card(
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: Image.asset(
-                        booking.img,
-                        scale: 1.5,
-                        fit: BoxFit.fitHeight,
+                      child: Image.network(
+                        widget.restaurant['res_logo'],
+                        fit: BoxFit.cover,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(3.0),
@@ -70,7 +81,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        booking.name,
+                        widget.restaurant['username'],
                         style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
@@ -157,14 +168,14 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        "Guest : ",
+                        "Guest : " ,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                       Text(
-                        booking.guest,
+                        widget.restaurant['guests'].toString(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,

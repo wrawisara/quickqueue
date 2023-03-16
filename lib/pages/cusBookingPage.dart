@@ -5,30 +5,28 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 
 import '../widgets/restaurantInfo.dart';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class CusBookingPage extends StatefulWidget {
   final Map<String, dynamic> restaurant;
-  const CusBookingPage({Key? key, required this.restaurant})
-      : super(key: key);
+  const CusBookingPage({Key? key, required this.restaurant}) : super(key: key);
 
 // final List<Map<String, dynamic>> allRestaurantModel;
-  
 
   @override
   State<CusBookingPage> createState() => _CusBookingPageState();
-
 }
 
 class _CusBookingPageState extends State<CusBookingPage> {
-
   final CustomerServices customerServices = CustomerServices();
+  final BookingServices bookingService = BookingServices();
 
   //อยากดึงข้อมูล Branch จาก Restaurant ?
   @override
@@ -96,7 +94,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     children: <Widget>[
                       Text(
                         "Previous Queue : " +
-                          //  "widget.allRestaurantModel.queueNum.toString()" +
+                            //  "widget.allRestaurantModel.queueNum.toString()" +
                             " Queue",
                         style: TextStyle(
                           fontSize: 20,
@@ -131,7 +129,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
                   SizedBox(
                     height: 20,
                   ),
-                
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       // primary: Colors.green,
@@ -142,18 +139,32 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     ),
                     child: const Text('Book',
                         style: TextStyle(fontSize: 20, color: Colors.white)),
-                  
                     onPressed: () {
+                      try {
+                      if (currentUser != null && currentUser.uid != null) {
+                        DateTime now = DateTime.now();
+
+                        String date = DateFormat('yyyy-MM-dd').format(now);
+                        String time = DateFormat('hh:mm a').format(now);
+                        bookingService.bookTable(
+                            widget.restaurant['r_id'],
+                            currentUser.uid,
+                            date,
+                            time,
+                            0);
+                      }
+                      } catch (e){
+                        print('Something error: $e');
+                      }
 
                       //save data ลง db 
-                      widget.restaurant['username'];
+                      //widget.restaurant['username'];
                       //widget.allRestaurantModel.queueNum;
-                      NumOfPersons();
-
+                      //NumOfPersons();
+                      
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusBookedPage()));
+                          builder: (context) => CusBookedPage(restaurant: widget.restaurant,)));
 
-                    
                       // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
                       // showDialog<String>(
                       //   context: context,
@@ -171,10 +182,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
         ));
   }
 }
-
-
-
-
 
 //เพิ่มลดจำนวนคนที่จอง
 class NumOfPersons extends StatefulWidget {

@@ -47,9 +47,6 @@ class UserRegisterService {
             'reputation_points': 100, // reputation if cancel = go down
             'role': 'customer',
           });
-
-          // create coupon for this customer
-          await createCouponsSampleCollection(customerDocRef.id);
           //}
         }
       } catch (e) {
@@ -89,42 +86,6 @@ class UserRegisterService {
     }
   }
 
-  // create with 4 universal coupons
-  Future<void> createCouponsSampleCollection(String cusId) async {
-    CollectionReference<Map<String, dynamic>> couponsCollectionRef =
-        FirebaseFirestore.instance.collection('coupons');
-
-    for (var i = 0; i < 4; i++) {
-      DateTime now = DateTime.now();
-      DateTime startDate = now.add(Duration(days: i));
-      DateTime endDate = startDate.add(Duration(days: 7));
-
-      String couponName = 'Coupon ${i + 1}';
-      String couponCode = 'CODE${i + 1}';
-      double discount = (i + 1) * 2.0;
-      String menu = 'Description for Coupon ${i + 1}';
-      int requiredPoint = (i + 1) * 20;
-      String imageUrl = 'https://via.placeholder.com/150';
-
-      DocumentReference<Map<String, dynamic>> couponDocRef =
-          couponsCollectionRef.doc();
-
-      await couponDocRef.set({
-        'name': couponName,
-        'code': couponCode,
-        'discount': discount,
-        'menu': menu,
-        'tier': 'bronze',
-        'required_point': requiredPoint,
-        'start_date': Timestamp.fromDate(startDate),
-        'end_date': Timestamp.fromDate(endDate),
-        'img': imageUrl,
-        'cus_id': cusId,
-        'res_id': null,
-      });
-    }
-  }
-
   Future<void> createBookingInfo(String resId) async {
     CollectionReference<Map<String, dynamic>> bookingCollectionRef =
         FirebaseFirestore.instance.collection("bookings");
@@ -146,7 +107,6 @@ class UserRegisterService {
       'created_at': FieldValue.serverTimestamp(),
       'updated_at': FieldValue.serverTimestamp()
     });
-    //}
   }
 
   Future<void> createCollectionIfNotExists(String collectionName) async {
@@ -258,31 +218,5 @@ class UserRegisterService {
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
     return userCredential;
-  }
-
-  Future<String> hashPassword(String password, String salt) async {
-    return sha256.convert(utf8.encode(password + salt)).toString();
-  }
-
-  Future<int> randomInt() async {
-    final rand = Random();
-    int id = rand.nextInt(999999);
-    return id;
-  }
-
-  Future<Tuple2<bool, String>> checkIdInCollection(
-      String collectionName, String id) async {
-    final QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
-        .instance
-        .collection(collectionName)
-        .where('id', isEqualTo: id)
-        .get();
-    bool isNotEmpty = result.docs.isNotEmpty;
-    if (isNotEmpty) {
-      int newId = await randomInt();
-      return checkIdInCollection(collectionName, newId.toString());
-    } else {
-      return Tuple2(isNotEmpty, id.toString());
-    }
   }
 }
