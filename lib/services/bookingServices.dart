@@ -18,12 +18,12 @@ class BookingServices {
         String bookingQueue = doc.get('booking_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
-        String guest = doc.get('guest');
+        int guest = doc.get('guest');
         String date = doc.get('date');
         String time = doc.get('time');
         String status = doc.get('status');
-        DateTime createdAt = doc.get('created_at');
-        DateTime updatedAt = doc.get('updated_at');
+        Timestamp createdAt = doc.get('created_at');
+        Timestamp updatedAt = doc.get('updated_at');
 
         //print('bookig ' + bookingQueue);
         //print('cusID ' + cusId);
@@ -58,47 +58,51 @@ class BookingServices {
   }
 
   Future<String> getBookingQueue(
-      String resId, String date, int numOfGuests) async {
-    try {
-      final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
-          await bookingCollection
-              .where('r_id', isEqualTo: resId)
-              .where('date', isEqualTo: date)
-              .orderBy('created_at', descending: true)
-              .get() as QuerySnapshot<Map<String, dynamic>>;
+    String resId, String date, int numOfGuests) async {
+  try {
+    final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
+        await bookingCollection
+            .where('r_id', isEqualTo: resId)
+            .where('date', isEqualTo: date)
+            .orderBy('created_at', descending: true)
+            .get() as QuerySnapshot<Map<String, dynamic>>;
 
-      final bookingCount = bookingQueueSnapshot.docs.length;
-      final lastQueueNumber = bookingCount > 0
-          ? bookingQueueSnapshot.docs.first['booking_queue']
-          : 0;
+    final bookingCount = bookingQueueSnapshot.docs.length;
+    final lastQueueNumber = bookingCount > 0
+        ? bookingQueueSnapshot.docs.first['booking_queue']
+        : 0;
 
-      String tableType = getTableType(numOfGuests);
-      //print('tableType: $tableType');
+    String tableType = getTableType(numOfGuests);
 
-      final tableTypeQuerySnapshot =
-          await tableInfoCollection.where('r_id', isEqualTo: resId).get();
-      final tableTypes =
-          tableTypeQuerySnapshot.docs.map((doc) => doc['table_type']).toList();
-      final tableTypeCount = tableTypes.length;
+    final tableTypeQuerySnapshot =
+        await tableInfoCollection.where('r_id', isEqualTo: resId).get();
+    final tableTypes =
+        tableTypeQuerySnapshot.docs.map((doc) => doc['table_type']).toList();
+    final tableTypeCount = tableTypes.length;
 
-      final tableTypeIndex = bookingCount % tableTypeCount;
-      tableType = tableTypes[tableTypeIndex];
+    final tableTypeIndex = bookingCount % tableTypeCount;
+    tableType = tableTypes[tableTypeIndex];
 
-       final queueNumber = lastQueueNumber != null ? lastQueueNumber + 1 : 1;
-      return tableType + queueNumber.toString().padLeft(3, '0');
-    } catch (e) {
-      print('Error occurred when get booking queue : $e');
-      throw (e);
-    }
+    
+    final queueNumber = lastQueueNumber != null ? lastQueueNumber + 1 : 1;
+    final formattedQueueNumber =
+        queueNumber.toString().padLeft(3, '0');
+    print('$tableType$formattedQueueNumber');
+    return '$tableType$formattedQueueNumber'.toString();
+  } catch (e) {
+    print('Error occurred when get booking queue : $e');
+    throw (e);
   }
+}
+
 
   // Booking
 
   Future<void> bookTable(
-      String resId, String cusId, String date, String time, int guests) async {
+      String resId, String cusId, String date, String time, int guests, String bookingQueue) async {
     try {
-      String bookingQueue =
-          await getBookingQueue(resId, date.toString(), guests);
+      //String bookingQueue =
+          //await getBookingQueue(resId, date, guests);
       await FirebaseFirestore.instance.collection('bookings').add({
         'booking_queue': bookingQueue,
         'created_at': DateTime.now(),
@@ -106,7 +110,7 @@ class BookingServices {
         'r_id': resId,
         'date': date,
         'guest': guests,
-        'status': 'pending',
+        'status': 'booked',
         'time': time,
         'updated_at': DateTime.now(),
       });
@@ -115,17 +119,18 @@ class BookingServices {
     }
   }
 
-  String getTableType(int guests) {
-    if (guests <= 2) {
-      return 'A';
-    } else if (guests < 5) {
-      return 'B';
-    } else if (guests < 7) {
-      return 'C';
-    } else if (guests <= 8) {
-      return 'D';
-    } else {
-      return 'E';
-    }
+ String getTableType(int guests) {
+  if (guests > 0 && guests <= 2) {
+    return 'A';
+  } else if (guests >= 3 && guests <= 4) {
+    return 'B';
+  } else if (guests >= 5 && guests <= 7) {
+    return 'C';
+  } else if (guests == 8) {
+    return 'D';
+  } else {
+    return 'E';
   }
+}
+
 }
