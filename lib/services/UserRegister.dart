@@ -97,7 +97,7 @@ class UserRegisterService {
     String timeString = DateFormat('H.mm').format(dateTime);
 
     await bookingDocRef.set({
-      'cus_id': '',
+      'c_id': '',
       'r_id': resId,
       'booking_queue': null,
       'date': timestamp,
@@ -181,6 +181,7 @@ class UserRegisterService {
             'address': address,
             'location': GeoPoint(latitude, longitude),
             'res_logo': imageUrl,
+            'queue_status': 'close',
             'role': 'restaurant',
           });
           createTableInfoWhenRegister(id);

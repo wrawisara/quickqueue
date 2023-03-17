@@ -11,8 +11,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class CusBookedPage extends StatefulWidget {
   final Map<String, dynamic> restaurant;
+
+  //เอา guest มาจากหน้า booking
+  final int numberPerson;
+
   // Pass the current User
-  const CusBookedPage({Key? key, required this.restaurant}) : super(key: key);
+  const CusBookedPage(
+      {Key? key, required this.restaurant, required this.numberPerson})
+      : super(key: key);
   @override
   State<CusBookedPage> createState() => _CusBookedPageState();
 }
@@ -25,25 +31,27 @@ class _CusBookedPageState extends State<CusBookedPage> {
   //เรียกข้อมูลมาใช้
   final booking = Booking.generateBooking();
   final customer = Customer.generateCustomer();
-  final bookingServices = BookingServices();
-  final customerServices = CustomerServices();
+  final BookingServices bookingServices = BookingServices();
+  final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
   late Future<List<String>> customerNameFuture;
-  //List<String> customerName = await customerNameFuture;
+  // List<String> customerName = await customerNameFuture;
 
   @override
   void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
-    _bookingDataFuture = bookingServices.getBookingData();
+    
     if (currentUser != null && currentUser.uid != null) {
-      //customerName = customerServices.getCustomerName(currentUser.uid);
+      _bookingDataFuture = bookingServices.getBookingData();
+      currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+   
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -71,6 +79,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     child: Card(
                       semanticContainer: true,
                       clipBehavior: Clip.antiAliasWithSaveLayer,
+                      //ใส่รูปร้านอาหารที่เลือก
                       child: Image.network(
                         widget.restaurant['res_logo'],
                         fit: BoxFit.cover,
@@ -101,7 +110,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        "Booking Code",
+                        "Booking Code ",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -119,53 +128,80 @@ class _CusBookedPageState extends State<CusBookedPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 100.0,
-                          height: 70.0,
-                          decoration: new BoxDecoration(
-                            color: Colors.cyan.withOpacity(0.7),
-                            border: Border.all(color: Colors.white, width: 3),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              booking.booking_queue,
-                              style: new TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _bookingDataFuture,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error fetching data booking data'),
+                          );
+                        }
+
+                        if (snapshot.data?.isEmpty ?? true) {
+                          return Center(
+                            child: Text('No booking found'),
+                          );
+                        }
+
+                        List<Map<String, dynamic>> bookingData = snapshot.data!;
+                        print('BookingQueueeeee ' + bookingData[0]['bookingQueue']);
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () {},
+                              child: Container(
+                                width: 100.0,
+                                height: 70.0,
+                                decoration: new BoxDecoration(
+                                  color: Colors.cyan.withOpacity(0.7),
+                                  border:
+                                      Border.all(color: Colors.white, width: 3),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    bookingData[0]['bookingQueue'] ?? '',
+                                    style: new TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 100.0,
-                          height: 70.0,
-                          decoration: new BoxDecoration(
-                            color: Colors.cyan.withOpacity(0.7),
-                            border: Border.all(color: Colors.white, width: 3),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              booking.previous_queue,
-                              style: new TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400),
+                            InkWell(
+                              onTap: () {},
+                              child: Container(
+                                width: 100.0,
+                                height: 70.0,
+                                decoration: new BoxDecoration(
+                                  color: Colors.cyan.withOpacity(0.7),
+                                  border:
+                                      Border.all(color: Colors.white, width: 3),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    bookingData[0]['bookingQueue'] ?? '',
+                                    style: new TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                          ],
+                        );
+                      }),
                   SizedBox(
                     height: 10,
                   ),
@@ -173,14 +209,14 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        "Guest : ",
+                        "Guest : " ,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                       Text(
-                        widget.restaurant['guests'].toString(),
+                        widget.numberPerson.toString(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
@@ -191,40 +227,91 @@ class _CusBookedPageState extends State<CusBookedPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 75,
-                        ),
-                        child: Text(
-                          "wavy" + " " + customer.lastname,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                      future: currentUserInfoFuture,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error fetching data userdata'),
+                          );
+                        }
+
+                        if (snapshot.data?.isEmpty ?? true) {
+                          return Center(
+                            child: Text('No user found'),
+                          );
+                        }
+
+                        List<Map<String, dynamic>> userData = snapshot.data!;
+                        return Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 75,
+                              ),
+                              child: Text(
+                                (userData[0]['firstname'] ?? '') +
+                                    " " +
+                                    (userData[0]['lastname'] ?? ''),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 75,
-                        ),
-                        child: Text(
-                          booking.datetime,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
+                 FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _bookingDataFuture,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error fetching data'),
+                          );
+                        }
+
+                        if (snapshot.data?.isEmpty ?? true) {
+                          return Center(
+                            child: Text('No date time found'),
+                          );
+                        }
+
+                        List<Map<String, dynamic>> bookingData = snapshot.data!;
+                      return Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 75,
+                            ),
+                            child: Text(
+                              bookingData[0]['created_at'] ?? '',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    }
                   ),
                   SizedBox(
                     height: 20,

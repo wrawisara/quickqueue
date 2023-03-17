@@ -14,6 +14,7 @@ class CustomerServices {
       List<Map<String, dynamic>> restaurants = [];
 
       restaurantQuerySnapshot.docs.forEach((doc) {
+        String resId = doc.get('r_id');
         String address = doc.get('address');
         GeoPoint location = doc.get('location');
         String username = doc.get('username');
@@ -23,6 +24,7 @@ class CustomerServices {
         print(address);
 
         restaurants.add({
+          'r_id': resId,
           'address': address,
           'location': location,
           'username': username,
