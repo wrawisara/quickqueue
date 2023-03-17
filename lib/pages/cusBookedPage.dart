@@ -5,6 +5,7 @@ import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
 import 'package:quickqueue/services/bookingServices.dart';
+import 'package:quickqueue/services/customerServices.dart';
 import '../model/Customer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -14,10 +15,7 @@ class CusBookedPage extends StatefulWidget {
   const CusBookedPage({Key? key, required this.restaurant}) : super(key: key);
   @override
   State<CusBookedPage> createState() => _CusBookedPageState();
-
 }
-
-
 
 class _CusBookedPageState extends State<CusBookedPage> {
   //คำสั่งรับ datenow ยังไม่ได้ใช้
@@ -27,13 +25,20 @@ class _CusBookedPageState extends State<CusBookedPage> {
   //เรียกข้อมูลมาใช้
   final booking = Booking.generateBooking();
   final customer = Customer.generateCustomer();
-  final BookingServices bookingServices = BookingServices();
+  final bookingServices = BookingServices();
+  final customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  late Future<List<String>> customerNameFuture;
+  //List<String> customerName = await customerNameFuture;
 
   @override
   void initState() {
     super.initState();
+    final currentUser = FirebaseAuth.instance.currentUser;
     _bookingDataFuture = bookingServices.getBookingData();
+    if (currentUser != null && currentUser.uid != null) {
+      //customerName = customerServices.getCustomerName(currentUser.uid);
+    }
   }
 
   @override
@@ -168,7 +173,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        "Guest : " ,
+                        "Guest : ",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
@@ -193,7 +198,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                           left: 75,
                         ),
                         child: Text(
-                          customer.firstname + " " + customer.lastname,
+                          "wavy" + " " + customer.lastname,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
@@ -221,7 +226,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                       ),
                     ],
                   ),
-                SizedBox(
+                  SizedBox(
                     height: 20,
                   ),
                   ElevatedButton(

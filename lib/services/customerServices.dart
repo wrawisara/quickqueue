@@ -276,4 +276,16 @@ class CustomerServices {
       return 'E';
     }
   }
+
+  Future<List<String>> getCustomerName(String cusId) async {
+  final QuerySnapshot<Map<String, dynamic>> customerSnapshot =
+      await _firestore.collection('customer').where('c_id', isEqualTo: cusId).get();
+  if (customerSnapshot.docs.isNotEmpty) {
+    final customer = customerSnapshot.docs.first;
+    final firstName = customer['first_name'] as String;
+    final lastName = customer['last_name'] as String;
+    return [firstName, lastName];
+  }
+  return [];
+}
 }
