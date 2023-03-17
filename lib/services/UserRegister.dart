@@ -93,6 +93,8 @@ class UserRegisterService {
         bookingCollectionRef.doc();
 
     Timestamp timestamp = Timestamp.now();
+    DateTime now = DateTime.now();
+    String date = DateFormat('yyyy-MM-dd').format(now);
     DateTime dateTime = timestamp.toDate();
     String timeString = DateFormat('H.mm').format(dateTime);
 
@@ -100,7 +102,7 @@ class UserRegisterService {
       'c_id': '',
       'r_id': resId,
       'booking_queue': null,
-      'date': timestamp,
+      'date': date,
       'time': timeString,
       'guest': null,
       'status': null,
@@ -185,7 +187,7 @@ class UserRegisterService {
             'role': 'restaurant',
           });
           createTableInfoWhenRegister(id);
-          createBookingInfo(id);
+          //createBookingInfo(id);
           //}
         }
       } on FirebaseAuthException catch (e) {
