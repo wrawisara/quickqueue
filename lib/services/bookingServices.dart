@@ -18,7 +18,7 @@ class BookingServices {
         String bookingQueue = doc.get('booking_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
-        String guest = doc.get('guest');
+        int guest = doc.get('guest');
         String date = doc.get('date');
         String time = doc.get('time');
         String status = doc.get('status');

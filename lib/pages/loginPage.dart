@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-              padding: const EdgeInsets.fromLTRB(20, 180, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 210, 20, 20),
               child: Text(
                 "Quick Queue",
                 style: TextStyle(

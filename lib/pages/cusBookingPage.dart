@@ -160,6 +160,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                         child: const Text('Book',
                             style: TextStyle(fontSize: 20, color: Colors.white)),
                         onPressed: () {
+                          String numGuest = numberPerson.toString();
                           try {
                           if (currentUser != null && currentUser.uid != null) {
                             DateTime now = DateTime.now();
