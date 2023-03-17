@@ -28,7 +28,25 @@ class _CusBookingPageState extends State<CusBookingPage> {
   final CustomerServices customerServices = CustomerServices();
   final BookingServices bookingService = BookingServices();
 
-  //อยากดึงข้อมูล Branch จาก Restaurant ?
+  //เรียกข้อมูล booking มาใช้
+    final BookingServices bookingServices = BookingServices();
+  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookingDataFuture = bookingServices.getBookingData();
+  }
+
+  //เอาค่า guest จาก number of person มาใช้
+  int numberPerson = 0;
+
+  void updateNumberOfPersons(int value) {
+    setState(() {
+      numberPerson = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -42,153 +60,160 @@ class _CusBookingPageState extends State<CusBookingPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: Container(
-          padding: EdgeInsets.only(
-            left: 15,
-            right: 15,
-          ),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 30,
+        body:  Container(
+              padding: EdgeInsets.only(
+                left: 15,
+                right: 15,
               ),
-              Container(
-                height: 250,
-                child: Card(
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: Image.network(
-                    widget.restaurant['res_logo'],
-                    scale: 1.5,
-                    fit: BoxFit.fitHeight,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(3.0),
-                  ),
-                  elevation: 1,
-                  margin: EdgeInsets.all(5),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Column(
+              child: Column(
                 children: <Widget>[
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    height: 250,
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: Image.network(
+                        widget.restaurant['res_logo'],
+                        scale: 1.5,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3.0),
+                      ),
+                      elevation: 1,
+                      margin: EdgeInsets.all(5),
+                    ),
+                  ),
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Column(
                     children: <Widget>[
-                      Text(
-                        widget.restaurant['username'],
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Text(
-                        "Previous Queue : " +
-                            //  "widget.allRestaurantModel.queueNum.toString()" +
-                            " Queue",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                        ),
-                        child: Text(
-                          "Number of persons",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text(
+                            widget.restaurant['username'],
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text(
+                            "Previous Queue : " +
+                                //  "widget.allRestaurantModel.queueNum.toString()" +
+                                " Queue",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                            ),
+                            child: Text(
+                              "Number of persons",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      NumOfPersons(
+                        onChanged: updateNumberOfPersons
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          // primary: Colors.green,
+                          // elevation: 3,
+                          minimumSize: Size(160, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0)),
+                        ),
+                        child: const Text('Book',
+                            style: TextStyle(fontSize: 20, color: Colors.white)),
+                        onPressed: () {
+                          try {
+                          if (currentUser != null && currentUser.uid != null) {
+                            print(numberPerson);
+                            DateTime now = DateTime.now();
+                            String date = DateFormat('yyyy-MM-dd').format(now);
+                            String time = DateFormat('hh:mm a').format(now);
+                            bookingService.bookTable(
+                                widget.restaurant['r_id'],
+                                currentUser.uid,
+                                date,
+                                time,
+                                numberPerson);
+                          }
+                          } catch (e){
+                            print('Something error: $e');
+                          }
+        
+                          //save data ลง db 
+                          //widget.restaurant['username'];
+                          //widget.allRestaurantModel.queueNum;
+                          //NumOfPersons();
+                          
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CusBookedPage(restaurant: widget.restaurant,numberPerson: numberPerson,)));
+        
+                          // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
+                          // showDialog<String>(
+                          //   context: context,
+                          //   builder: (BuildContext context) => AlertDialog(
+                          //     title: const Text('Sucess'),
+                          //     content: const Text('Your queue has been booked.'),
+                          //   ),
+                          // );
+                        },
+                      )
                     ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  NumOfPersons(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // primary: Colors.green,
-                      // elevation: 3,
-                      minimumSize: Size(160, 50),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
-                    ),
-                    child: const Text('Book',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    onPressed: () {
-                      try {
-                      if (currentUser != null && currentUser.uid != null) {
-                        DateTime now = DateTime.now();
-
-                        String date = DateFormat('yyyy-MM-dd').format(now);
-                        String time = DateFormat('hh:mm a').format(now);
-                        bookingService.bookTable(
-                            widget.restaurant['r_id'],
-                            currentUser.uid,
-                            date,
-                            time,
-                            0);
-                      }
-                      } catch (e){
-                        print('Something error: $e');
-                      }
-
-                      //save data ลง db 
-                      //widget.restaurant['username'];
-                      //widget.allRestaurantModel.queueNum;
-                      //NumOfPersons();
-                      
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusBookedPage(restaurant: widget.restaurant,)));
-
-                      // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
-                      // showDialog<String>(
-                      //   context: context,
-                      //   builder: (BuildContext context) => AlertDialog(
-                      //     title: const Text('Sucess'),
-                      //     content: const Text('Your queue has been booked.'),
-                      //   ),
-                      // );
-                    },
                   )
                 ],
-              )
-            ],
-          ),
-        ));
+              ),
+            )
+        );
   }
 }
 
 //เพิ่มลดจำนวนคนที่จอง
 class NumOfPersons extends StatefulWidget {
-  const NumOfPersons({super.key});
+ 
+  // @override
+  // State<NumOfPersons> createState() => _NumOfPersonsState();
 
+   final void Function(int) onChanged;
+  const NumOfPersons({Key? key, required this.onChanged}) : super(key: key);
   @override
-  State<NumOfPersons> createState() => _NumOfPersonsState();
+  _NumOfPersonsState createState() => _NumOfPersonsState();
 }
 
 class _NumOfPersonsState extends State<NumOfPersons> {
@@ -201,13 +226,30 @@ class _NumOfPersonsState extends State<NumOfPersons> {
         children: <Widget>[
           IconButton(
             onPressed: () {
-              numberPerson > 0
-                  ? setState(() {
-                      numberPerson--;
-                    })
-                  : setState(() {
-                      numberPerson = 0;
-                    });
+              setState(() {
+                numberPerson = numberPerson > 0 ? numberPerson - 1 : 0;
+                widget.onChanged(numberPerson);
+                
+              });
+
+              // numberPerson > 0
+              //     ? setState(() {
+              //         numberPerson--;
+              //       })
+              //     : setState(() {
+              //          numberPerson = 0;
+              //       });
+
+
+
+              // widget.onChanged(numberPerson -1);
+              // numberPerson > 0
+              //   ? setState(() {
+              //       numberPerson = numberPerson - 1;
+              //     })
+              //   : setState(() {
+              //       numberPerson = 0;
+              //     });
             },
             icon: Icon(Icons.remove),
             color: Colors.black,
@@ -236,9 +278,20 @@ class _NumOfPersonsState extends State<NumOfPersons> {
           ),
           IconButton(
             onPressed: () {
-              setState(() {
+               setState(() {
                 numberPerson++;
+                widget.onChanged(numberPerson);
               });
+
+
+              // setState(() {
+              //    numberPerson++;
+              // });
+
+              //  widget.onChanged(numberPerson+1);
+              // setState(() {
+              //   numberPerson = numberPerson + 1;
+              // });
             },
             icon: Icon(Icons.add),
             color: Colors.black,

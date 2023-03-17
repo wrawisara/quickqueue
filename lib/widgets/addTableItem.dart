@@ -3,21 +3,20 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/model/tableInfo.dart';
+import 'package:quickqueue/pages/resConfigTable.dart';
 
 class AddTableItem extends StatefulWidget {
   //parameter จากหน้า resConfig
-   String type = '';
-   int person = 0;
+  String type = '';
+  int person = 0;
   // String capacity = '';
   // String table_capacity = '';
   final Function(int)? onCapacityChanged;
 
-  
-
   final Function(int) onTableCapacityChanged; // new callback function
-  AddTableItem(this.type,this.person,{required this.onTableCapacityChanged, this.onCapacityChanged});
+  AddTableItem(this.type, this.person,
+      {required this.onTableCapacityChanged, this.onCapacityChanged});
 
-  
 
   // String getTableCapacity(){
   //   return table_capacity;
@@ -32,14 +31,34 @@ class AddTableItem extends StatefulWidget {
 }
 
 class _AddTableItemState extends State<AddTableItem> {
-
   TextEditingController _tableCapacityController = TextEditingController();
+
+  // เอา alert ไปโชว์หน้า ResConfigTablePage
+//   void showAlert() {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text('Invalid Input'),
+//         content: Text('All fields can only contain numeric values'),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               Navigator.pop(context);
+//             },
+//             child: Text('OK'),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
+
+
+
 
   //นำค่าไป setstae ใน textfield
 
- 
-
-  
   @override
   void dispose() {
     _tableCapacityController.dispose();
@@ -51,7 +70,7 @@ class _AddTableItemState extends State<AddTableItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          width: 190,
+          width: 180,
           height: 170,
           decoration: new BoxDecoration(
             color: Colors.white,
@@ -112,9 +131,14 @@ class _AddTableItemState extends State<AddTableItem> {
                             labelText: 'Number of table',
                           ),
                           onChanged: (value) {
-                            // setState(() => widget.table_capacity = val);
-                            widget.onTableCapacityChanged(int.tryParse(value) ?? 0);
-                            
+                            int? parsedValue = int.tryParse(value);
+                            if (parsedValue != null) {
+                              print(value);
+                              widget.onTableCapacityChanged(
+                                  int.tryParse(value) ?? 0);
+                            } else {
+                            //  showAlert();
+                            }
                           },
                         )),
                   ],
@@ -188,7 +212,8 @@ class _AddTableItemState extends State<AddTableItem> {
                             labelText: 'Number of table',
                           ),
                           onChanged: (value) {
-                            widget.onTableCapacityChanged(int.tryParse(value) ?? 0);
+                            widget.onTableCapacityChanged(
+                                int.tryParse(value) ?? 0);
                           },
                         )),
                   ],
@@ -199,9 +224,7 @@ class _AddTableItemState extends State<AddTableItem> {
   }
 }
 
-// Future<String> getTableData(String type,String guest){
-//   return 
-// }
+
 
 
 

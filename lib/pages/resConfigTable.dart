@@ -10,7 +10,7 @@ class ResConfigTablePage extends StatefulWidget {
   var selected = 0;
   Map<String, int> tableCapacities =
       {}; // map to store the capacities of each type of table
-  Map<String,int> e_capacities = {};
+  Map<String, int> e_capacities = {};
   @override
   State<ResConfigTablePage> createState() => _ResConfigTablePageState();
 }
@@ -20,6 +20,8 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
   final customer = Customer.generateCustomer();
   final RestaurantServices restaurantServices = RestaurantServices();
 
+  //เรียกไว้รอทำ alert
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // static const String _title = 'Tooltip Sample';
 
@@ -35,13 +37,14 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
           title: Text('Configuration', style: TextStyle(color: Colors.white)),
-           automaticallyImplyLeading: false, // Disable the back icon
+          automaticallyImplyLeading: false, // Disable the back icon
         ),
         backgroundColor: Colors.white,
         body: Column(
@@ -157,7 +160,7 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
                                 eTableNum = tablecapacity;
                               });
                             },
-                            onCapacityChanged: (capacity){
+                            onCapacityChanged: (capacity) {
                               setState(() {
                                 widget.e_capacities['E'] = capacity;
                                 eSeats = capacity;
@@ -179,13 +182,29 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
                       onPressed: () {
                         print(widget.tableCapacities);
                         print(widget.e_capacities);
-                        if (currentUser != null  && currentUser.uid != null ){
-                          if (eSeats == null || eSeats == 0 && eTableNum == null || eTableNum == 0){
-                            restaurantServices.setTableInfo(currentUser.uid, widget.tableCapacities);
+
+                        if (currentUser != null && currentUser.uid != null) {
+                          if (eSeats == null ||
+                              eSeats == 0 && eTableNum == null ||
+                              eTableNum == 0) {
+                            restaurantServices.setTableInfo(
+                                currentUser.uid, widget.tableCapacities);
                           } else {
-                            restaurantServices.setTableInfoForTableE(currentUser.uid, widget.e_capacities, eTableNum, widget.tableCapacities);
+                            restaurantServices.setTableInfoForTableE(
+                                currentUser.uid,
+                                widget.e_capacities,
+                                eTableNum,
+                                widget.tableCapacities);
                           }
+                        } else {
+                          // final snackBar = SnackBar(
+                          //   content: Text(
+                          //       'All fields can only contain numeric values'),
+                          //   duration: Duration(seconds: 2),
+                          // );
+                          // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
+
                         // if (int.tryParse(table_capacity) == null) {
                         //   showDialog<String>(
                         //     context: context,
@@ -227,10 +246,3 @@ class _ResConfigTablePageState extends State<ResConfigTablePage> {
         ));
   }
 }
-
-
-
-
-
-
-
