@@ -86,7 +86,7 @@ class _ResMainPageState extends State<ResMainPage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                //showLogoutAlertDialog(context);
+                showLogoutAlertDialog(context);
               },
             ),
           ]),
@@ -172,7 +172,7 @@ navigateToLoginPage(BuildContext context) {
   }));
 }
 
-showAlertDialog(BuildContext context) {
+showLogoutAlertDialog(BuildContext context) {
   Widget continueButton = TextButton(
     child: Text("Yes"),
     onPressed: () {

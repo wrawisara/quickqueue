@@ -58,41 +58,96 @@ class BookingServices {
     }
   }
 
-Future<String> getBookingQueue(String resId, String date, int numOfGuests) async {
-  try {
-    final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
-        await bookingCollection
-            .where('r_id', isEqualTo: resId)
-            .where('date', isEqualTo: date)
-            .orderBy('created_at', descending: true)
-            .get() as QuerySnapshot<Map<String, dynamic>>;
+  Future<List<Map<String, dynamic>>> getBookingDataForCurrentUser(
+      String uId) async {
+    try {
+      QuerySnapshot bookingQuerySnapshot = await _firestore
+          .collection('bookings')
+          .where('c_id', isEqualTo: uId)
+          .orderBy('created_at', descending: true)
+          .get();
 
-    final bookingCount = bookingQueueSnapshot.docs.length;
+      List<Map<String, dynamic>> booking = [];
 
-    final lastQueueNumber = bookingCount > 0
-        ? bookingQueueSnapshot.docs.first['booking_queue']?.toString()
-        : null;
+      bookingQuerySnapshot.docs.forEach((doc) {
+        String bookingQueue = doc.get('booking_queue');
+        String cusId = doc.get('c_id');
+        String resId = doc.get('r_id');
+        int guest = doc.get('guest');
+        String date = doc.get('date');
+        String time = doc.get('time');
+        String status = doc.get('status');
+        Timestamp createdAt = doc.get('created_at');
+        Timestamp updatedAt = doc.get('updated_at');
 
-    final tableType = getTableType(numOfGuests);
+        //print('bookig ' + bookingQueue);
+        //print('cusID ' + cusId);
+        //print('resId ' + resId);
+        //print('guest ' + guest);
+        //print('date ' + date);
+        //print('time ' + time);
+        //print('status ' + status);
+        //print('created ' + createdAt.toString());
+        //print('updated ' + updatedAt.toString());
 
-    String formattedQueueNumber = '001';
-    if (lastQueueNumber != null) {
-      final lastTableType = lastQueueNumber.substring(0, 1);
-      if (lastTableType == tableType) {
-        final lastQueueNumberInt = int.parse(lastQueueNumber.substring(1));
-        formattedQueueNumber =
-            (lastQueueNumberInt + 1).toString().padLeft(3, '0');
-      }
+        booking.add({
+          'bookingQueue': bookingQueue,
+          'c_id': cusId,
+          'r_id': resId,
+          'guest': guest,
+          'date': date,
+          'time': time,
+          'status': 'pending',
+          'created_at': createdAt,
+          'updated_at': updatedAt,
+        });
+      });
+
+      print(booking);
+
+      return booking;
+    } catch (e) {
+      print('Error fetching data: $e');
+      throw e;
     }
-
-    final bookingQueue = '$tableType$formattedQueueNumber';
-    print('Booking queue: $bookingQueue');
-    return bookingQueue;
-  } catch (e) {
-    print('Error occurred when get booking queue : $e');
-    throw (e);
   }
-}
+
+  Future<String> getBookingQueue(
+      String resId, String date, int numOfGuests) async {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
+          await bookingCollection
+              .where('r_id', isEqualTo: resId)
+              .where('date', isEqualTo: date)
+              .orderBy('created_at', descending: true)
+              .get() as QuerySnapshot<Map<String, dynamic>>;
+
+      final bookingCount = bookingQueueSnapshot.docs.length;
+
+      final lastQueueNumber = bookingCount > 0
+          ? bookingQueueSnapshot.docs.first['booking_queue']?.toString()
+          : null;
+
+      final tableType = getTableType(numOfGuests);
+
+      String formattedQueueNumber = '001';
+      if (lastQueueNumber != null) {
+        final lastTableType = lastQueueNumber.substring(0, 1);
+        if (lastTableType == tableType) {
+          final lastQueueNumberInt = int.parse(lastQueueNumber.substring(1));
+          formattedQueueNumber =
+              (lastQueueNumberInt + 1).toString().padLeft(3, '0');
+        }
+      }
+
+      final bookingQueue = '$tableType$formattedQueueNumber';
+      print('Booking queue: $bookingQueue');
+      return bookingQueue;
+    } catch (e) {
+      print('Error occurred when get booking queue : $e');
+      throw (e);
+    }
+  }
 
   // Booking
 

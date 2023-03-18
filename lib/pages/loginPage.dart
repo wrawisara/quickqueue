@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/pages/cusHomePage.dart';
 import 'package:quickqueue/pages/resHomePage.dart';
 import 'package:quickqueue/services/userAuthen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-              padding: const EdgeInsets.fromLTRB(20, 210, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 220, 20, 20),
               child: Text(
                 "Quick Queue",
                 style: TextStyle(
