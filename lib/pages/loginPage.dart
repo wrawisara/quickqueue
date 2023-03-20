@@ -100,7 +100,22 @@ class _LoginPageState extends State<LoginPage> {
                             print(password);
                             await loginChecker(context, email, password);
                           } on FirebaseAuthException catch (e) {
-                            throw FirebaseAuthException(code: e.code);
+                            print(e.message);
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Error'),
+                                content: Text(
+                                    'Please enter your email and password.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'OK'),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
                           }
                         },
                       ),
