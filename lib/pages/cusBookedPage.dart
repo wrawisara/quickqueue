@@ -57,6 +57,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
+          automaticallyImplyLeading: false, // Disable the back icon
           title: Text(
             "Booked",
             style: TextStyle(color: Colors.white),
@@ -150,7 +151,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                           );
                         }
 
-                        List<Map<String, dynamic>> bookingData = snapshot.data!;
+                        List<Map<String, dynamic>> bookingData = snapshot.data ?? [];
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[

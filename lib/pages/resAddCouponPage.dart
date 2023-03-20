@@ -208,7 +208,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             HorizontalLine(),
                             SizedBox(height: 20.0),
                             Padding(
-                              padding: const EdgeInsets.only(right: 250),
+                              padding: const EdgeInsets.only(right: 230),
                               child: Text(
                                 'Redeem',
                                 style: TextStyle(fontSize: 17),
@@ -234,7 +234,6 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 ),
                                 // SizedBox(width: 10.0),
                                 Text('Food menu'),
-
                                 SizedBox(width: 50.0),
                                 //checkbox Discount
                                 SizedBox(
@@ -257,7 +256,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                               ]),
                             ]),
                             TextFormField(
-                              obscureText: true,
+                              // obscureText: true,
                               decoration: InputDecoration(
                                 enabled: couponMenu,
                                 border: OutlineInputBorder(
@@ -283,7 +282,6 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                               onChanged: (val) {
                                 double newDiscount =
                                     double.tryParse(val) ?? 0.0;
-
                                 setState(() => discount = newDiscount);
                               },
                             ),

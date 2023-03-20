@@ -11,12 +11,14 @@ class AddTableItem extends StatefulWidget {
   int person = 0;
   // String capacity = '';
   // String table_capacity = '';
-  final Function(int)? onCapacityChanged;
+  final Function(dynamic)? onCapacityChanged;
+  final VoidCallback? onInvalidInput;
 
-  final Function(int) onTableCapacityChanged; // new callback function
+  final Function(dynamic) onTableCapacityChanged; // new callback function
   AddTableItem(this.type, this.person,
-      {required this.onTableCapacityChanged, this.onCapacityChanged});
-
+      {required this.onTableCapacityChanged,
+      this.onCapacityChanged,
+      this.onInvalidInput});
 
   // String getTableCapacity(){
   //   return table_capacity;
@@ -53,9 +55,6 @@ class _AddTableItemState extends State<AddTableItem> {
 //     },
 //   );
 // }
-
-
-
 
   //นำค่าไป setstae ใน textfield
 
@@ -131,13 +130,15 @@ class _AddTableItemState extends State<AddTableItem> {
                             labelText: 'Number of table',
                           ),
                           onChanged: (value) {
-                            int? parsedValue = int.tryParse(value);
-                            if (parsedValue != null) {
-                              print(value);
+                            print("addTable: " + value);
+                            if (int.tryParse(value) != null) {
+                              print("int" + value);
                               widget.onTableCapacityChanged(
                                   int.tryParse(value) ?? 0);
                             } else {
-                            //  showAlert();
+                              widget.onTableCapacityChanged(null);
+                              //  print("throw");
+                              //  throw Exception('All fields can only contain numeric values');
                             }
                           },
                         )),
@@ -192,8 +193,13 @@ class _AddTableItemState extends State<AddTableItem> {
                             labelText: 'Number of seats',
                           ),
                           onChanged: (value) {
-                            // setState(() => widget.capacity = val);
-                            widget.onCapacityChanged!(int.tryParse(value) ?? 0);
+                             print("addTable: " + value);
+                             if (int.tryParse(value) != null) {
+                              print("int" + value);
+                                widget.onCapacityChanged!(int.tryParse(value) ?? 0);
+                            } else {
+                              widget.onCapacityChanged!(null);
+                            }
                           },
                         )),
                     SizedBox(
@@ -212,8 +218,13 @@ class _AddTableItemState extends State<AddTableItem> {
                             labelText: 'Number of table',
                           ),
                           onChanged: (value) {
-                            widget.onTableCapacityChanged(
-                                int.tryParse(value) ?? 0);
+                            if (int.tryParse(value) != null) {
+                              print("int" + value);
+                              widget.onTableCapacityChanged(
+                                  int.tryParse(value) ?? 0);
+                            } else {
+                              widget.onTableCapacityChanged(value);
+                            }
                           },
                         )),
                   ],
@@ -223,9 +234,3 @@ class _AddTableItemState extends State<AddTableItem> {
     );
   }
 }
-
-
-
-
-
-

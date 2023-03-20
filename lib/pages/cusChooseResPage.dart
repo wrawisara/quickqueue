@@ -75,7 +75,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                showAlertDialog(context);
+                showLogoutAlertDialog(context);
               },
             ),
           ]),
@@ -146,7 +146,7 @@ navigateToLoginPage(BuildContext context) {
   }));
 }
 
-  showAlertDialog(BuildContext context) {
+  showLogoutAlertDialog(BuildContext context) {
     Widget continueButton = TextButton(
       child: Text("Yes"),
       onPressed: () {
