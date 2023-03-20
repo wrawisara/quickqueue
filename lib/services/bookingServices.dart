@@ -58,12 +58,12 @@ class BookingServices {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getBookingDataForCurrentUser(
-      String uId) async {
+  Future<List<Map<String, dynamic>>> getBookingDataForCustomer(
+      String cusId) async {
     try {
       QuerySnapshot bookingQuerySnapshot = await _firestore
           .collection('bookings')
-          .where('c_id', isEqualTo: uId)
+          .where('c_id', isEqualTo: cusId)
           .orderBy('created_at', descending: true)
           .get();
 
@@ -89,6 +89,50 @@ class BookingServices {
         //print('status ' + status);
         //print('created ' + createdAt.toString());
         //print('updated ' + updatedAt.toString());
+
+        booking.add({
+          'bookingQueue': bookingQueue,
+          'c_id': cusId,
+          'r_id': resId,
+          'guest': guest,
+          'date': date,
+          'time': time,
+          'status': 'pending',
+          'created_at': createdAt,
+          'updated_at': updatedAt,
+        });
+      });
+
+      print(booking);
+
+      return booking;
+    } catch (e) {
+      print('Error fetching data: $e');
+      throw e;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getBookingDataForRestaurant(
+      String resId) async {
+    try {
+      QuerySnapshot bookingQuerySnapshot = await _firestore
+          .collection('bookings')
+          .where('r_id', isEqualTo: resId)
+          .orderBy('created_at', descending: true)
+          .get();
+
+      List<Map<String, dynamic>> booking = [];
+
+      bookingQuerySnapshot.docs.forEach((doc) {
+        String bookingQueue = doc.get('booking_queue');
+        String cusId = doc.get('c_id');
+        String resId = doc.get('r_id');
+        int guest = doc.get('guest');
+        String date = doc.get('date');
+        String time = doc.get('time');
+        String status = doc.get('status');
+        Timestamp createdAt = doc.get('created_at');
+        Timestamp updatedAt = doc.get('updated_at');
 
         booking.add({
           'bookingQueue': bookingQueue,
