@@ -1,16 +1,7 @@
-import 'dart:collection';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
-
-import '../widgets/restaurantInfo.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -26,10 +17,9 @@ class CusBookingPage extends StatefulWidget {
 
 class _CusBookingPageState extends State<CusBookingPage> {
   final CustomerServices customerServices = CustomerServices();
-  final BookingServices bookingService = BookingServices();
 
   //เรียกข้อมูล booking มาใช้
-    final BookingServices bookingServices = BookingServices();
+  final BookingServices bookingServices = BookingServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
   @override
@@ -165,9 +155,9 @@ class _CusBookingPageState extends State<CusBookingPage> {
                             DateTime now = DateTime.now();
                             String date = DateFormat('yyyy-MM-dd').format(now);
                             String time = DateFormat('hh:mm a').format(now);
-                            String bookingQueue = await bookingService.getBookingQueue(widget.restaurant['r_id'], date, numberPerson);
+                            String bookingQueue = await bookingServices.getBookingQueue(widget.restaurant['r_id'], date, numberPerson);
                             print(bookingQueue);
-                            bookingService.bookTable(
+                            bookingServices.bookTable(
                                 widget.restaurant['r_id'],
                                 currentUser.uid,
                                 date,

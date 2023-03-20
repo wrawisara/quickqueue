@@ -18,6 +18,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
   final RestaurantServices restaurantServices = RestaurantServices();
   final BookingServices bookingServices = BookingServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  late Future<List<Map<String, dynamic>>> _customerDataFuture;
 
   @override
   void initState() {
@@ -32,6 +33,9 @@ class _ResManageQueueState extends State<ResManageQueue> {
   // ข้อมูลจาก Model ฺBooking
   final bookingList = Booking.generateBookingList();
   late List<Booking> selectedBookings;
+
+   // ไว้ดึงข้อมูลจาก firebase
+   late List<Map<String, dynamic>> _bookingData;
 
   //ใช้ select data ใน table
   List<DataRow> selectedRows = [];
@@ -89,6 +93,8 @@ class _ResManageQueueState extends State<ResManageQueue> {
                 child: Text('No bookings found'),
               );
             }
+
+              _bookingData = snapshot.data!;
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
@@ -132,18 +138,18 @@ class _ResManageQueueState extends State<ResManageQueue> {
                   //   ),
                   // ),
                 ],
-                rows: bookingList
+                rows: _bookingData
                     .map((booking) => DataRow(
                           cells: [
-                            DataCell(Text(booking.booking_queue)),
-                            DataCell(Text(booking.datetime)),
-                            DataCell(Text(booking.q_status), showEditIcon: true,
-                                onTap: () {
+                            DataCell(Text(booking['bookingQueue'])),
+                            DataCell(Text(booking['time'])),
+                            DataCell(Text(booking['status']), showEditIcon: true,
+                                onTap: () async {
+                                  final customer = await bookingServices.getCustomerById(booking['c_id']);
+                                  final customerName = customer.isNotEmpty ? "${customer[0]['firstname']} ${customer[0]['lastname']}" : "Unknown";
+                                  final message = 'Name: $customerName\nGuest: ${booking['guest']}';
                               Dialogs.materialDialog(
-                                  msg: 'Name: ' +
-                                      booking.c_name +
-                                      '\nGuest: ' +
-                                      booking.guest,
+                                  msg: message,
                                   // msgStyle: TextStyle(color: Colors.cyan,),
                                   title: 'Customer confirmed the queue?',
                                   color: Colors.white,

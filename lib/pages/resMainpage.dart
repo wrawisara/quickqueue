@@ -25,13 +25,19 @@ class _ResMainPageState extends State<ResMainPage> {
   final customer = Customer.generateCustomer();
   final RestaurantServices restaurantServices = RestaurantServices();
   late Future<List<Map<String, dynamic>>> _tableDataFuture;
+  late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
   var selected = 0;
+  late Future<num> _totalCapacityFuture;
   @override
   void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
       _tableDataFuture = restaurantServices.getAllTableInfo(currentUser.uid);
+      _totalCapacityFuture =
+          restaurantServices.getTotalCapacity(currentUser.uid);
+      _restaurantDataFuture =
+          restaurantServices.getCurrentRestaurants(currentUser.uid);
     }
   }
 
@@ -96,7 +102,51 @@ class _ResMainPageState extends State<ResMainPage> {
           Container(
             child: Column(
               children: [
-                RestaurantInfo(),
+                FutureBuilder<num>(
+                  future: _totalCapacityFuture,
+                  builder: (context, totalCapacitySnapshot) {
+                    if (totalCapacitySnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      // Show a loading spinner while waiting for the future to complete
+                      return CircularProgressIndicator();
+                    }
+
+                    final num? totalCapacity = totalCapacitySnapshot.data!;
+
+                    if (totalCapacity == null) {
+                      // Show an error message if the data is null
+                      return Text('Total capacity data is null');
+                    }
+
+                    return FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _restaurantDataFuture,
+                      builder: (context, restaurantDataSnapshot) {
+                        if (restaurantDataSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading spinner while waiting for the future to complete
+                          return CircularProgressIndicator();
+                        }
+
+                        final List<Map<String, dynamic>> restaurantData =
+                            restaurantDataSnapshot.data!;
+
+                        print(restaurantData[0]['username']);
+                        print(totalCapacity);
+                        print(restaurantData[0]['branch']);
+                        print(restaurantData[0]['status']);
+                        print(restaurantData[0]['res_logo']);
+
+                        return RestaurantInfo(
+                          restaurantData[0]['name'] ?? "",
+                          totalCapacity,
+                          restaurantData[0]['branch'] ?? "",
+                          restaurantData[0]['status'] ?? "",
+                          restaurantData[0]['res_logo'] ?? "",
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -120,6 +170,22 @@ class _ResMainPageState extends State<ResMainPage> {
                     ),
                   ),
                   FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _restaurantDataFuture,
+                  builder: (context, restaurantSnapshot) {
+                    if (restaurantSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      // Show a loading spinner while waiting for the future to complete
+                      return CircularProgressIndicator();
+                    }
+
+                    final List<Map<String, dynamic>> restaurantData = restaurantSnapshot.data!;
+
+                    if (restaurantData == null) {
+                      // Show an error message if the data is null
+                      return Text('Total restaurant data is null');
+                    }
+                  
+                  return FutureBuilder<List<Map<String, dynamic>>>(
                     future: _tableDataFuture,
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -145,10 +211,12 @@ class _ResMainPageState extends State<ResMainPage> {
                           String type = tableInfo['table_type'];
                           int capacity = tableInfo['capacity'];
                           int available = tableInfo['available'];
-                          return BookTableItem(type, capacity, available);
+                          return BookTableItem(type, capacity, available, restaurantData);
                         }).toList(),
                       );
                     },
+                  );
+                  },
                   ),
                 ],
               ),

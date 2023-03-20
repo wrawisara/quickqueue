@@ -8,8 +8,16 @@ import 'package:quickqueue/model/restaurant.dart';
 import 'package:quickqueue/model/tableInfo.dart';
 
 class RestaurantInfo extends StatefulWidget {
-  final Restaurant restaurant = Restaurant.generateRestaurant();
-  final TableInfo tableInfo = TableInfo.generateTableInfo();
+  //final Restaurant restaurant = Restaurant.generateRestaurant();
+  //final TableInfo tableInfo = TableInfo.generateTableInfo();
+  num capacity = 0;
+  String resName = 'name';
+  String branch = 'branch';
+  String status = 'closed';
+  String resLogo = 'default';
+
+  RestaurantInfo(this.resName, this.capacity, this.branch, this.status, this.resLogo);
+
   @override
   State<RestaurantInfo> createState() => _RestaurantInfoState();
 }
@@ -40,7 +48,8 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                     height: 20,
                   ),
                   Text(
-                    widget.restaurant.restaurantName,
+                    widget.resName,
+                    //widget.restaurant.restaurantName,
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -51,7 +60,8 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                   ),
                   Row(children: [
                     Text(
-                      widget.restaurant.branch,
+                      widget.branch,
+                      //widget.restaurant.branch,
                       style: TextStyle(color: Colors.white),
                     ),
                   ]),
@@ -61,7 +71,8 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                   Row(
                     children: [
                       Text(
-                        widget.tableInfo.total_capacity.toString() + " tables",
+                        widget.capacity.toString() + " tables",
+                        //widget.tableInfo.total_capacity.toString() + " tables",
                         style: TextStyle(color: Colors.white),
                       ),
                     ],
@@ -77,7 +88,7 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                               color: Colors.white.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
-                            " Close Queue",
+                            widget.status,
                             style: TextStyle(
                                 color: Colors.cyan.shade800, fontSize: 12),
                           ))
@@ -90,9 +101,9 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                   Padding(
                     padding: const EdgeInsets.only(top: 17.0),
                     child: ClipRect(
-                      child: Image.asset(
-                        widget.restaurant.logo,
-                        width: 90,
+                      child: Image.network(
+                        widget.resLogo,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

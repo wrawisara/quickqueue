@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
+import 'package:intl/intl.dart';
 
 class BookingServices {
   final CollectionReference bookingCollection =
@@ -27,16 +27,6 @@ class BookingServices {
         String status = doc.get('status');
         Timestamp createdAt = doc.get('created_at');
         Timestamp updatedAt = doc.get('updated_at');
-
-        //print('bookig ' + bookingQueue);
-        //print('cusID ' + cusId);
-        //print('resId ' + resId);
-        //print('guest ' + guest);
-        //print('date ' + date);
-        //print('time ' + time);
-        //print('status ' + status);
-        //print('created ' + createdAt.toString());
-        //print('updated ' + updatedAt.toString());
 
         booking.add({
           'bookingQueue': bookingQueue,
@@ -81,16 +71,6 @@ class BookingServices {
         String status = doc.get('status');
         Timestamp createdAt = doc.get('created_at');
         Timestamp updatedAt = doc.get('updated_at');
-
-        //print('bookig ' + bookingQueue);
-        //print('cusID ' + cusId);
-        //print('resId ' + resId);
-        //print('guest ' + guest);
-        //print('date ' + date);
-        //print('time ' + time);
-        //print('status ' + status);
-        //print('created ' + createdAt.toString());
-        //print('updated ' + updatedAt.toString());
 
         booking.add({
           'bookingQueue': bookingQueue,
@@ -227,6 +207,7 @@ class BookingServices {
   Future<void> bookTable(String resId, String cusId, String date, String time,
       int guests, String bookingQueue) async {
     try {
+      if (cusId != '' ){
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await bookingCollection.where('c_id', isEqualTo: cusId).get()
               as QuerySnapshot<Map<String, dynamic>>;
@@ -246,10 +227,24 @@ class BookingServices {
         'time': time,
         'updated_at': DateTime.now(),
       });
+      } else if (cusId == ''){
+        await FirebaseFirestore.instance.collection('bookings').add({
+        'booking_queue': bookingQueue,
+        'created_at': DateTime.now(),
+        'c_id': cusId,
+        'r_id': resId,
+        'date': date,
+        'guest': guests,
+        'status': 'booked',
+        'time': time,
+        'updated_at': DateTime.now(),
+      });
+      }
     } catch (e) {
       print('Error occurred when booking : $e');
     }
   }
+
 
   String getTableType(int guests) {
     if (guests > 0 && guests <= 2) {
@@ -267,9 +262,12 @@ class BookingServices {
 
   Future<void> updateBookingStatus(String bookingQueue, String status) async {
     try {
+      final now = DateTime.now();
+      final todayString = DateFormat('yyyy-MM-dd').format(now);
       final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
           await bookingCollection
               .where('booking_queue', isEqualTo: bookingQueue)
+              .where('date', isEqualTo: todayString)
               .get() as QuerySnapshot<Map<String, dynamic>>;
 
       final List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
@@ -281,7 +279,10 @@ class BookingServices {
             bookingCollection.doc(bookingId)
                 as DocumentReference<Map<String, dynamic>>;
 
-        await bookingDoc.update({'status': status});
+        await bookingDoc.update({
+          'status': status,
+          'updated_at': DateTime.now() 
+        });
         print('Booking status updated successfully');
       } else {
         print('No booking found with booking queue: $bookingQueue');
@@ -308,4 +309,23 @@ class BookingServices {
       throw e;
     }
   }
+
+  // to be decided wether to delete or not 
+  Future<void> deleteOldBookings() async {
+  final now = DateTime.now();
+  final todayString = DateFormat('yyyy-MM-dd').format(now);
+
+  final oldBookingsQuerySnapshot = await FirebaseFirestore.instance
+      .collection('bookings')
+      .where('date', isLessThan: todayString)
+      .get();
+
+  final batch = FirebaseFirestore.instance.batch();
+
+  oldBookingsQuerySnapshot.docs.forEach((doc) {
+    batch.delete(doc.reference);
+  });
+
+  await batch.commit();
+}
 }
