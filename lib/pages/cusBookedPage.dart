@@ -44,7 +44,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     
     if (currentUser != null && currentUser.uid != null) {
-      _bookingDataFuture = bookingServices.getBookingDataForCurrentUser(currentUser.uid);
+      _bookingDataFuture = bookingServices.getBookingDataForCustomer(currentUser.uid);
       currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }

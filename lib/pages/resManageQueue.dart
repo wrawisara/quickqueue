@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:material_dialogs/material_dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:quickqueue/model/booking.dart';
+// import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
 import 'package:quickqueue/widgets/resQueueTable.dart';
@@ -17,25 +17,24 @@ class ResManageQueue extends StatefulWidget {
 class _ResManageQueueState extends State<ResManageQueue> {
   final RestaurantServices restaurantServices = RestaurantServices();
   final BookingServices bookingServices = BookingServices();
-  late Future<List<Map<String, dynamic>>> _tableDataFuture;
+  
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
-      _tableDataFuture = restaurantServices.getAllTableInfo(currentUser.uid);
       _bookingDataFuture = bookingServices.getBookingDataForRestaurant(currentUser.uid);
-     
+      // selectedBookings = [];
     }
-     selectedBookings = [];
   }
 
   // ข้อมูลจาก Model ฺBooking
-  final bookingList = Booking.generateBookingList();
-  late List<Booking> selectedBookings;
+  // final bookingList = Booking.generateBookingList();
+  // late List<Booking> selectedBookings;
 
+   // ไว้ดึงข้อมูลจาก firebase
    late List<Map<String, dynamic>> _bookingData;
 
   //ใช้ select data ใน table
@@ -95,7 +94,8 @@ class _ResManageQueueState extends State<ResManageQueue> {
               );
             }
 
-              _bookingData = snapshot.data!;
+            List<Map<String, dynamic>> _bookingData = snapshot.data!;
+  
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
@@ -132,25 +132,26 @@ class _ResManageQueueState extends State<ResManageQueue> {
                   //  DataColumn(
                   //   label: Expanded(
                   //     child: Text(
-                  //       'Confirm',
+                  //       'Guest',
                   //       style: TextStyle(fontStyle: FontStyle.normal),
                   //     ),
 
                   //   ),
                   // ),
                 ],
+                
                 rows: _bookingData
                     .map((booking) => DataRow(
                           cells: [
-                            DataCell(Text(booking['bookingQueue'].toString())),
-                            DataCell(Text('${booking['date']} ${booking['time']}')),
-                            DataCell(Text(booking['status'].toString()), showEditIcon: true,
-                                onTap: () {
+                            DataCell(Text(booking['bookingQueue'])),
+                            DataCell(Text(booking['time'])),
+                            DataCell(Text(booking['status']), showEditIcon: true,
+                                onTap: () async {
+                                  final customer = await bookingServices.getCustomerById(booking['c_id']);
+                                  final customerName = customer.isNotEmpty ? "${customer[0]['firstname']} ${customer[0]['lastname']}" : "Unknown";
+                                  final message = 'Name: $customerName\nGuest: ${booking['guest']}';
                               Dialogs.materialDialog(
-                                  msg: 'Name: ' +
-                                       booking['c_name'].toString() +
-                                      '\nGuest: ' +
-                                       booking['guest'].toString(),
+                                  msg: message,
                                   // msgStyle: TextStyle(color: Colors.cyan,),
                                   title: 'Customer confirmed the queue?',
                                   color: Colors.white,
