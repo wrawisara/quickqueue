@@ -23,20 +23,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
   final BookingServices bookingServices = BookingServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
-  final RestaurantServices restaurantServices = RestaurantServices();
-
-  late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null && currentUser.uid != null) {
-      _restaurantDataFuture =
-          restaurantServices.getCurrentRestaurants(currentUser.uid);
-    }
-  }
-
   // @override
   // void initState() {
   //   super.initState();
@@ -72,69 +58,66 @@ class _CusBookingPageState extends State<CusBookingPage> {
                 right: 15,
               ),
               child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Container(
-                  height: 250,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.cyan[200],
-                    image: DecorationImage(
-                      image: NetworkImage(widget.restaurant['res_logo']),
-                      fit: BoxFit.cover,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Container(
+                      height: 250,
+                      width: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.cyan[200],
+                        image: DecorationImage(
+                          image: NetworkImage(widget.restaurant['res_logo']),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-             
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      widget.restaurant['username'],
-                      //widget.restaurant.restaurantName,
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                    ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          widget.restaurant['username'],
+                          //widget.restaurant.restaurantName,
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _restaurantDataFuture,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<Map<String, dynamic>>>
-                                restaurantDataSnapshot) {
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: FutureBuilder<List<Map<String, dynamic>>>(
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<Map<String, dynamic>>>
+                                    restaurantDataSnapshot) {
                           if (restaurantDataSnapshot.hasError) {
                             return Center(
                               child: Text('Error fetching data'),
                             );
                           }
-                  
+
                           if (restaurantDataSnapshot.data?.isEmpty ?? true) {
                             return Center(
                               child: Text('No restaurants found'),
                             );
                           }
-                  
+
                           if (restaurantDataSnapshot.connectionState ==
                               ConnectionState.waiting) {
                             // Show a loading spinner while waiting for the future to complete
                             return CircularProgressIndicator();
                           }
-                  
+
                           List<Map<String, dynamic>> restaurantData =
                               restaurantDataSnapshot.data!;
                           return Container(
@@ -142,7 +125,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  restaurantData[0]['branch'],
+                                  widget.restaurant['branch'],
                                   //widget.restaurant.restaurantName,
                                   style: TextStyle(
                                       fontSize: 22,
@@ -153,121 +136,107 @@ class _CusBookingPageState extends State<CusBookingPage> {
                             ),
                           );
                         }),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                    ),
-                    child: Text(
-                      "Previous Queue",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Colors.cyan.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "20 Queue",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  )),
-        
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                    ),
-                    child: Text(
-                      "Number of persons",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                        ),
+                        child: Text(
+                          "Previous Queue",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: Colors.cyan.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Text(
+                        "20 Queue",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                        ),
+                        child: Text(
+                          "Number of persons",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  NumOfPersons(onChanged: updateNumberOfPersons),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      // primary: Colors.green,
+                      // elevation: 3,
+                      minimumSize: Size(160, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
+                    ),
+                    child: const Text('Book',
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                    onPressed: () async {
+                      if (currentUser != null && currentUser.uid != null) {
+                        DateTime now = DateTime.now();
+                        String date = DateFormat('yyyy-MM-dd').format(now);
+                        String time = DateFormat('hh:mm a').format(now);
+                        String bookingQueue =
+                            await bookingServices.getBookingQueue(
+                                widget.restaurant['r_id'], date, numberPerson);
+                        print(bookingQueue);
+                        await bookingServices
+                            .bookTable(
+                                widget.restaurant['r_id'],
+                                currentUser.uid,
+                                date,
+                                time,
+                                numberPerson,
+                                bookingQueue)
+                            .then((_) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CusBookedPage(
+                                    restaurant: widget.restaurant,
+                                    numberPerson: numberPerson,
+                                  )));
+                        }).catchError((e) {
+                          print('$e');
+                        });
+                      }
+                    },
+                  )
                 ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              NumOfPersons(onChanged: updateNumberOfPersons),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  // primary: Colors.green,
-                  // elevation: 3,
-                  minimumSize: Size(160, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
-                ),
-                child: const Text('Book',
-                    style: TextStyle(fontSize: 20, color: Colors.white)),
-                onPressed: () async {
-                  try {
-                    if (currentUser != null && currentUser.uid != null) {
-                      DateTime now = DateTime.now();
-                      String date = DateFormat('yyyy-MM-dd').format(now);
-                      String time = DateFormat('hh:mm a').format(now);
-                      String bookingQueue = await bookingServices.getBookingQueue(
-                          widget.restaurant['r_id'], date, numberPerson);
-                      print(bookingQueue);
-                      bookingServices.bookTable(
-                          widget.restaurant['r_id'],
-                          currentUser.uid,
-                          date,
-                          time,
-                          numberPerson,
-                          bookingQueue);
-        
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CusBookedPage(
-                                restaurant: widget.restaurant,
-                                numberPerson: numberPerson,
-                              )));
-                    }
-                  } catch (e) {
-                    print('Something error: $e');
-                  }
-        
-                  //save data ลง db
-                  //widget.restaurant['username'];
-                  //widget.allRestaurantModel.queueNum;
-                  //NumOfPersons();
-        
-                  // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
-                  // showDialog<String>(
-                  //   context: context,
-                  //   builder: (BuildContext context) => AlertDialog(
-                  //     title: const Text('Sucess'),
-                  //     content: const Text('Your queue has been booked.'),
-                  //   ),
-                  // );
-                },
-              )
-            ],
-          )),
+              )),
         ));
   }
 }
