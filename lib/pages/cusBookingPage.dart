@@ -23,13 +23,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
   final BookingServices bookingServices = BookingServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _bookingDataFuture = bookingServices.getBookingData();
-  // }
-
-  //เอาค่า guest จาก number of person มาใช้
   int numberPerson = 0;
 
   void updateNumberOfPersons(int value) {
@@ -63,116 +56,96 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     padding: const EdgeInsets.all(15),
                     child: Container(
                       height: 250,
-                      width: 250,
+                      width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.cyan[200],
                         image: DecorationImage(
                           image: NetworkImage(widget.restaurant['res_logo']),
                           fit: BoxFit.cover,
                         ),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.cyan[200],
                       ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(
-                          widget.restaurant['username'],
-                          //widget.restaurant.restaurantName,
-                          style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
-                        ),
+                   SizedBox(height: 10,),
+                   Text(
+                        widget.restaurant['username'],
+                        //widget.restaurant.restaurantName,
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: FutureBuilder<List<Map<String, dynamic>>>(
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<Map<String, dynamic>>>
-                                    restaurantDataSnapshot) {
-                          if (restaurantDataSnapshot.hasError) {
-                            return Center(
-                              child: Text('Error fetching data'),
-                            );
-                          }
-
-                          if (restaurantDataSnapshot.data?.isEmpty ?? true) {
-                            return Center(
-                              child: Text('No restaurants found'),
-                            );
-                          }
-
-                          if (restaurantDataSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // Show a loading spinner while waiting for the future to complete
-                            return CircularProgressIndicator();
-                          }
-
-                          List<Map<String, dynamic>> restaurantData =
-                              restaurantDataSnapshot.data!;
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              children: [
-                                Text(
-                                  widget.restaurant['branch'],
-                                  //widget.restaurant.restaurantName,
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
+                  
+                   SizedBox(
+                    height: 10,
                   ),
                   Row(
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(
-                          left: 20,
+                          left: 40,
                         ),
                         child: Text(
                           "Previous Queue",
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                           ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                          padding: EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                              color: Colors.cyan.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(
+                            "20 Queue",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          )),
+                    ],
+                  ),
+                 
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left :40),
+                        child: Text(
+                          widget.restaurant['branch'],
+                          //widget.restaurant.restaurantName,
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 10,
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left :40),
+                        child: Text(
+                          "URl Gopoint ",
+                          //widget.restaurant.restaurantName,
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: Colors.cyan.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text(
-                        "20 Queue",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      )),
+
+                  
+                  
                   SizedBox(
-                    height: 20,
+                    height: 50,
                   ),
+                  
                   Row(
                     children: <Widget>[
                       Padding(
@@ -200,14 +173,14 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     style: ElevatedButton.styleFrom(
                       // primary: Colors.green,
                       // elevation: 3,
-                      minimumSize: Size(160, 50),
+                      minimumSize: Size(330, 50),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
+                          borderRadius: BorderRadius.circular(20.0)),
                     ),
                     child: const Text('Book',
                         style: TextStyle(fontSize: 20, color: Colors.white)),
                     onPressed: () async {
-                      if (currentUser != null && currentUser.uid != null) {
+                        if (currentUser != null && currentUser.uid != null) {
                         DateTime now = DateTime.now();
                         String date = DateFormat('yyyy-MM-dd').format(now);
                         String time = DateFormat('hh:mm a').format(now);
@@ -232,8 +205,22 @@ class _CusBookingPageState extends State<CusBookingPage> {
                         }).catchError((e) {
                           print('$e');
                         });
-                      }
-                    },
+
+                      //save data ลง db
+                      //widget.restaurant['username'];
+                      //widget.allRestaurantModel.queueNum;
+                      //NumOfPersons();
+
+                      // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
+                      // showDialog<String>(
+                      //   context: context,
+                      //   builder: (BuildContext context) => AlertDialog(
+                      //     title: const Text('Sucess'),
+                      //     content: const Text('Your queue has been booked.'),
+                      //   ),
+                      // );
+                    };
+                    }
                   )
                 ],
               )),

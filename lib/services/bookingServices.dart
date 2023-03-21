@@ -1,5 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:share_plus/share_plus.dart';
+import 'dart:ui';
+import 'package:csv/csv.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BookingServices {
   final CollectionReference bookingCollection =
@@ -8,12 +13,11 @@ class BookingServices {
       FirebaseFirestore.instance.collection('tableInfo');
   final CollectionReference customerCollection =
       FirebaseFirestore.instance.collection('customer');
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> getBookingData() async {
     try {
       QuerySnapshot bookingQuerySnapshot =
-          await _firestore.collection('bookings').get();
+          await bookingCollection.get();
 
       List<Map<String, dynamic>> booking = [];
 
@@ -53,8 +57,7 @@ class BookingServices {
   Future<List<Map<String, dynamic>>> getBookingDataForCustomer(
       String cusId) async {
     try {
-      QuerySnapshot bookingQuerySnapshot = await _firestore
-          .collection('bookings')
+      QuerySnapshot bookingQuerySnapshot = await bookingCollection
           .where('c_id', isEqualTo: cusId)
           .orderBy('created_at', descending: true)
           .get();
@@ -79,7 +82,7 @@ class BookingServices {
           'guest': guest,
           'date': date,
           'time': time,
-          'status': 'pending',
+          'status': status,
           'created_at': createdAt,
           'updated_at': updatedAt,
         });
@@ -99,8 +102,7 @@ class BookingServices {
     try {
       final now = DateTime.now();
       final todayString = DateFormat('yyyy-MM-dd').format(now);
-      QuerySnapshot bookingQuerySnapshot = await _firestore
-          .collection('bookings')
+      QuerySnapshot bookingQuerySnapshot = await bookingCollection
           .where('r_id', isEqualTo: resId)
           .where('date', isEqualTo: todayString)
           .orderBy('created_at')
@@ -126,7 +128,7 @@ class BookingServices {
           'guest': guest,
           'date': date,
           'time': time,
-          'status': 'pending',
+          'status': status,
           'created_at': createdAt,
           'updated_at': updatedAt,
         });
@@ -206,8 +208,7 @@ class BookingServices {
   }
 
   // Booking
-
-  Future<void> bookTable(String resId, String cusId, String date, String time,
+Future<void> bookTable(String resId, String cusId, String date, String time,
       int guests, String bookingQueue) async {
     try {
       if (cusId != '' ){
@@ -228,7 +229,7 @@ class BookingServices {
         'r_id': resId,
         'date': date,
         'guest': guests,
-        'status': 'booked',
+        'status': 'pending',
         'time': time,
         'updated_at': DateTime.now(),
       });
@@ -240,7 +241,7 @@ class BookingServices {
         'r_id': resId,
         'date': date,
         'guest': guests,
-        'status': 'booked',
+        'status': 'pending',
         'time': time,
         'updated_at': DateTime.now(),
       });
@@ -321,10 +322,9 @@ class BookingServices {
   final now = DateTime.now();
   final todayString = DateFormat('yyyy-MM-dd').format(now);
 
-  final oldBookingsQuerySnapshot = await FirebaseFirestore.instance
-      .collection('bookings')
+  final oldBookingsQuerySnapshot = await bookingCollection
       .where('date', isLessThan: todayString)
-      .get();
+      .get() as QuerySnapshot<Map<String, dynamic>>;
 
   final batch = FirebaseFirestore.instance.batch();
 
@@ -333,5 +333,53 @@ class BookingServices {
   });
 
   await batch.commit();
+}
+
+Future<void> downloadBookingsCsv(String resId) async {
+  try {
+  // Query the bookings collection
+  final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      await bookingCollection.where('r_id', isEqualTo: resId).get() as QuerySnapshot<Map<String, dynamic>>;
+
+  // Convert the data into a CSV format
+  final List<List<dynamic>> rows = [];
+  rows.add(['booking_id', 'res_id', 'booking_queue','booking_date', 'booking_time', 'guests']); // Add header row
+  for (final QueryDocumentSnapshot<Map<String, dynamic>> document
+      in querySnapshot.docs) {
+    rows.add([
+      document.id,
+      document.data()['r_id'],
+      document.data()['booking_queue'],
+      document.data()['date'],
+      document.data()['time'],
+      document.data()['guest']
+    ]);
+  }
+  final String csvData = const ListToCsvConverter().convert(rows);
+
+  // Save the CSV data to a file on the device
+  final Directory appDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+  const String csvFileName = 'bookings.csv';
+  final File csvFile = File('${appDocumentsDirectory.path}/$csvFileName');
+  await csvFile.writeAsString(csvData);
+
+  // Offer the user the option to download the file
+  await shareFile(csvFile);
+  } catch (e){
+    print('Error during downloading CSV $e');
+  }
+}
+
+Future<void> shareFile(File file) async {
+  final String fileName = file.path.split('/').last;
+  final List<String> paths = file.path.split('/');
+  paths.removeLast();
+  final String directory = paths.join('/');
+
+   await Share.shareXFiles([XFile(file.path)],
+      text: 'Here is your CSV file: $fileName',
+      subject: 'CSV File',
+      sharePositionOrigin: Rect.fromLTWH(0, 0, 10, 10));
 }
 }

@@ -19,7 +19,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
   final BookingServices bookingServices = BookingServices();
 
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
-  late Future<List<Map<String, dynamic>>> _customerDataFuture;
+  late String userId;
 
   @override
   void initState() {
@@ -28,6 +28,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
     if (currentUser != null && currentUser.uid != null) {
       _bookingDataFuture =
           bookingServices.getBookingDataForRestaurant(currentUser.uid);
+      userId = currentUser.uid;
       // selectedBookings = [];
     }
   }
@@ -68,8 +69,9 @@ class _ResManageQueueState extends State<ResManageQueue> {
               ),
               // tooltip: 'Show Snackbar',
               onPressed: () {
+                bookingServices.downloadBookingsCsv(userId);
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Download csv file')));
+                    const SnackBar(content: Text('Downloading csv file')));
                 // method to show the search bar
                 // showSearch(
                 //   context: context,
@@ -177,8 +179,9 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                       context: context,
                                       actions: [
                                         IconsButton(
-                                          onPressed: () {
+                                          onPressed:() {
                                             //ใส่ action
+                                            bookingServices.updateBookingStatus(booking['bookingQueue'], 'confirmed');
                                           },
                                           text: 'Confirm Queue',
                                           iconData: Icons.check_circle_outline,
@@ -190,6 +193,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                         IconsButton(
                                           onPressed: () {
                                             //ใส่ action
+                                            bookingServices.updateBookingStatus(booking['bookingQueue'], 'canceled');
                                           },
                                           text: 'Cancel',
                                           iconData: Icons.cancel_outlined,
