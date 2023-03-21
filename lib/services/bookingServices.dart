@@ -203,13 +203,14 @@ class BookingServices {
   }
 
   // Booking
-
-  Future<void> bookTable(String resId, String cusId, String date, String time,
+Future<void> bookTable(String resId, String cusId, String date, String time,
       int guests, String bookingQueue) async {
     try {
       if (cusId != '' ){
+      final now = DateTime.now();
+      final todayString = DateFormat('yyyy-MM-dd').format(now);
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await bookingCollection.where('c_id', isEqualTo: cusId).get()
+          await bookingCollection.where('c_id', isEqualTo: cusId).where('date', isEqualTo: todayString).get()
               as QuerySnapshot<Map<String, dynamic>>;
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -241,7 +242,8 @@ class BookingServices {
       });
       }
     } catch (e) {
-      print('Error occurred when booking : $e');
+      print('$e');
+      throw e;
     }
   }
 

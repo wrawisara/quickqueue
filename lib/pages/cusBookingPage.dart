@@ -201,34 +201,31 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     child: const Text('Book',
                         style: TextStyle(fontSize: 20, color: Colors.white)),
                     onPressed: () async {
-                      try {
                         if (currentUser != null && currentUser.uid != null) {
-                          DateTime now = DateTime.now();
-                          String date = DateFormat('yyyy-MM-dd').format(now);
-                          String time = DateFormat('hh:mm a').format(now);
-                          String bookingQueue =
-                              await bookingServices.getBookingQueue(
-                                  widget.restaurant['r_id'],
-                                  date,
-                                  numberPerson);
-                          print(bookingQueue);
-                          bookingServices.bookTable(
-                              widget.restaurant['r_id'],
-                              currentUser.uid,
-                              date,
-                              time,
-                              numberPerson,
-                              bookingQueue);
-
+                        DateTime now = DateTime.now();
+                        String date = DateFormat('yyyy-MM-dd').format(now);
+                        String time = DateFormat('hh:mm a').format(now);
+                        String bookingQueue =
+                            await bookingServices.getBookingQueue(
+                                widget.restaurant['r_id'], date, numberPerson);
+                        print(bookingQueue);
+                        await bookingServices
+                            .bookTable(
+                                widget.restaurant['r_id'],
+                                currentUser.uid,
+                                date,
+                                time,
+                                numberPerson,
+                                bookingQueue)
+                            .then((_) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => CusBookedPage(
                                     restaurant: widget.restaurant,
                                     numberPerson: numberPerson,
                                   )));
-                        }
-                      } catch (e) {
-                        print('Something error: $e');
-                      }
+                        }).catchError((e) {
+                          print('$e');
+                        });
 
                       //save data ลง db
                       //widget.restaurant['username'];
@@ -243,7 +240,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       //     content: const Text('Your queue has been booked.'),
                       //   ),
                       // );
-                    },
+                    };
+                    }
                   )
                 ],
               )),
