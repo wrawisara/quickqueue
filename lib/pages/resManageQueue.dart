@@ -17,15 +17,17 @@ class ResManageQueue extends StatefulWidget {
 class _ResManageQueueState extends State<ResManageQueue> {
   final RestaurantServices restaurantServices = RestaurantServices();
   final BookingServices bookingServices = BookingServices();
-  
+
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  late Future<List<Map<String, dynamic>>> _customerDataFuture;
 
   @override
-   void initState() {
+  void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
-      _bookingDataFuture = bookingServices.getBookingDataForRestaurant(currentUser.uid);
+      _bookingDataFuture =
+          bookingServices.getBookingDataForRestaurant(currentUser.uid);
       // selectedBookings = [];
     }
   }
@@ -34,8 +36,11 @@ class _ResManageQueueState extends State<ResManageQueue> {
   // final bookingList = Booking.generateBookingList();
   // late List<Booking> selectedBookings;
 
-   // ไว้ดึงข้อมูลจาก firebase
-   late List<Map<String, dynamic>> _bookingData;
+  // ไว้ดึงข้อมูลจาก firebase
+  late List<Map<String, dynamic>> _bookingData;
+
+  // ไว้ดึงข้อมูลจาก firebase
+  //  late List<Map<String, dynamic>> _bookingData;
 
   //ใช้ select data ใน table
   List<DataRow> selectedRows = [];
@@ -58,13 +63,13 @@ class _ResManageQueueState extends State<ResManageQueue> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.search_rounded,
+                Icons.download_rounded,
                 color: Colors.white,
               ),
               // tooltip: 'Show Snackbar',
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Search Restaurant')));
+                    const SnackBar(content: Text('Download csv file')));
                 // method to show the search bar
                 // showSearch(
                 //   context: context,
@@ -94,84 +99,112 @@ class _ResManageQueueState extends State<ResManageQueue> {
               );
             }
 
-            List<Map<String, dynamic>> _bookingData = snapshot.data!;
-  
+            _bookingData = snapshot.data!;
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: DataTable(
-                sortAscending: true,
-                headingRowColor:
-                    MaterialStateProperty.all<Color>(Colors.cyan[50]!),
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Booking',
-                        style: TextStyle(fontStyle: FontStyle.normal),
-                      ),
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: 400,
+                  // margin: EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                  decoration: new BoxDecoration(
+                    color: Colors.cyan.withOpacity(0.1),
+                    border: Border.all(color: Colors.white, width: 3),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'DateTime',
-                        style: TextStyle(fontStyle: FontStyle.normal),
+                  child: DataTable(
+                    sortAscending: true,
+                    // headingRowColor:
+                    //     MaterialStateProperty.all<Color>(Colors.cyan.withOpacity(0.1)),
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            'Booking',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Status',
-                        style: TextStyle(fontStyle: FontStyle.normal),
+                              
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            'DateTime',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                        ),
                       ),
-                    ),
+                              
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            'Status',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                        ),
+                      ),
+                      //  DataColumn(
+                      //   label: Expanded(
+                      //     child: Text(
+                      //       'Guest',
+                      //       style: TextStyle(fontStyle: FontStyle.normal),
+                      //     ),
+                              
+                      //   ),
+                      // ),
+                    ],
+                    rows: _bookingData
+                        .map((booking) => DataRow(
+                              cells: [
+                                DataCell(Text(booking['bookingQueue'])),
+                                DataCell(Text(booking['time'])),
+                                DataCell(Text(booking['status']),
+                                    showEditIcon: true, onTap: () async {
+                                  final customer = await bookingServices
+                                      .getCustomerById(booking['c_id']);
+                                  final customerName = customer.isNotEmpty
+                                      ? "${customer[0]['firstname']} ${customer[0]['lastname']}"
+                                      : "Unknown";
+                                  final message =
+                                      'Name: $customerName\nGuest: ${booking['guest']}';
+                                  Dialogs.materialDialog(
+                                      msg: message,
+                                      // msgStyle: TextStyle(color: Colors.cyan,),
+                                      title: 'Customer confirmed the queue?',
+                                      color: Colors.white,
+                                      context: context,
+                                      actions: [
+                                        IconsButton(
+                                          onPressed: () {
+                                            //ใส่ action
+                                          },
+                                          text: 'Confirm Queue',
+                                          iconData: Icons.check_circle_outline,
+                                          color: Colors.tealAccent[700],
+                                          textStyle:
+                                              TextStyle(color: Colors.white),
+                                          iconColor: Colors.white,
+                                        ),
+                                        IconsButton(
+                                          onPressed: () {
+                                            //ใส่ action
+                                          },
+                                          text: 'Cancel',
+                                          iconData: Icons.cancel_outlined,
+                                          color: Colors.red[400],
+                                          textStyle:
+                                              TextStyle(color: Colors.white),
+                                          iconColor: Colors.white,
+                                        ),
+                                      ]);
+                                }),
+                              ],
+                            ))
+                        .toList(),
                   ),
-                  //  DataColumn(
-                  //   label: Expanded(
-                  //     child: Text(
-                  //       'Guest',
-                  //       style: TextStyle(fontStyle: FontStyle.normal),
-                  //     ),
-
-                  //   ),
-                  // ),
-                ],
-                
-                rows: _bookingData
-                    .map((booking) => DataRow(
-                          cells: [
-                            DataCell(Text(booking['bookingQueue'])),
-                            DataCell(Text(booking['time'])),
-                            DataCell(Text(booking['status']), showEditIcon: true,
-                                onTap: () async {
-                                  final customer = await bookingServices.getCustomerById(booking['c_id']);
-                                  final customerName = customer.isNotEmpty ? "${customer[0]['firstname']} ${customer[0]['lastname']}" : "Unknown";
-                                  final message = 'Name: $customerName\nGuest: ${booking['guest']}';
-                              Dialogs.materialDialog(
-                                  msg: message,
-                                  // msgStyle: TextStyle(color: Colors.cyan,),
-                                  title: 'Customer confirmed the queue?',
-                                  color: Colors.white,
-                                  context: context,
-                                  actions: [
-                                    IconsButton(
-                                      onPressed: () {
-                                        //ใส่ action
-                                      },
-                                      text: 'Confirm Queue',
-                                      iconData: Icons.check_circle_outline,
-                                      color: Colors.tealAccent[700],
-                                      textStyle: TextStyle(color: Colors.white),
-                                      iconColor: Colors.white,
-                                    ),
-                                  ]);
-                            }),
-                          ],
-                        ))
-                    .toList(),
+                ),
               ),
             );
           }),

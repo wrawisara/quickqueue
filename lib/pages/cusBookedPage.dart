@@ -42,16 +42,16 @@ class _CusBookedPageState extends State<CusBookedPage> {
   void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
-    
+
     if (currentUser != null && currentUser.uid != null) {
-      _bookingDataFuture = bookingServices.getBookingDataForCustomer(currentUser.uid);
+      _bookingDataFuture =
+          bookingServices.getBookingDataForCustomer(currentUser.uid);
       currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
@@ -76,33 +76,44 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     height: 10,
                   ),
                   Container(
-                    height: 250,
-                    child: Card(
-                      semanticContainer: true,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      //ใส่รูปร้านอาหารที่เลือก
-                      child: Image.network(
-                        widget.restaurant['res_logo'],
-                        fit: BoxFit.cover,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                      elevation: 1,
-                      margin: EdgeInsets.all(5),
+                    height: 300,
+                    width: 300,
+                    margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+                    // padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: new BoxDecoration(
+                      color: Colors.cyan.withOpacity(0.6),
+                      border: Border.all(color: Colors.white, width: 3),
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Text(
-                        widget.restaurant['username'],
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
+                    child: Column(
+                      
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Container(
+                            height: 260,
+                            child: Image.network(
+                              widget.restaurant['res_logo'],
+                              fit: BoxFit.fill,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        Row(
+                          
+                          children: [
+                            Text(
+                              widget.restaurant['username'],
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 20,
@@ -151,7 +162,8 @@ class _CusBookedPageState extends State<CusBookedPage> {
                           );
                         }
 
-                        List<Map<String, dynamic>> bookingData = snapshot.data ?? [];
+                        List<Map<String, dynamic>> bookingData =
+                            snapshot.data ?? [];
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
@@ -209,7 +221,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       Text(
-                        "Guest : " ,
+                        "Guest : ",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
@@ -272,7 +284,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                   SizedBox(
                     height: 10,
                   ),
-                 FutureBuilder<List<Map<String, dynamic>>>(
+                  FutureBuilder<List<Map<String, dynamic>>>(
                       future: _bookingDataFuture,
                       builder: (BuildContext context,
                           AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
@@ -295,24 +307,23 @@ class _CusBookedPageState extends State<CusBookedPage> {
                         }
 
                         List<Map<String, dynamic>> bookingData = snapshot.data!;
-                      return Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 75,
-                            ),
-                            child: Text(
-                              bookingData[0]['time'],
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w400,
+                        return Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 75,
+                              ),
+                              child: Text(
+                                bookingData[0]['time'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }
-                  ),
+                          ],
+                        );
+                      }),
                   SizedBox(
                     height: 20,
                   ),

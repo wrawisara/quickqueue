@@ -52,6 +52,46 @@ class RestaurantServices {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getCurrentRestaurants(String resId) async {
+    try {
+      QuerySnapshot restaurantQuerySnapshot =
+          await _firestore.collection('restaurant').where('r_id', isEqualTo: resId).get();
+
+      List<Map<String, dynamic>> restaurants = [];
+
+      restaurantQuerySnapshot.docs.forEach((doc) {
+        String resId = doc.get('r_id');
+        String address = doc.get('address');
+        GeoPoint location = doc.get('location');
+        String username = doc.get('username');
+        String phone = doc.get('phone');
+        String res_logo = doc.get('res_logo');
+        String branch = doc.get('branch');
+        String status = doc.get('status');
+
+        print(address);
+
+        restaurants.add({
+          'r_id': resId,
+          'address': address,
+          'location': location,
+          'username': username,
+          'phone': phone,
+          'res_logo': res_logo,
+          'branch': branch,
+          'status': status,
+        });
+      });
+
+      print(restaurants);
+
+      return restaurants;
+    } catch (e) {
+      print('Error fetching data: $e');
+      throw e;
+    }
+  }
+
   // haven't check
   Future<void> setTableInfo(String resId, Map<String, int> tableInfo) async {
     try {
@@ -172,6 +212,26 @@ class RestaurantServices {
       throw e;
     }
   }
+
+  Future<num> getTotalCapacity(String resId) async {
+  try {
+    final QuerySnapshot querySnapshot =  await _firestore.collection('tableInfo')
+        .where('r_id', isEqualTo: resId)
+        .get();
+
+    num totalCapacity = 0;
+
+    querySnapshot.docs.forEach((doc) {
+      totalCapacity += doc.get('capacity');
+    });
+
+    print('Total Capacity: ' + totalCapacity.toString());
+    return totalCapacity;
+  } catch (e) {
+    print('Error occurred while getting total capacity: $e');
+    throw e;
+  }
+}
 
   Future<String> getNumberOfQueue(String resId) async {
     try {

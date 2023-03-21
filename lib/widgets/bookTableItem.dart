@@ -1,9 +1,6 @@
-import 'dart:math';
-
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
-import 'package:quickqueue/model/tableInfo.dart';
+import 'package:intl/intl.dart';
+import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/utils/horizontalLine.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
 
@@ -11,14 +8,23 @@ class BookTableItem extends StatefulWidget {
   String type;
   int capacity;
   int available;
+  List<Map<String, dynamic>> restaurant;
 
-  BookTableItem(this.type, this.capacity, this.available);
+  BookTableItem(this.type, this.capacity, this.available, this.restaurant);
 
   @override
   State<BookTableItem> createState() => _BookTableItemState();
 }
 
 class _BookTableItemState extends State<BookTableItem> {
+  final BookingServices bookingServices = BookingServices();
+  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookingDataFuture = bookingServices.getBookingData();
+  }
 
   //final TableInfo tableInfo = TableInfo.generateTableInfo();
 
@@ -102,11 +108,30 @@ class _BookTableItemState extends State<BookTableItem> {
                               height: 35,
                               child: CustomElevatedButton(
                                 width: double.infinity,
-                                onPressed: () {},
+                                onPressed: () async {
+                                  DateTime now = DateTime.now();
+                                  String date =
+                                      DateFormat('yyyy-MM-dd').format(now);
+                                  String time =
+                                      DateFormat('hh:mm a').format(now);
+                                  String bookingQueue =
+                                      await bookingServices.getBookingQueue(
+                                          widget.restaurant[0]['r_id'],
+                                          date,
+                                          2);
+                                  bookingServices.bookTable(
+                                      widget.restaurant[0]['r_id'],
+                                      '',
+                                      date,
+                                      time,
+                                      2,
+                                      bookingQueue);
+                                },
                                 borderRadius: BorderRadius.circular(10),
                                 child: Text(
                                   'Book',
-                                  style: TextStyle(color: Colors.white, fontSize: 15),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
                                 ),
                               )
 

@@ -20,8 +20,8 @@ class CustomerServices {
         String username = doc.get('username');
         String phone = doc.get('phone');
         String res_logo = doc.get('res_logo');
-
-        print(address);
+        String branch = doc.get('branch');
+        String status = doc.get('status');
 
         restaurants.add({
           'r_id': resId,
@@ -30,6 +30,8 @@ class CustomerServices {
           'username': username,
           'phone': phone,
           'res_logo': res_logo,
+          'branch': branch,
+          'status': status,
         });
       });
 
@@ -205,33 +207,6 @@ class CustomerServices {
     await customerDoc.reference.update(updateData);
   }
 
-  Future<void> createBookings(String cusId, String resId, int guests) async {
-    Timestamp timestamp = Timestamp.now();
-    DateTime dateTime = timestamp.toDate();
-    String timeString = DateFormat('H.mm').format(dateTime);
-
-    Timestamp bookingDate = timestamp;
-    String bookingTime = timeString;
-
-    String tableType = getTableType(guests);
-
-    int numBookings = await FirebaseFirestore.instance
-        .collection('bookings')
-        .where('r_id', isEqualTo: resId)
-        .where('date', isEqualTo: bookingDate)
-        .where('time', isEqualTo: bookingTime)
-        .where('status', isEqualTo: 'confirmed')
-        .where('booking_queue', isGreaterThanOrEqualTo: tableType)
-        .where('booking_queue', isLessThan: tableType + 'z')
-        .get()
-        .then((querySnapshot) => querySnapshot.docs.length);
-
-// Format booking queue number with leading zeros
-    String bookingQueue =
-        '${tableType}${(numBookings + 1).toString().padLeft(3, '0')}';
-    createBookingDoc(resId, cusId, bookingQueue, guests);
-  }
-
   Future<List<DocumentSnapshot>> getBookingQueue(String resId) async {
   QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
       .collection('bookings')
@@ -241,29 +216,6 @@ class CustomerServices {
   return snapshot.docs;
 }
 
-  Future<void> createBookingDoc(
-      String resId, String? cusId, String bookingQueue, int guests) async {
-    CollectionReference<Map<String, dynamic>> bookingCollectionRef =
-        FirebaseFirestore.instance.collection("bookings");
-    DocumentReference<Map<String, dynamic>> bookingDocRef =
-        bookingCollectionRef.doc();
-
-    Timestamp timestamp = Timestamp.now();
-    DateTime dateTime = timestamp.toDate();
-    String timeString = DateFormat('H.mm').format(dateTime);
-
-    await bookingDocRef.set({
-      'cus_id': cusId,
-      'r_id': resId,
-      'booking_queue': bookingQueue,
-      'date': timestamp,
-      'time': timeString,
-      'guest': guests,
-      'status': 'รอคิว',
-      'created_at': FieldValue.serverTimestamp(),
-      'updated_at': FieldValue.serverTimestamp()
-    });
-  }
 
   String getTableType(int guests) {
     if (guests <= 2) {
@@ -279,6 +231,7 @@ class CustomerServices {
     }
   }
 
+  // tobe delete
   Future<List<String>> getCustomerName(String cusId) async {
   final QuerySnapshot<Map<String, dynamic>> customerSnapshot =
       await _firestore.collection('customer').where('c_id', isEqualTo: cusId).get();

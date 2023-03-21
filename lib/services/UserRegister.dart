@@ -181,9 +181,10 @@ class UserRegisterService {
             'username': username,
             'phone': phoneNum,
             'address': address,
+            'branch': branch,
             'location': GeoPoint(latitude, longitude),
             'res_logo': imageUrl,
-            'queue_status': 'close',
+            'status': 'close',
             'role': 'restaurant',
           });
           createTableInfoWhenRegister(id);
