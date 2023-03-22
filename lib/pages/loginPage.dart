@@ -172,7 +172,7 @@ Future<void> loginChecker(
     if (userType == 'customer') {
       print('Login Success');
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => CusChooseResPage()));
+          .push(MaterialPageRoute(builder: (context) => CusHomePage()));
       //navigateToCusChooseResPage(context, user);
     } else if (userType == 'restaurant') {
       print('Login Success');

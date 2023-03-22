@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quickqueue/pages/cusBookedPage.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
@@ -20,12 +21,27 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
   final CustomerServices customerServices = CustomerServices();
 
   late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
+  late List<Map<String, dynamic>> _searchResults;
 
   @override
   void initState() {
     super.initState();
     _restaurantDataFuture = customerServices.getAllRestaurants();
+     _searchResults = [];
   }
+
+  //search box
+  void _onSearchQueryChanged(String query) {
+  _restaurantDataFuture.then((restaurantData) {
+    setState(() {
+      _searchResults = restaurantData.where((restaurant) {
+        final name = restaurant['username'].toLowerCase();
+        final searchLower = query.toLowerCase();
+        return name.contains(searchLower);
+      }).toList();
+    });
+  });
+}
 
   //แสดงผลข้อมูล
   @override
@@ -41,30 +57,14 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.search_rounded,
-                color: Colors.white,
-              ),
-              // tooltip: 'Show Snackbar',
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Search Restaurant')));
-                // method to show the search bar
-                // showSearch(
-                //   context: context,
-                //   // delegate to customize the search bar
-                //   // delegate: CustomSearchDelegate()
-                // );
-              },
-            ),
-            IconButton(
-              icon: const Icon(
                 Icons.account_circle_rounded,
                 color: Colors.white,
               ),
               // tooltip: 'Show Snackbar',
               onPressed: () {
                 // ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(content: Text('Want to go Profile')));
+                //     const SnackBar(content: Text('Want to go My booked')));
+                
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => CusProfilePage()));
               },
@@ -79,66 +79,169 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               },
             ),
           ]),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-          future: _restaurantDataFuture,
-          builder: (BuildContext context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('Error fetching data'),
-              );
-            }
-
-            if (snapshot.data?.isEmpty ?? true) {
-              return Center(
-                child: Text('No restaurants found'),
-              );
-            }
-
-            List<Map<String, dynamic>> restaurantData = snapshot.data ?? [];
-            return ListView.builder(
-              itemCount: restaurantData.length,
-              itemBuilder: (BuildContext context, int index) {
-                Map<String, dynamic> restaurant = restaurantData[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(
-                      restaurant['username'],
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    subtitle: Text(
-                      restaurant['address'],
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    leading: SizedBox(
-                      width: 50,
-                      height: 60,
-                      child: Image.network(
-                        restaurant['res_logo'],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    onTap: () {
-                      // TODO: navigate to booking page
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  CusBookingPage(restaurant: restaurant)));
-                    },
-                  ),
-                );
-              },
-            );
-          }),
+      body:  Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0,left: 20,right: 20),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText : 'Search',suffixIcon: Icon(Icons.search) ,
+              ),
+              onChanged: _onSearchQueryChanged,
+            ),
+          ),
+          Expanded(
+            child: _searchResults.isEmpty 
+              ? FutureBuilder<List<Map<String, dynamic>>>(
+                future: _restaurantDataFuture,
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error fetching data'),
+                    );
+                  }
+                
+                  if (snapshot.data?.isEmpty ?? true) {
+                    return Center(
+                      child: Text('No restaurants found'),
+                    );
+                  }
+                 List<Map<String, dynamic>> restaurantData = snapshot.data ?? [];
+                  return 
+                     ListView.builder(
+                      itemCount: restaurantData.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Map<String, dynamic> restaurant = restaurantData[index];
+                        return Container(
+                          height: 90,
+                          margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+                          decoration: new BoxDecoration(
+                           color: Colors.cyan.withOpacity(0.1),
+                            
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.only(top: 10,left: 15,right: 20),
+                            title: Text(
+                              restaurant['username'],
+                              style: TextStyle(fontSize: 22),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Container(
+                                  
+                                  // width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                              color: Color.fromRGBO(72, 210, 157, 1).withOpacity(0.9),
+                                              borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    //ใส่ queue
+                                    "20 queue",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            leading: Container(
+                              width: 90,
+                              height: MediaQuery.of(context).size.height,
+                           
+                              child: Image.network(
+                                restaurant['res_logo'],
+                                fit: BoxFit.contain,
+                                width: 90,
+                                height: 90,
+                              ),
+                            ),
+                            onTap: () {
+                              // TODO: navigate to booking page
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CusBookingPage(
+                                          restaurant: restaurant)));
+                            },
+                          ),
+                        );
+                      },
+                    );
+                }
+                )
+            :  ListView.builder(
+                      itemCount: _searchResults.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Map<String, dynamic> restaurant = _searchResults[index];
+                        return Container(
+                          height: 90,
+                          margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+                          decoration: new BoxDecoration(
+                           color: Colors.cyan.withOpacity(0.1),
+                            
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.only(top: 10,left: 15,right: 20),
+                            title: Text(
+                              restaurant['username'],
+                              style: TextStyle(fontSize: 22),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Container(
+                                  
+                                  // width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                              color: Color.fromRGBO(72, 210, 157, 1).withOpacity(0.9),
+                                              borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    //ใส่ queue
+                                    "20 queue",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            leading: Container(
+                              width: 90,
+                              height: MediaQuery.of(context).size.height,
+                           
+                              child: Image.network(
+                                restaurant['res_logo'],
+                                fit: BoxFit.contain,
+                                width: 90,
+                                height: 90,
+                              ),
+                            ),
+                            onTap: () {
+                              // TODO: navigate to booking page
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CusBookingPage(
+                                          restaurant: restaurant)));
+                            },
+                          ),
+                        );
+                      }
+                    
+                
+                )
+            
+          ),
+        ],
+      ),
     );
   }
 }
-
 
 navigateToLoginPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -146,38 +249,38 @@ navigateToLoginPage(BuildContext context) {
   }));
 }
 
-  showLogoutAlertDialog(BuildContext context) {
-    Widget continueButton = TextButton(
-      child: Text("Yes"),
-      onPressed: () {
-        navigateToLoginPage(context);
-      },
-    );
-    Widget cancelButton = TextButton(
-      child: Text("No"),
-      onPressed: () {
-         Navigator.pop(context, false);
-      },
-    );
+showLogoutAlertDialog(BuildContext context) {
+  Widget continueButton = TextButton(
+    child: Text("Yes"),
+    onPressed: () {
+      navigateToLoginPage(context);
+    },
+  );
+  Widget cancelButton = TextButton(
+    child: Text("No"),
+    onPressed: () {
+      Navigator.pop(context, false);
+    },
+  );
 
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Sign Out"),
-      content: Text("Would you like to sign out ?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Sign Out"),
+    content: Text("Would you like to sign out ?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
 
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
 
 // navigateToCusBookingPage(BuildContext context) {
 //   Navigator.push(context, MaterialPageRoute(builder: (context) {
