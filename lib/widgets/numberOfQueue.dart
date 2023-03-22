@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/booking.dart';
+import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/utils/color.dart';
 
 
 class NumberOfQueue extends StatefulWidget {
-  NumberOfQueue({super.key});
+  String resId;
+
+  NumberOfQueue(this.resId);
 
   Booking booking = Booking.generateBooking();
 
@@ -16,6 +19,20 @@ class NumberOfQueue extends StatefulWidget {
 
 class _NumberOfQueueState extends State<NumberOfQueue> {
   int num_queue = 0;
+  late BookingServices bookingServices;
+  late int totalBooking;
+
+  
+  @override
+  void initState() {
+    super.initState();
+    bookingServices = BookingServices();
+    bookingServices.getTotalBookingQueueForOneRes(widget.resId).then((value) {
+      setState(() {
+        totalBooking = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +61,7 @@ class _NumberOfQueueState extends State<NumberOfQueue> {
               ),
               child: Center(
                 child: Text(
-                  widget.booking.num_queue.toString(),
+                  totalBooking.toString(),
                   style: new TextStyle(
                       fontSize: 30,
                       color: Colors.white,

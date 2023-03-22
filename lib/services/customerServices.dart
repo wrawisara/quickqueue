@@ -98,6 +98,60 @@ class CustomerServices {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getCurrentCustomerCoupon(
+      String cusId) async {
+    try {
+      final collectionRef = FirebaseFirestore.instance.collection('customer');
+      final querySnapshot =
+          await collectionRef.where('c_id', isEqualTo: cusId).get();
+
+
+      QuerySnapshot couponQuery = await FirebaseFirestore.instance
+          .collection('coupons')
+          .where('status', isEqualTo: 'used')
+          .get();
+
+      List<Map<String, dynamic>> coupons = [];
+      couponQuery.docs.forEach((doc) {
+        String code = doc.get('code');
+        String couponName = doc.get('couponName');
+        String? cusId = doc.get('c_id');
+        double discount = doc.get('discount');
+        Timestamp endDate = doc.get('end_date');
+        Timestamp startDate = doc.get('start_date');
+        String img = doc.get('img');
+        String menu = doc.get('menu');
+        int requiredPoint = doc.get('required_point');
+        String? resId = doc.get('r_id');
+        String tier = doc.get('tier');
+        String status = doc.get('status');
+        String? couponId = doc.get('coupon_id');
+
+        coupons.add({
+          'code': code,
+          'couponName': couponName,
+          'c_id': cusId,
+          'discount': discount,
+          'end_date': endDate,
+          'start_date': startDate,
+          'img': img,
+          'requiredPoint': requiredPoint,
+          'r_id': resId,
+          'coupon_id': couponId,
+          'menu': menu,
+          'tier': tier,
+          'status': status,
+        });
+      });
+
+      // Return the list of coupon documents
+      return coupons;
+    } catch (e) {
+      print('Error fetching data: $e');
+      throw e;
+    }
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     final collectionRef = FirebaseFirestore.instance.collection('customer');
     final querySnapshot =
@@ -203,8 +257,10 @@ class CustomerServices {
     if (newPointsC < 0) {
       throw Exception('Insufficient points to use this coupon');
     }
-    final updateData = {'point_c': newPointsC};
-    await customerDoc.reference.update(updateData);
+    final updateDataCustomer = {'point_c': newPointsC};
+    final updateDataCoupon = {'status': 'used'};
+    await customerDoc.reference.update(updateDataCustomer);
+    await couponDoc.reference.update(updateDataCoupon);
   }
 
   Future<List<DocumentSnapshot>> getBookingQueue(String resId) async {

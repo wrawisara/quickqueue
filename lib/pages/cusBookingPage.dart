@@ -188,6 +188,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                         String bookingQueue =
                             await bookingServices.getBookingQueue(
                                 widget.restaurant['r_id'], date, numberPerson);
+                        //String previousBookingQueue = await bookingServices.getPreviousBookingQueue(widget.restaurant['r_id'], date, numberPerson);
+                        //print(previousBookingQueue);
                         print(bookingQueue);
                         await bookingServices
                             .bookTable(
@@ -196,7 +198,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
                                 date,
                                 time,
                                 numberPerson,
-                                bookingQueue)
+                                bookingQueue
+                                )
                             .then((_) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => CusBookedPage(

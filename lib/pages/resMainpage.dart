@@ -27,6 +27,7 @@ class _ResMainPageState extends State<ResMainPage> {
   late Future<List<Map<String, dynamic>>> _tableDataFuture;
   late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
   var selected = 0;
+  late String userId;
   late Future<num> _totalCapacityFuture;
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _ResMainPageState extends State<ResMainPage> {
           restaurantServices.getTotalCapacity(currentUser.uid);
       _restaurantDataFuture =
           restaurantServices.getCurrentRestaurants(currentUser.uid);
+      userId = currentUser.uid;
     }
   }
 
@@ -108,7 +110,7 @@ class _ResMainPageState extends State<ResMainPage> {
                   width: 400,
                   child: RestaurantInfo(),
                 ),
-                NumberOfQueue(),
+                NumberOfQueue(userId),
                 SizedBox(
                   height: 40,
                 ),

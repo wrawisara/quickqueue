@@ -46,6 +46,7 @@ class RestaurantServices {
         'start_date': now,
         'end_date': expiredDate,
         'img': imageUrl,
+        'status': 'available',
       });
     } catch (e) {
       print('Error adding coupon: $e');

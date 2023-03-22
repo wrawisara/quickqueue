@@ -10,7 +10,7 @@ class BookTableItem extends StatefulWidget {
   int available;
   List<Map<String, dynamic>> restaurant;
 
-  BookTableItem(this.type, this.capacity, this.available, this.restaurant);
+  BookTableItem(this.type, this.capacity, this.available, this.restaurant,);
 
   @override
   State<BookTableItem> createState() => _BookTableItemState();
@@ -117,6 +117,10 @@ class _BookTableItemState extends State<BookTableItem> {
                                   String bookingQueue =
                                       await bookingServices.getBookingQueue(
                                           widget.restaurant[0]['r_id'],
+                                          date,
+                                          2);
+
+                                  String previousQueue = await bookingServices.getPreviousBookingQueue(widget.restaurant[0]['r_id'],
                                           date,
                                           2);
                                   bookingServices.bookTable(

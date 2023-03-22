@@ -202,7 +202,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    bookingData[0]['bookingQueue'] ?? '',
+                                    bookingData[0]['previousQueue'] ?? '',
                                     style: new TextStyle(
                                         fontSize: 30,
                                         color: Colors.white,

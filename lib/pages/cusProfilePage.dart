@@ -250,7 +250,6 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                             child: Text("YES"),
                                             onPressed: () async {
                                               try {
-                                                print("bigmuang");
                                                 final currentUser =
                                                     FirebaseAuth.instance.currentUser;
                                                 if (currentUser != null &&
@@ -262,7 +261,6 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                                       context, coupon);
                                                 }
                                               } catch (e) {
-                                                print("bigmuang error");
                                                 if (e.toString() ==
                                                     'Exception: Insufficient points to use this coupon') {
                                                   showDialog(

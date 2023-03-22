@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
+import 'package:quickqueue/services/customerServices.dart';
 
 class CusRedeemCouponPage extends StatefulWidget {
   final Map<String, dynamic> coupon;
@@ -27,8 +28,22 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
   final booking = Booking.generateBooking();
   final customer = Customer.generateCustomer();
   //final coupon = Coupon.generateCoupon();
+  final CustomerServices customerServices = CustomerServices();
+  late Future<List<Map<String, dynamic>>> _couponDataFuture;
+  late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
 
   // String coupon_code = generateRandomString(10);
+
+    @override
+  void initState() {
+    super.initState();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null && currentUser.uid != null) {
+      _couponDataFuture =
+          customerServices.getCurrentCustomerCoupon(currentUser.uid);
+      currentUserInfoFuture = customerServices.getCurrentUserData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +104,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(3.0),
                       ),
-                      elevation: 1,
+                      elevation: 1, 
                       margin: EdgeInsets.all(5),
                     ),
                   ),
