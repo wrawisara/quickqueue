@@ -5,11 +5,14 @@ import 'package:intl/intl.dart';
 
 class CustomerServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final CollectionReference customerCollection =
+      FirebaseFirestore.instance.collection('customer');
+  final CollectionReference restaurantCollection =
+      FirebaseFirestore.instance.collection('restaurant');
 
   Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     try {
-      QuerySnapshot restaurantQuerySnapshot =
-          await _firestore.collection('restaurant').get();
+      QuerySnapshot restaurantQuerySnapshot = await restaurantCollection.get();
 
       List<Map<String, dynamic>> restaurants = [];
 
@@ -47,9 +50,8 @@ class CustomerServices {
   Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(
       String cusId) async {
     try {
-      final collectionRef = FirebaseFirestore.instance.collection('customer');
-      final querySnapshot =
-          await collectionRef.where('c_id', isEqualTo: cusId).get();
+      QuerySnapshot querySnapshot =
+          await customerCollection.where('c_id', isEqualTo: cusId).get();
 
       String customerTier = querySnapshot.docs[0]['tier'];
 
@@ -101,11 +103,6 @@ class CustomerServices {
   Future<List<Map<String, dynamic>>> getCurrentCustomerCoupon(
       String cusId) async {
     try {
-      final collectionRef = FirebaseFirestore.instance.collection('customer');
-      final querySnapshot =
-          await collectionRef.where('c_id', isEqualTo: cusId).get();
-
-
       QuerySnapshot couponQuery = await FirebaseFirestore.instance
           .collection('coupons')
           .where('status', isEqualTo: 'used')
@@ -207,44 +204,103 @@ class CustomerServices {
       tier = 'Bronze';
     }
     // Update the customer's tier in the database
-    await FirebaseFirestore.instance
+    final customerDocSnapshot = await FirebaseFirestore.instance
         .collection('customer')
-        .doc(cusId)
-        .update({'tier': tier});
+        .where('c_id', isEqualTo: cusId)
+        .get();
+    final customerDoc = customerDocSnapshot.docs[0];
+    await customerDoc.reference.update({'tier': tier});
   }
 
-  Future<void> updatePointsOnCheckIn(String cusId, int numPersons) async {
-    final customerDocRef =
-        FirebaseFirestore.instance.collection('customer').doc(cusId);
-    final customerDoc = await customerDocRef.get();
-    final currentPointsM = customerDoc.get('point_m');
-    final currentPointsC = customerDoc.get('point_c');
-    final currentTier = customerDoc.get('tier');
-    final newPointsM = currentPointsM +
-        (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
-    final newPointsC = currentPointsC +
-        (numPersons > 2 ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2)) : 0);
-    final updateData = {
-      'point_m': newPointsM,
-      'point_c': newPointsC,
-    };
-    if (currentTier == 'Gold' && currentPointsM > 40) {
-      updateData['point_c'] = newPointsC * 2;
+  Future<void> updatePointsOnCheckIn(String cusId, String bookingQueue) async {
+    try {
+      final now = DateTime.now();
+      final todayString = DateFormat('yyyy-MM-dd').format(now);
+      final customerDocs =
+          await customerCollection.where('c_id', isEqualTo: cusId).get();
+      final customerDoc = customerDocs.docs.first;
+      int currentPointsC = customerDoc.get('point_c');
+      int currentPointsM = customerDoc.get('point_m');
+      int currentReputation = customerDoc.get('reputation');
+      final currentTier = customerDoc.get('tier');
+      String type = bookingQueue.substring(0, 1);
+      int numPersons = 0;
+      if (type == 'A') {
+        numPersons = 2;
+      } else if (type == 'B') {
+        if (currentReputation < 50) {
+          numPersons = 4;
+        } else {
+          numPersons = 6;
+        }
+      } else if (type == 'C' || type == 'D' || type == 'E') {
+        if (currentReputation < 50) {
+          numPersons = 4;
+        } else {
+          numPersons = 8;
+        }
+      }
+
+      int newPointsM = currentPointsM +
+          (numPersons > 2
+              ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2))
+              : 0);
+      int newPointsC = currentPointsC +
+          (numPersons > 2
+              ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2))
+              : 0);
+      int newReputation = currentReputation;
+
+      if (currentReputation < 100) {
+          newReputation += numPersons~/2;
+      }
+      final updateData = {
+        'point_m': newPointsM,
+        'point_c': newPointsC,
+        'reputation_points': newReputation,
+      };
+
+      if (currentTier == 'Gold' && currentPointsM > 40) {
+        updateData['point_c'] = newPointsC * 2;
+      }
+      await customerDoc.reference.update(updateData);
+      updateCustomerTier(cusId, newPointsM);
+    } catch (e) {
+      print('Error when updating points $e');
     }
-    await customerDocRef.update(updateData);
-    updateCustomerTier(cusId, newPointsM);
   }
+
+  Future<void> subtractReputation(String cusId) async {
+  try {
+    final customerQuery = await customerCollection.where('c_id', isEqualTo: cusId).get();
+
+    if (customerQuery.docs.isNotEmpty) {
+      final customerDoc = customerQuery.docs.first;
+
+      final currentReputation = customerDoc.get('reputation_points');
+
+      final newReputation = currentReputation - 5;
+      customerDoc.reference.update({'reputation_points': newReputation});
+
+      print('Reputation subtracted successfully!');
+    } else {
+      print('Error: Customer with ID $cusId does not exist');
+    }
+  } catch (e) {
+    print('Error subtracting reputation: $e');
+  }
+}
 
   Future<void> useCoupon(
       String cusId, int requiredPoints, String couponId) async {
-        print(couponId);
+    print(couponId);
     QuerySnapshot<Map<String, dynamic>> couponQuery = await FirebaseFirestore
         .instance
         .collection('coupons')
         .where('coupon_id', isEqualTo: couponId)
         .get();
 
-        QuerySnapshot<Map<String, dynamic>> customerQuery = await FirebaseFirestore
+    QuerySnapshot<Map<String, dynamic>> customerQuery = await FirebaseFirestore
         .instance
         .collection('customer')
         .where('c_id', isEqualTo: cusId)
@@ -264,14 +320,14 @@ class CustomerServices {
   }
 
   Future<List<DocumentSnapshot>> getBookingQueue(String resId) async {
-  QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-      .collection('bookings')
-      .where('r_id', isEqualTo: resId)
-      .orderBy('created_at', descending: false)
-      .get();
-  return snapshot.docs;
-}
-
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('bookings')
+        .where('r_id', isEqualTo: resId)
+        .orderBy('created_at', descending: false)
+        .get();
+    return snapshot.docs;
+  }
 
   String getTableType(int guests) {
     if (guests <= 2) {
@@ -289,14 +345,17 @@ class CustomerServices {
 
   // tobe delete
   Future<List<String>> getCustomerName(String cusId) async {
-  final QuerySnapshot<Map<String, dynamic>> customerSnapshot =
-      await _firestore.collection('customer').where('c_id', isEqualTo: cusId).get();
-  if (customerSnapshot.docs.isNotEmpty) {
-    final customer = customerSnapshot.docs.first;
-    final firstName = customer['first_name'] as String;
-    final lastName = customer['last_name'] as String;
-    return [firstName, lastName];
+    final QuerySnapshot<Map<String, dynamic>> customerSnapshot =
+        await _firestore
+            .collection('customer')
+            .where('c_id', isEqualTo: cusId)
+            .get();
+    if (customerSnapshot.docs.isNotEmpty) {
+      final customer = customerSnapshot.docs.first;
+      final firstName = customer['first_name'] as String;
+      final lastName = customer['last_name'] as String;
+      return [firstName, lastName];
+    }
+    return [];
   }
-  return [];
-}
 }

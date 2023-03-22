@@ -23,7 +23,7 @@ class BookingServices {
 
       bookingQuerySnapshot.docs.forEach((doc) {
         String bookingQueue = doc.get('booking_queue');
-        String previousQueue = doc.get('previous_queue');
+        //String previousQueue = doc.get('previous_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
         int guest = doc.get('guest');
@@ -35,13 +35,13 @@ class BookingServices {
 
         booking.add({
           'bookingQueue': bookingQueue,
-          'previousQueue': previousQueue,
+          //'previousQueue': previousQueue,
           'c_id': cusId,
           'r_id': resId,
           'guest': guest,
           'date': date,
           'time': time,
-          'status': 'pending',
+          'status': status,
           'created_at': createdAt,
           'updated_at': updatedAt,
         });
@@ -68,7 +68,7 @@ class BookingServices {
 
       bookingQuerySnapshot.docs.forEach((doc) {
         String bookingQueue = doc.get('booking_queue');
-        String previousQueue = doc.get('previous_queue');
+        //String previousQueue = doc.get('previous_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
         int guest = doc.get('guest');
@@ -80,7 +80,7 @@ class BookingServices {
 
         booking.add({
           'bookingQueue': bookingQueue,
-          'previousQueue': previousQueue,
+          //'previousQueue': previousQueue,
           'c_id': cusId,
           'r_id': resId,
           'guest': guest,
@@ -116,7 +116,7 @@ class BookingServices {
 
       bookingQuerySnapshot.docs.forEach((doc) {
         String bookingQueue = doc.get('booking_queue');
-        String previousQueue = doc.get('previous_queue');
+        //String previousQueue = doc.get('previous_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
         int guest = doc.get('guest');
@@ -128,7 +128,7 @@ class BookingServices {
 
         booking.add({
           'bookingQueue': bookingQueue,
-          'previousQueue': previousQueue,
+          //'previousQueue': previousQueue,
           'c_id': cusId,
           'r_id': resId,
           'guest': guest,

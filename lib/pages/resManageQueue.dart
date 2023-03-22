@@ -6,6 +6,7 @@ import 'package:material_dialogs/material_dialogs.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 // import 'package:quickqueue/model/booking.dart';
 import 'package:quickqueue/services/bookingServices.dart';
+import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
 import 'package:quickqueue/widgets/resQueueTable.dart';
 
@@ -17,6 +18,7 @@ class ResManageQueue extends StatefulWidget {
 class _ResManageQueueState extends State<ResManageQueue> {
   final RestaurantServices restaurantServices = RestaurantServices();
   final BookingServices bookingServices = BookingServices();
+  final CustomerServices customerServices = CustomerServices();
 
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
   late String userId;
@@ -203,6 +205,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                                   .updateBookingStatus(
                                                       booking['bookingQueue'],
                                                       'confirmed');
+                                              customerServices.updatePointsOnCheckIn(booking['c_id'], booking['bookingQueue']);
                                             },
                                             text: 'Confirm Queue',
                                             iconData:
@@ -219,6 +222,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                                   .updateBookingStatus(
                                                       booking['bookingQueue'],
                                                       'canceled');
+                                              customerServices.subtractReputation(booking['c_id']);
                                             },
                                             text: 'Cancel',
                                             iconData: Icons.cancel_outlined,
