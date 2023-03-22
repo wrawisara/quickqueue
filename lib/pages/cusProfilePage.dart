@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickqueue/pages/cusMyCouponPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
@@ -61,8 +62,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Want to go Booking History')));
+              navigateToCusMyCouponPage(context);
             },
           ),
         ],
@@ -323,6 +323,12 @@ class _CusProfilePageState extends State<CusProfilePage> {
 navigateToCusRedeemCouponPage(BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusRedeemCouponPage(coupon: coupon);
+  }));
+}
+
+navigateToCusMyCouponPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return CusMyCouponPage();
   }));
 }
 

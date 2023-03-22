@@ -99,7 +99,6 @@ class _ResMainPageState extends State<ResMainPage> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
             child: Stack(children: <Widget>[
-         
           Container(
             child: Column(
               children: <Widget>[
