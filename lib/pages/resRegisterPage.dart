@@ -43,6 +43,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
         title: Text('Register', style: TextStyle(color: Colors.white)),
       ),
       body: Column(
@@ -219,18 +222,38 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 File img = logo ?? File(defaultImageUrl);
 
                                 //File img = File('assets/img/default.jpg');
-                                registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, 
+                                try{
+                                   registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, 
                                   phone, address, double.parse(latitude), double.parse(longitude), branch, img);
                                   
+                                  showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Sucess'),
+                                    content: const Text('Your account has been successfully created.'),
+                                  ),
+                                );
+                                } catch(e) {
+                                  print(e);
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Error'),
+                                content: Text(
+                                    'Error $e'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'OK'),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                                }
+                               
                                 //** ใส่ที่จะบันทึกข้อมูล */
-                                // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
-                                // showDialog<String>(
-                                //   context: context,
-                                //   builder: (BuildContext context) => AlertDialog(
-                                //     title: const Text('Sucess'),
-                                //     content: const Text('Your account has been successfully created.'),
-                                //   ),
-                                // );
+                                
                               },
                             ),
                           ],
