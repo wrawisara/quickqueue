@@ -1,7 +1,8 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+
+
 
 class CustomerServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -9,6 +10,10 @@ class CustomerServices {
       FirebaseFirestore.instance.collection('customer');
   final CollectionReference restaurantCollection =
       FirebaseFirestore.instance.collection('restaurant');
+  final CollectionReference couponCollection =
+      FirebaseFirestore.instance.collection('coupons');
+  final CollectionReference bookingCollection =
+      FirebaseFirestore.instance.collection('bookings');
 
   Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     try {
@@ -103,8 +108,7 @@ class CustomerServices {
   Future<List<Map<String, dynamic>>> getCurrentCustomerCoupon(
       String cusId) async {
     try {
-      QuerySnapshot couponQuery = await FirebaseFirestore.instance
-          .collection('coupons')
+      QuerySnapshot couponQuery = await couponCollection
           .where('status', isEqualTo: 'used')
           .get();
 
@@ -294,17 +298,13 @@ class CustomerServices {
   Future<void> useCoupon(
       String cusId, int requiredPoints, String couponId) async {
     print(couponId);
-    QuerySnapshot<Map<String, dynamic>> couponQuery = await FirebaseFirestore
-        .instance
-        .collection('coupons')
+    QuerySnapshot<Map<String, dynamic>> couponQuery = await couponCollection
         .where('coupon_id', isEqualTo: couponId)
-        .get();
+        .get() as QuerySnapshot<Map<String, dynamic>>;
 
-    QuerySnapshot<Map<String, dynamic>> customerQuery = await FirebaseFirestore
-        .instance
-        .collection('customer')
+    QuerySnapshot<Map<String, dynamic>> customerQuery = await customerCollection
         .where('c_id', isEqualTo: cusId)
-        .get();
+        .get() as QuerySnapshot<Map<String, dynamic>>;
 
     final couponDoc = couponQuery.docs.first;
     final customerDoc = customerQuery.docs.first;
@@ -320,12 +320,10 @@ class CustomerServices {
   }
 
   Future<List<DocumentSnapshot>> getBookingQueue(String resId) async {
-    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-        .instance
-        .collection('bookings')
+    QuerySnapshot<Map<String, dynamic>> snapshot = await bookingCollection
         .where('r_id', isEqualTo: resId)
         .orderBy('created_at', descending: false)
-        .get();
+        .get() as QuerySnapshot<Map<String, dynamic>>;
     return snapshot.docs;
   }
 
@@ -343,19 +341,18 @@ class CustomerServices {
     }
   }
 
-  // tobe delete
-  Future<List<String>> getCustomerName(String cusId) async {
-    final QuerySnapshot<Map<String, dynamic>> customerSnapshot =
-        await _firestore
-            .collection('customer')
-            .where('c_id', isEqualTo: cusId)
-            .get();
-    if (customerSnapshot.docs.isNotEmpty) {
-      final customer = customerSnapshot.docs.first;
-      final firstName = customer['first_name'] as String;
-      final lastName = customer['last_name'] as String;
-      return [firstName, lastName];
+  Future<void> updateExpiredCoupons() async {
+  final now = DateTime.now();
+
+  final couponCollection = FirebaseFirestore.instance.collection('coupons');
+
+  final expiredCouponsQuery = await couponCollection.where('end_date', isLessThan: now).get();
+
+  for (final couponDoc in expiredCouponsQuery.docs) {
+      await couponDoc.reference.delete();
+      print('Expired coupon ${couponDoc.id} has been deleted');
     }
-    return [];
   }
 }
+
+

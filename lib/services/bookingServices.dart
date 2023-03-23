@@ -13,6 +13,8 @@ class BookingServices {
       FirebaseFirestore.instance.collection('tableInfo');
   final CollectionReference customerCollection =
       FirebaseFirestore.instance.collection('customer');
+  final CollectionReference restaurantCollection =
+      FirebaseFirestore.instance.collection('restaurant');
 
   Future<List<Map<String, dynamic>>> getBookingData() async {
     try {
@@ -145,6 +147,45 @@ class BookingServices {
       return booking;
     } catch (e) {
       print('Error fetching data: $e');
+      throw e;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getRestaurantById(String resId) async {
+    try {
+      final QuerySnapshot querySnapshot = await restaurantCollection
+          .where('r_id', isEqualTo: resId)
+          .limit(1)
+          .get();
+
+      List<Map<String, dynamic>> restaurant = [];
+
+      querySnapshot.docs.forEach((doc) {
+        String resId = doc.get('r_id');
+        String address = doc.get('address');
+        GeoPoint location = doc.get('location');
+        String username = doc.get('username');
+        String phone = doc.get('phone');
+        String res_logo = doc.get('res_logo');
+        String branch = doc.get('branch');
+        String status = doc.get('status');
+
+        restaurant.add({
+          'r_id': resId,
+          'address': address,
+          'location': location,
+          'username': username,
+          'phone': phone,
+          'res_logo': res_logo,
+          'branch': branch,
+          'status': status,
+        });
+      });
+
+      // Return the first document
+      return restaurant;
+    } catch (e) {
+      print('Error occurred while getting restaurant by ID: $e');
       throw e;
     }
   }

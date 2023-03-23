@@ -34,8 +34,8 @@ class _CusBookedPageState extends State<CusBookedPage> {
   final BookingServices bookingServices = BookingServices();
   final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
-  late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
-  late Future<List<String>> customerNameFuture;
+  late Future<List<Map<String, dynamic>>> _currentUserInfoFuture;
+  late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
   // List<String> customerName = await customerNameFuture;
 
   @override
@@ -46,7 +46,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
     if (currentUser != null && currentUser.uid != null) {
       _bookingDataFuture =
           bookingServices.getBookingDataForCustomer(currentUser.uid);
-      currentUserInfoFuture = customerServices.getCurrentUserData();
+      _currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
 
@@ -240,7 +240,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     height: 10,
                   ),
                   FutureBuilder<List<Map<String, dynamic>>>(
-                      future: currentUserInfoFuture,
+                      future: _currentUserInfoFuture,
                       builder: (BuildContext context,
                           AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                         if (snapshot.connectionState ==
