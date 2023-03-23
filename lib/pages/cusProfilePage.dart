@@ -197,7 +197,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
           
                         if (snapshot.data?.isEmpty ?? true) {
                           return Center(
-                            child: Text('No restaurants found'),
+                            child: Text('Currently no coupon available.'),
                           );
                         }
           

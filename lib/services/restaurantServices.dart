@@ -8,12 +8,6 @@ import 'package:intl/intl.dart';
 class RestaurantServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String generateCouponCode() {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    final random = Random();
-    return String.fromCharCodes(Iterable.generate(
-        8, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
-  }
 
   Future<void> addCoupon(
       String couponName,
@@ -28,14 +22,13 @@ class RestaurantServices {
       DateTime now = DateTime.now();
       //DateTime expiredDate = now.add(Duration(days: 7));
       String imageUrl = await uploadImage(image);
-      String couponCode = generateCouponCode();
       String couponId = Uuid().v4();
       //check
       print(couponName);
 
       await _firestore.collection('coupons').add({
         'couponName': couponName,
-        'code': couponCode,
+        'code': null,
         'c_id': null,
         'r_id': resId,
         'coupon_id': couponId,

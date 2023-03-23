@@ -25,8 +25,8 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
 
   //เรียกข้อมูลมาใช้
-  final booking = Booking.generateBooking();
-  final customer = Customer.generateCustomer();
+  //final booking = Booking.generateBooking();
+  //final customer = Customer.generateCustomer();
   //final coupon = Coupon.generateCoupon();
   final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _couponDataFuture;

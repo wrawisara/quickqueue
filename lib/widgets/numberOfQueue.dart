@@ -20,7 +20,7 @@ class NumberOfQueue extends StatefulWidget {
 class _NumberOfQueueState extends State<NumberOfQueue> {
   int num_queue = 0;
   late BookingServices bookingServices;
-  late int totalBooking;
+  late int totalBooking = 0;
 
   
   @override
