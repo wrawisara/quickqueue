@@ -18,16 +18,30 @@ class CusBookingPage extends StatefulWidget {
 
 class _CusBookingPageState extends State<CusBookingPage> {
   final CustomerServices customerServices = CustomerServices();
-
-  //เรียกข้อมูล booking มาใช้
   final BookingServices bookingServices = BookingServices();
-  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  //เรียกข้อมูล booking มาใช้
 
+  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+ late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
+  late Future<Map<String, int>> _queueDataFuture;
+  late List<Map<String, dynamic>> _searchResults;
   int numberPerson = 0;
 
   void updateNumberOfPersons(int value) {
     setState(() {
       numberPerson = value;
+    });
+  }
+    @override
+  void initState() {
+    super.initState();
+    _restaurantDataFuture = customerServices.getAllRestaurants();
+    _searchResults = [];
+
+    _queueDataFuture = _restaurantDataFuture.then((restaurantData) {
+      final resIds =
+          restaurantData.map<String>((res) => res['r_id'] as String).toList();
+      return bookingServices.getTotalBookingQueue(resIds);
     });
   }
   
@@ -57,11 +71,11 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     padding: const EdgeInsets.all(15),
                     child: Container(
                       height: 250,
-                      width: MediaQuery.of(context).size.width,
+                      width: 250,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: NetworkImage(widget.restaurant['res_logo']),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.cyan[200],
@@ -98,15 +112,39 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Container(
-                          padding: EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                              color: Colors.cyan.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "20 Queue",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          )),
+                      FutureBuilder<Map<String, int>>(
+                            future: _queueDataFuture,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<Map<String, int>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error fetching data'),
+                                );
+                              }
+
+                              final queueData = snapshot.data ?? {};
+                              final totalQueue = queueData.values
+                                  .fold(0, (sum, queue) => sum + queue);
+                              print(queueData);
+                              final queueNum =
+                                      queueData[widget.restaurant['r_id']] ?? 0;
+                          return Container(
+                              padding: EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                  color: Colors.cyan.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Text(
+                               '${queueNum} queue',
+                                style: TextStyle(color: Colors.white, fontSize: 18),
+                              ));
+                        }
+                      ),
                     ],
                   ),
                  

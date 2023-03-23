@@ -95,12 +95,51 @@ class _LoginPageState extends State<LoginPage> {
                           //     content: const Text('Your email and password do not match. Please try again.'),
                           //   ),
                           // );
-                          try {
-                            print(email);
-                            print(password);
-                            await loginChecker(context, email, password);
-                          } on FirebaseAuthException catch (e) {
-                            print(e.message);
+                          if (email != null && password != null) {
+                            try {
+                              print(email);
+                              print(password);
+                              await loginChecker(context, email, password);
+                            } on FirebaseAuthException catch (e) {
+                              print("Login error: ${e.message}");
+                              if(e.message == 'user not found'){
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Text(
+                                            "You account doesn't exist. Please sign up."),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'OK'),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ));
+                              } else if( e.message == 'invalid-email' || e.message == 'wrong-password'){
+                                if(e.message == 'user-not-found'){
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Text(
+                                            "Your email or password is incorrect. Please try again."),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'OK'),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ));
+                              }
+                              }
+                              
+                            }
+                          } else {
                             showDialog<String>(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
@@ -184,3 +223,22 @@ Future<void> loginChecker(
     print('Login failed');
   }
 }
+
+// catch password มาจาก backend
+//  on FirebaseAuthException catch (e) {
+//                               print(e.message);
+//                               showDialog<String>(
+//                                 context: context,
+//                                 builder: (BuildContext context) => AlertDialog(
+//                                   title: const Text('Error'),
+//                                   content: Text(
+//                                       "You account doesn't exist. Please sign up."),
+//                                   actions: <Widget>[
+//                                     TextButton(
+//                                       onPressed: () =>
+//                                           Navigator.pop(context, 'OK'),
+//                                       child: const Text('OK'),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               );
