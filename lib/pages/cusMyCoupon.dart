@@ -106,7 +106,7 @@ class _CusMyCouponPageState extends State<CusMyCouponPage> {
                           ),
                           onTap: () async {
                             // * ไปหน้า redeemCoupon
-                             navigateToCusRedeemCouponPage(context,coupon);
+                            //  navig
                           },
                         ),
                       );
@@ -132,3 +132,10 @@ navigateToCusRedeemCouponPage(
     return CusRedeemCouponPage(coupon: coupon);
   }));
 }
+
+// navigateToCusPage(
+//     BuildContext context, Map<String, dynamic> coupon) {
+//   Navigator.push(context, MaterialPageRoute(builder: (context) {
+//     return CusRedeemCouponPage(coupon: coupon);
+//   }));
+// }
