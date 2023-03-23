@@ -199,14 +199,25 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                         ),
                                       ),
                                       onTap: () {
-                                        // TODO: navigate to booking page
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CusBookingPage(
-                                                        restaurant:
-                                                            restaurant)));
+                                        try {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CusBookingPage(
+                                                          restaurant:
+                                                              restaurant)));
+                                        } catch (e) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: Text(e.toString()),
+                                                actions: [],
+                                              );
+                                            },
+                                          );
+                                        }
                                       },
                                     ),
                                   );

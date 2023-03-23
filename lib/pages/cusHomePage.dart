@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/pages/cusBookedPage.dart';
 import 'package:quickqueue/pages/cusBookingPage.dart';
 import 'package:quickqueue/pages/cusChooseResPage.dart';
+import 'package:quickqueue/pages/cusMyBookedPage.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/cusReDeemCouponPage.dart';
 import 'package:quickqueue/pages/resAddCouponPage.dart';
@@ -29,7 +30,7 @@ class _CusHomePageState extends State<CusHomePage> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     GoCusChooseResPage(),
-    GoCusRedeemPage(),
+    GoCusMyBookedPage(),
   ];
   void _onItemTapped(int index) {
     setState(() {
@@ -72,29 +73,36 @@ class GoCusChooseResPage extends StatelessWidget {
   }
 }
 
-class GoCusRedeemPage extends StatefulWidget {
-
-
-  @override
-  State<GoCusRedeemPage> createState() => _GoCusRedeemPageState();
-}
-
-class _GoCusRedeemPageState extends State<GoCusRedeemPage> {
-  
+class GoCusMyBookedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child:  Text(
-                      'booking page',
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-    );
-        
+    return CusMyBookedPage();
   }
 }
+
+// class GoCusRedeemPage extends StatefulWidget {
+
+
+//   @override
+//   State<GoCusRedeemPage> createState() => _GoCusRedeemPageState();
+// }
+
+// class _GoCusRedeemPageState extends State<GoCusRedeemPage> {
+  
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child:  Text(
+//                       'booking page',
+//                         style: TextStyle(
+//                             fontSize: 30,
+//                             fontWeight: FontWeight.w500,
+//                             color: Colors.black),
+//                       ),
+//     );
+        
+//   }
+// }
 
 // class GoCusBookedPage extends StatelessWidget {
 //   @override

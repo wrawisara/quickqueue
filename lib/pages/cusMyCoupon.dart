@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:quickqueue/pages/cusCouponCode.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/cusReDeemCouponPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
@@ -105,8 +106,8 @@ class _CusMyCouponPageState extends State<CusMyCouponPage> {
                             ),
                           ),
                           onTap: () async {
-                            // * ไปหน้า redeemCoupon
-                            //  navig
+                            // * ไปหน้า CouponCode
+                           navigateToCusCouponCodePage(context,coupon);
                           },
                         ),
                       );
@@ -126,10 +127,10 @@ navigateToCusProfilePage(BuildContext context) {
   }));
 }
 
-navigateToCusRedeemCouponPage(
+navigateToCusCouponCodePage(
     BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusRedeemCouponPage(coupon: coupon);
+    return CusCouponCodePage(coupon: coupon);
   }));
 }
 

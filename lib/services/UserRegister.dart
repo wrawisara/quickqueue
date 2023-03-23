@@ -41,8 +41,8 @@ class UserRegisterService {
             'lastname': lastname,
             'phone': phoneNum,
             'tier': 'Bronze',
-            'point_m': 0, //  membership points
-            'point_c': 0, // coupon points
+            'point_m': 10, //  membership points
+            'point_c': 10, // coupon points
             'status': "", // booking status
             'reputation_points': 100, // reputation if cancel = go down
             'role': 'customer',

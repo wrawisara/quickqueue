@@ -22,7 +22,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
   //เรียกข้อมูล booking มาใช้
 
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
- late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
+  late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
   late Future<Map<String, int>> _queueDataFuture;
   late List<Map<String, dynamic>> _searchResults;
   int numberPerson = 0;
@@ -32,7 +32,8 @@ class _CusBookingPageState extends State<CusBookingPage> {
       numberPerson = value;
     });
   }
-    @override
+
+  @override
   void initState() {
     super.initState();
     _restaurantDataFuture = customerServices.getAllRestaurants();
@@ -44,7 +45,6 @@ class _CusBookingPageState extends State<CusBookingPage> {
       return bookingServices.getTotalBookingQueue(resIds);
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +82,18 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       ),
                     ),
                   ),
-                   SizedBox(height: 10,),
-                   Text(
-                        widget.restaurant['username'],
-                        //widget.restaurant.restaurantName,
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-                  
-                   SizedBox(
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    widget.restaurant['username'],
+                    //widget.restaurant.restaurantName,
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
+                  ),
+                  SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -113,45 +114,44 @@ class _CusBookingPageState extends State<CusBookingPage> {
                         width: 10,
                       ),
                       FutureBuilder<Map<String, int>>(
-                            future: _queueDataFuture,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<Map<String, int>> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error fetching data'),
-                                );
-                              }
+                          future: _queueDataFuture,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<Map<String, int>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error fetching data'),
+                              );
+                            }
 
-                              final queueData = snapshot.data ?? {};
-                              final totalQueue = queueData.values
-                                  .fold(0, (sum, queue) => sum + queue);
-                              print(queueData);
-                              final queueNum =
-                                      queueData[widget.restaurant['r_id']] ?? 0;
-                          return Container(
-                              padding: EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                  color: Colors.cyan.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Text(
-                               '${queueNum} queue',
-                                style: TextStyle(color: Colors.white, fontSize: 18),
-                              ));
-                        }
-                      ),
+                            final queueData = snapshot.data ?? {};
+                            final totalQueue = queueData.values
+                                .fold(0, (sum, queue) => sum + queue);
+                            print(queueData);
+                            final queueNum =
+                                queueData[widget.restaurant['r_id']] ?? 0;
+                            return Container(
+                                padding: EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                    color: Colors.cyan.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Text(
+                                  '${queueNum} queue',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ));
+                          }),
                     ],
                   ),
-                 
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left :40),
+                        padding: const EdgeInsets.only(left: 40),
                         child: Text(
                           widget.restaurant['branch'],
                           //widget.restaurant.restaurantName,
@@ -166,7 +166,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left :40),
+                        padding: const EdgeInsets.only(left: 40),
                         child: Text(
                           "URl Gopoint ",
                           //widget.restaurant.restaurantName,
@@ -178,13 +178,9 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       ),
                     ],
                   ),
-
-                  
-                  
                   SizedBox(
                     height: 50,
                   ),
-                  
                   Row(
                     children: <Widget>[
                       Padding(
@@ -209,61 +205,71 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     height: 20,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // primary: Colors.green,
-                      // elevation: 3,
-                      minimumSize: Size(330, 50),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                    ),
-                    child: const Text('Book',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    onPressed: () async {
+                      style: ElevatedButton.styleFrom(
+                        // primary: Colors.green,
+                        // elevation: 3,
+                        minimumSize: Size(330, 50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                      ),
+                      child: const Text('Book',
+                          style: TextStyle(fontSize: 20, color: Colors.white)),
+                      onPressed: () async {
                         if (currentUser != null && currentUser.uid != null) {
-                        DateTime now = DateTime.now();
-                        String date = DateFormat('yyyy-MM-dd').format(now);
-                        String time = DateFormat('hh:mm a').format(now);
-                        String bookingQueue =
-                            await bookingServices.getBookingQueue(
-                                widget.restaurant['r_id'], date, numberPerson);
-                        //String previousBookingQueue = await bookingServices.getPreviousBookingQueue(widget.restaurant['r_id'], date, numberPerson);
-                        //print(previousBookingQueue);
-                        print(bookingQueue);
-                        await bookingServices
-                            .bookTable(
-                                widget.restaurant['r_id'],
-                                currentUser.uid,
-                                date,
-                                time,
-                                numberPerson,
-                                bookingQueue
-                                )
-                            .then((_) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => CusBookedPage(
-                                    restaurant: widget.restaurant,
-                                    numberPerson: numberPerson,
-                                  )));
-                        }).catchError((e) {
-                          print('$e');
-                        });
+                          DateTime now = DateTime.now();
+                          String date = DateFormat('yyyy-MM-dd').format(now);
+                          String time = DateFormat('hh:mm a').format(now);
+                          String bookingQueue =
+                              await bookingServices.getBookingQueue(
+                                  widget.restaurant['r_id'],
+                                  date,
+                                  numberPerson);
+                          //String previousBookingQueue = await bookingServices.getPreviousBookingQueue(widget.restaurant['r_id'], date, numberPerson);
+                          //print(previousBookingQueue);
+                          print(bookingQueue);
+                          await bookingServices
+                              .bookTable(
+                                  widget.restaurant['r_id'],
+                                  currentUser.uid,
+                                  date,
+                                  time,
+                                  numberPerson,
+                                  bookingQueue)
+                              .then((_) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => CusBookedPage(
+                                      restaurant: widget.restaurant,
+                                      numberPerson: numberPerson,
+                                    )));
+                          }).catchError((e) {
+                            print('$e');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: Text(e.toString()),
+                                  actions: [],
+                                );
+                              },
+                            );
+                          });
 
-                      //save data ลง db
-                      //widget.restaurant['username'];
-                      //widget.allRestaurantModel.queueNum;
-                      //NumOfPersons();
+                          //save data ลง db
+                          //widget.restaurant['username'];
+                          //widget.allRestaurantModel.queueNum;
+                          //NumOfPersons();
 
-                      // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
-                      // showDialog<String>(
-                      //   context: context,
-                      //   builder: (BuildContext context) => AlertDialog(
-                      //     title: const Text('Sucess'),
-                      //     content: const Text('Your queue has been booked.'),
-                      //   ),
-                      // );
-                    };
-                    }
-                  )
+                          // alert แจ้งเตือนว่าจองสำเร็จใช้ได้ค่อยเปิด
+                          // showDialog<String>(
+                          //   context: context,
+                          //   builder: (BuildContext context) => AlertDialog(
+                          //     title: const Text('Sucess'),
+                          //     content: const Text('Your queue has been booked.'),
+                          //   ),
+                          // );
+                        }
+                        ;
+                      })
                 ],
               )),
         ));
