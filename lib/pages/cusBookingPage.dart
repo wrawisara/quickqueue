@@ -5,6 +5,7 @@ import 'package:quickqueue/pages/cusBookedPage.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CusBookingPage extends StatefulWidget {
   final Map<String, dynamic> restaurant;
@@ -19,6 +20,7 @@ class CusBookingPage extends StatefulWidget {
 class _CusBookingPageState extends State<CusBookingPage> {
   final CustomerServices customerServices = CustomerServices();
   final BookingServices bookingServices = BookingServices();
+  final RestaurantServices restaurantServices = RestaurantServices();
   //เรียกข้อมูล booking มาใช้
 
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
@@ -163,23 +165,68 @@ class _CusBookingPageState extends State<CusBookingPage> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: Text(
-                          "URl Gopoint ",
-                          //widget.restaurant.restaurantName,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _restaurantDataFuture,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error fetching data'),
+                          );
+                        }
+
+                        if (snapshot.data?.isEmpty ?? true) {
+                          return Center(
+                            child: Text('No date time found'),
+                          );
+                        }
+
+                         List<Map<String, dynamic>> restaurantData = snapshot.data!
+        .where((restaurant) => restaurant['r_id'] == widget.restaurant['r_id'])
+        .toList();
+                        final latitude = restaurantData[0]['location'].latitude;
+                        final longitude =
+                            restaurantData[0]['location'].longitude;
+                        final mapUrl =
+                            'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+                        print(mapUrl);
+
+                       
+                        // final longitude = GeoPoint.longitude;
+
+                        // final mapUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+                        return Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 40),
+                              child: Container(
+                                width:
+                                    (MediaQuery.of(context).size.width) * 0.8,
+                                child: GestureDetector(
+                                  onTap: () => launch(mapUrl),
+                                  child: Text(
+                                    'View on Google Maps',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                   SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
                   Row(
                     children: <Widget>[

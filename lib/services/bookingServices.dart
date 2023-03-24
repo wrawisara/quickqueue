@@ -62,7 +62,7 @@ class BookingServices {
       String cusId) async {
     try {
       QuerySnapshot bookingQuerySnapshot = await bookingCollection
-          .where('c_id', isEqualTo: cusId)
+          .where('c_id', isEqualTo: cusId).where('status', whereIn: ['pending', 'canceled'])
           .orderBy('created_at', descending: true)
           .get();
 
@@ -296,9 +296,12 @@ class BookingServices {
   try {
     final Map<String, int> totalQueues = {};
 
+final now = DateTime.now();
+    final todayString = DateFormat('yyyy-MM-dd').format(now);
+      
     for (final resId in resIds) {
       final querySnapshot =
-          await bookingCollection.where('r_id', isEqualTo: resId).get();
+          await bookingCollection.where('r_id', isEqualTo: resId).where('date', isEqualTo: todayString).get();
       final count = querySnapshot.docs.length;
       totalQueues[resId] = count;
     }
@@ -309,7 +312,6 @@ class BookingServices {
     throw (e);
   }
 }
-
 Future<int> getTotalBookingQueueForOneRes(String resId) async {
   try {
     int totalQueue = 0;
@@ -318,7 +320,7 @@ Future<int> getTotalBookingQueueForOneRes(String resId) async {
       final querySnapshot =
           await bookingCollection.where('r_id', isEqualTo: resId).where('date', isEqualTo: todayString).get();
       final count = querySnapshot.docs.length;
-      totalQueue = count;
+      totalQueue = count-1;
 
     return totalQueue;
   } catch (e) {

@@ -31,6 +31,7 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
   late Future<List<Map<String, dynamic>>> _currentUserInfoFuture;
   late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
   late Future<int> _queueDataFuture;
+  late Future<int> _totalQueueData;
   // List<String> customerName = await customerNameFuture;
 
   @override
@@ -82,11 +83,12 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
 
                     if (snapshot.data?.isEmpty ?? true) {
                       return Center(
-                        child: Text('No date time found'),
+                        child: Text('You have not book any restaurant yet.'),
                       );
                     }
 
                     List<Map<String, dynamic>> bookingData = snapshot.data!;
+                   
                     _restaurantDataFuture = restaurantServices
                         .getCurrentRestaurants(bookingData[0]['r_id']);
                     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -108,23 +110,33 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
 
                           if (snapshot.data?.isEmpty ?? true) {
                             return Center(
-                              child: Text('No date time found'),
+                              child: Text('No restaurant data was found'),
                             );
                           }
 
                           List<Map<String, dynamic>> restaurantData =
                               snapshot.data!;
-
                           _queueDataFuture =
-                              _restaurantDataFuture.then((restaurantData) {
-                            final resIds = restaurantData
-                                .map<String>((res) => res['r_id'] as String)
-                                .toList();
+                              bookingServices.getTotalBookingQueueForOneRes(
+                                  restaurantData[0]['r_id']);
+                          _totalQueueData =
+                              _bookingDataFuture.then((bookingData) {
+                            final resId = bookingData.isNotEmpty
+                                ? bookingData[0]['r_id'] as String
+                                : '';
                             return bookingServices
-                                .getTotalBookingQueueForOneRes(
-                                    restaurantData[0]['r_id']);
+                                .getTotalBookingQueueForOneRes(resId);
                           });
-                          
+                          // _queueDataFuture =
+                          //     _restaurantDataFuture.then((restaurantData) {
+                          //   final resIds = restaurantData
+                          //       .map<String>((res) => res['r_id'] as String)
+                          //       .toList();
+                          //   return bookingServices
+                          //       .getTotalBookingQueueForOneRes(
+                          //           restaurantData[0]['r_id']);
+                          // });
+
                           return Column(
                             children: <Widget>[
                               SizedBox(
@@ -236,7 +248,7 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                                             BorderRadius.circular(10.0),
                                       ),
                                       child: FutureBuilder<int>(
-                                          future: _queueDataFuture,
+                                          future: _totalQueueData,
                                           builder:
                                               (BuildContext context, snapshot) {
                                             if (snapshot.connectionState ==
@@ -249,18 +261,13 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                                             if (snapshot.hasError) {
                                               return Center(
                                                 child:
-                                                    Text('Error fetching data'),
+                                                    Text('You have not book any restaurant'),
                                               );
                                             }
-//                                             final queueData = snapshot.data ?? [];
-// final totalQueue = queueData.fold(0, (sum, queue) => sum + queue);
-//                                             print(queueData);
-
+                                            int queueData = snapshot.data!;
                                             return Center(
                                               child: Text(
-                                                restaurantData[0]
-                                                        ['bookingQueue'] ??
-                                                    '',
+                                                queueData.toString(),
                                                 style: new TextStyle(
                                                     fontSize: 30,
                                                     color: Colors.white,

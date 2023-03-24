@@ -99,7 +99,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
 
                   if (snapshot.data?.isEmpty ?? true) {
                     return Center(
-                      child: Text('No restaurants found'),
+                      child: Text('No coupon data found'),
                     );
                   }
 
@@ -153,7 +153,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Text(
-                                  "Expiration Date : \n" + couponData[0]['end_date'].toString(),
+                                  "Expiration Date : \n" + formatDate(couponData[0]['end_date']),
                                       //formattedEndDate,
                                   style: TextStyle(
                                     fontSize: 20,
@@ -253,6 +253,13 @@ navigateToCusMyCouponPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusMyCouponPage();
   }));
+}
+
+
+String formatDate(Timestamp timestamp) {
+  final date = timestamp.toDate();
+  final formatter = DateFormat('yyyy-MM-dd h:mm a');
+  return formatter.format(date);
 }
 
 

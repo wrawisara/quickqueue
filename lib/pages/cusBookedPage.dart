@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:quickqueue/model/booking.dart';
-import 'package:quickqueue/pages/cusChooseResPage.dart';
 import 'package:intl/intl.dart';
 import 'package:quickqueue/pages/cusHomePage.dart';
 import 'package:quickqueue/services/bookingServices.dart';
@@ -95,7 +94,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
 
                     if (snapshot.data?.isEmpty ?? true) {
                       return Center(
-                        child: Text('No date time found'),
+                        child: Text('No booking data found'),
                       );
                     }
 
@@ -118,11 +117,19 @@ class _CusBookedPageState extends State<CusBookedPage> {
 
                     if (snapshot.data?.isEmpty ?? true) {
                       return Center(
-                        child: Text('No date time found'),
+                        child: Text('No restaurant data found'),
                       );
                     }
 
                     List<Map<String, dynamic>> restaurantData = snapshot.data!;
+                        _totalQueueData =
+                              _bookingDataFuture.then((bookingData) {
+                            final resId = bookingData.isNotEmpty
+                                ? bookingData[0]['r_id'] as String
+                                : '';
+                            return bookingServices
+                                .getTotalBookingQueueForOneRes(resId);
+                          });
                         return Column(
                           children: <Widget>[
                             SizedBox(
@@ -205,17 +212,18 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                           Border.all(color: Colors.white, width: 3),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        bookingData[0]['bookingQueue'] ?? '',
-                                        style: new TextStyle(
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
+                                    child:  Center(
+                                          child: Text(
+                                            bookingData[0]['bookingQueue'] ?? '',
+                                            style: new TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        )
+                                      
                                   ),
-                                ),                       
+                                ),
                                 InkWell(
                                   onTap: () {},
                                   child: Container(
@@ -227,14 +235,34 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                           Border.all(color: Colors.white, width: 3),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        bookingData[0]['previousQueue'] ?? '',
-                                        style: new TextStyle(
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400),
-                                      ),
+                                    child: FutureBuilder<int>(
+                                          future: _totalQueueData,
+                                          builder:
+                                              (BuildContext context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            if (snapshot.hasError) {
+                                              return Center(
+                                                child:
+                                                    Text('Error fetching data'),
+                                              );
+                                            }
+                                            int queueData = snapshot.data!;
+                                        return Center(
+                                          child: Text(
+                                            queueData.toString(),
+                                            style: new TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        );
+                                      }
                                     ),
                                   ),
                                 ),
@@ -355,6 +383,8 @@ class _CusBookedPageState extends State<CusBookedPage> {
         ));
   }
 }
+
+
 
 // code เก่า ใช้ได้แต่เรียกจาก nav bar bottom ยังไม่ได้
 // import 'package:flutter/material.dart';

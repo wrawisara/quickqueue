@@ -152,7 +152,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Text(
-                                  "Expiration Date : \n" + couponData[0]['end_date'].toString(),
+                                  "Expiration Date : \n" + formatDate(couponData[0]['end_date']),
                                       //formattedEndDate,
                                   style: TextStyle(
                                     fontSize: 20,
@@ -252,6 +252,13 @@ navigateToCusProfilePage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusProfilePage();
   }));
+}
+
+
+String formatDate(Timestamp timestamp) {
+  final date = timestamp.toDate();
+  final formatter = DateFormat('yyyy-MM-dd h:mm a');
+  return formatter.format(date);
 }
 
 
