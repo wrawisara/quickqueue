@@ -22,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   //ตัวแปร
   String email = '';
   String password = '';
+  //ใช้ check textformfiled
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +49,15 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Form(
+                    key: _formKey,
                     child: Column(children: <Widget>[
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(90.0),
@@ -62,6 +71,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20.0),
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter you password';
+                          }
+                          return null;
+                        },
                         obscureText: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -76,88 +91,25 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          // primary: Colors.green,
-                          // elevation: 3,
-                          minimumSize: Size(280, 50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0)),
-                        ),
-                        child: const Text('Sign In',
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.white)),
-                        onPressed: () async {
-                          // alert แจ้งเตือนใส่ email/password ผิด
-                          // showDialog<String>(
-                          //   context: context,
-                          //   builder: (BuildContext context) => AlertDialog(
-                          //     title: const Text('Incorrect email or password'),
-                          //     content: const Text('Your email and password do not match. Please try again.'),
-                          //   ),
-                          // );
-                          if (email != null && password != null) {
-                            try {
+                          style: ElevatedButton.styleFrom(
+                            // primary: Colors.green,
+                            // elevation: 3,
+                            minimumSize: Size(280, 50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32.0)),
+                          ),
+                          child: const Text('Sign In',
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white)),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
                               print(email);
                               print(password);
                               await loginChecker(context, email, password);
-                            } on FirebaseAuthException catch (e) {
-                              print("Login error: ${e.message}");
-                              if(e.message == 'user not found'){
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                        title: const Text('Error'),
-                                        content: Text(
-                                            "You account doesn't exist. Please sign up."),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, 'OK'),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      ));
-                              } else if( e.message == 'invalid-email' || e.message == 'wrong-password'){
-                                if(e.message == 'user-not-found'){
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                        title: const Text('Error'),
-                                        content: Text(
-                                            "Your email or password is incorrect. Please try again."),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, 'OK'),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      ));
-                              }
-                              }
-                              
                             }
-                          } else {
-                            showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Error'),
-                                content: Text(
-                                    'Please enter your email and password.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'OK'),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                            child:
+                            Text('Submit');
+                          }),
                       SizedBox(height: 20.0),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -203,24 +155,56 @@ class _LoginPageState extends State<LoginPage> {
 
 Future<void> loginChecker(
     BuildContext context, String email, String password) async {
-  String userType = await authenServices.getUserType(email, password);
-  Future<User?> futureUser = authenServices.userSignInWithEmailAndPassword(
-      email: email, password: password);
-  User? user = await futureUser;
-  if (user != null) {
-    if (userType == 'customer') {
-      print('Login Success');
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => CusHomePage()));
-      //navigateToCusChooseResPage(context, user);
-    } else if (userType == 'restaurant') {
-      print('Login Success');
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ResHomePage()));
-      // go to restaurant page
+  try {
+    String userType = await authenServices.getUserType(email, password);
+    User? user = await authenServices.userSignInWithEmailAndPassword(
+        email: email, password: password);
+    if (user != null) {
+      if (userType == 'customer') {
+        print('Login Success');
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => CusHomePage()));
+        //navigateToCusChooseResPage(context, user);
+      } else if (userType == 'restaurant') {
+        print('Login Success');
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => ResHomePage()));
+        // go to restaurant page
+      }
     }
-  } else {
-    print('Login failed');
+  } on FirebaseAuthException catch (e) {
+    print("Login error: ${e.message}");
+    if (e.code == 'invalid-email' || e.code == 'wrong-password' || e.code =='too-many-requests' ) {
+      print("Invalid email or password!");
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Error'),
+                content: Text(
+                    "Your email or password is incorrect. Please try again."),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ));
+    }
+    if (e.code == 'user-not-found') {
+      print("User not found!");
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Error'),
+                content: Text("You account doesn't exist. Please sign up."),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ));
+    } 
   }
 }
 

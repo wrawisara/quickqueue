@@ -76,21 +76,21 @@ class _BookTableItemState extends State<BookTableItem> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            "Available ",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w400),
-                          ),
-                          Text(
-                            widget.available.toString(),
-                            style: TextStyle(
-                                // backgroundColor:Color.fromRGBO(72, 191, 145, 0.5),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w400),
-                          ),
-                          SizedBox(
-                            width: 30,
-                          ),
+                          // Text(
+                          //   "Available ",
+                          //   style: TextStyle(
+                          //       fontSize: 20, fontWeight: FontWeight.w400),
+                          // ),
+                          // Text(
+                          //   widget.available.toString(),
+                          //   style: TextStyle(
+                          //       // backgroundColor:Color.fromRGBO(72, 191, 145, 0.5),
+                          //       fontSize: 20,
+                          //       fontWeight: FontWeight.w400),
+                          // ),
+                          // SizedBox(
+                          //   width: 30,
+                          // ),
                           Text(
                             "Max " + widget.capacity.toString(),
                             style: TextStyle(

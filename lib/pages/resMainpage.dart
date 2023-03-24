@@ -55,6 +55,11 @@ class _ResMainPageState extends State<ResMainPage> {
             automaticallyImplyLeading: false, // Disable the back icon
             actions: <Widget>[
               IconButton(
+                icon: const Icon(Icons.redeem_outlined, color: Colors.white),
+                onPressed: () {
+                  showRedeemAlert(context);
+                }),
+              IconButton(
                 icon: const Icon(Icons.power_settings_new_outlined,
                     color: Colors.white),
                 onPressed: () {
@@ -322,6 +327,45 @@ navigateToLoginPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return LoginPage();
   }));
+}
+void showRedeemAlert(BuildContext context) {
+  final TextEditingController _textFieldController = TextEditingController();
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Redeem Code'),
+          content: TextField(
+            controller: _textFieldController,
+            decoration: InputDecoration(hintText: 'Redeem Code'),
+          ),
+          actions: <Widget>[
+            IconsButton(
+              onPressed: () {
+                String redeemCode = _textFieldController.text;
+                // do something with the redeem code
+                Navigator.of(context).pop();
+              },
+              text: 'Redeem',
+              iconData: Icons.check_circle_outline,
+              color: Colors.tealAccent[700],
+              textStyle: TextStyle(color: Colors.white),
+              iconColor: Colors.white,
+            ),
+            IconsButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              text: 'Cancel',
+              iconData: Icons.cancel_outlined,
+              color: Colors.red[400],
+              textStyle: TextStyle(color: Colors.white),
+              iconColor: Colors.white,
+            ),
+            
+          ],
+        );
+      });
 }
 
 showLogoutAlertDialog(BuildContext context) {
