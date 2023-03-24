@@ -54,6 +54,7 @@ class CustomerServices {
   Future<List<Map<String, dynamic>>> getAllCurrentTierCoupon(
       String cusId) async {
     try {
+      
       QuerySnapshot querySnapshot =
           await customerCollection.where('c_id', isEqualTo: cusId).get();
 
@@ -105,7 +106,7 @@ class CustomerServices {
       String cusId) async {
     try {
       QuerySnapshot couponQuery =
-          await couponCollection.where('status', isEqualTo: 'used').where('c_id', isEqualTo: cusId).get();
+          await couponCollection.where('status', isEqualTo: 'collected').where('c_id', isEqualTo: cusId).get();
 
       List<Map<String, dynamic>> coupons = [];
       couponQuery.docs.forEach((doc) {
@@ -312,7 +313,7 @@ class CustomerServices {
         .get();
 
     if (couponQuerySnapshot.size > 0) {
-      throw Exception('You already used this coupon');
+      throw Exception('You already collected this coupon');
     } else {
       // There are no existing documents with the specified 'c_id' and 'coupon_id'
 
@@ -339,7 +340,7 @@ class CustomerServices {
     // Update the new coupon document with the new c_id and status
     final updateDataCoupon = {
       'c_id': cusId,
-      'status': 'used',
+      'status': 'collected',
       'code': generateCouponCode()
     };
     await newCouponDoc.update(updateDataCoupon);
@@ -349,7 +350,7 @@ class CustomerServices {
     await customerDoc.reference.update(updateDataCustomer);
     }
     } catch (e){
-      throw(e);
+      throw('You already collected this coupon.');
     }
   }
 
