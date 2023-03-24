@@ -39,6 +39,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
   late Future<List<Map<String, dynamic>>> _bookingDataFuture;
   late Future<List<Map<String, dynamic>>> _currentUserInfoFuture;
   late Future<List<Map<String, dynamic>>> _restaurantDataFuture;
+    late Future<int> _totalQueueData;
   // List<String> customerName = await customerNameFuture;
 
   @override
@@ -118,6 +119,14 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     }
 
                     List<Map<String, dynamic>> restaurantData = snapshot.data!;
+                        _totalQueueData =
+                              _bookingDataFuture.then((bookingData) {
+                            final resId = bookingData.isNotEmpty
+                                ? bookingData[0]['r_id'] as String
+                                : '';
+                            return bookingServices
+                                .getTotalBookingQueueForOneRes(resId);
+                          });
                         return Column(
                           children: <Widget>[
                             SizedBox(
@@ -200,15 +209,16 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                           Border.all(color: Colors.white, width: 3),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        bookingData[0]['bookingQueue'] ?? '',
-                                        style: new TextStyle(
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
+                                    child:  Center(
+                                          child: Text(
+                                            bookingData[0]['bookingQueue'] ?? '',
+                                            style: new TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        )
+                                      
                                   ),
                                 ),
                                 InkWell(
@@ -222,14 +232,34 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                           Border.all(color: Colors.white, width: 3),
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        bookingData[0]['previousQueue'] ?? '',
-                                        style: new TextStyle(
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400),
-                                      ),
+                                    child: FutureBuilder<int>(
+                                          future: _totalQueueData,
+                                          builder:
+                                              (BuildContext context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            if (snapshot.hasError) {
+                                              return Center(
+                                                child:
+                                                    Text('Error fetching data'),
+                                              );
+                                            }
+                                            int queueData = snapshot.data!;
+                                        return Center(
+                                          child: Text(
+                                            queueData.toString(),
+                                            style: new TextStyle(
+                                                fontSize: 30,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        );
+                                      }
                                     ),
                                   ),
                                 ),
