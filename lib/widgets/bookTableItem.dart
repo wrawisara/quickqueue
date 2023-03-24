@@ -118,17 +118,13 @@ class _BookTableItemState extends State<BookTableItem> {
                                       await bookingServices.getBookingQueue(
                                           widget.restaurant[0]['r_id'],
                                           date,
-                                          2);
-
-                                  String previousQueue = await bookingServices.getPreviousBookingQueue(widget.restaurant[0]['r_id'],
-                                          date,
-                                          2);
-                                  bookingServices.bookTable(
+                                          -1);
+                                  bookingServices.resBookTable(
                                       widget.restaurant[0]['r_id'],
                                       '',
                                       date,
                                       time,
-                                      2,
+                                      -1,
                                       bookingQueue);
                                 },
                                 borderRadius: BorderRadius.circular(10),

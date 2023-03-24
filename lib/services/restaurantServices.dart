@@ -99,7 +99,6 @@ class RestaurantServices {
       querySnapshot.docs.forEach((doc) {
         String tableType = '';
         Map<String, dynamic>? data;
-        int capacity;
 
         // Check if the document exists and has data
         if (doc.exists && doc.data() != null) {
@@ -130,6 +129,16 @@ class RestaurantServices {
     } catch (e) {
       print('Error when edit table: $e');
     }
+  }
+
+   Future<void> updateRestaurantStatus(String resId, String status) async {
+    // Update the customer's tier in the database
+    final customerDocSnapshot = await FirebaseFirestore.instance
+        .collection('restaurant')
+        .where('r_id', isEqualTo: resId)
+        .get();
+    final customerDoc = customerDocSnapshot.docs[0];
+    await customerDoc.reference.update({'status': status});
   }
 
   Future<void> setTableInfoForTableE(String resId, Map<String, int> tableInfo,

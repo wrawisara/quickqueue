@@ -86,31 +86,6 @@ class UserRegisterService {
     }
   }
 
-  Future<void> createBookingInfo(String resId) async {
-    CollectionReference<Map<String, dynamic>> bookingCollectionRef =
-        FirebaseFirestore.instance.collection("bookings");
-    DocumentReference<Map<String, dynamic>> bookingDocRef =
-        bookingCollectionRef.doc();
-
-    Timestamp timestamp = Timestamp.now();
-    DateTime now = DateTime.now();
-    String date = DateFormat('yyyy-MM-dd').format(now);
-    DateTime dateTime = timestamp.toDate();
-    String timeString = DateFormat('H.mm').format(dateTime);
-
-    await bookingDocRef.set({
-      'c_id': '',
-      'r_id': resId,
-      'booking_queue': null,
-      'date': date,
-      'time': timeString,
-      'guest': null,
-      'status': null,
-      'created_at': FieldValue.serverTimestamp(),
-      'updated_at': FieldValue.serverTimestamp()
-    });
-  }
-
   Future<void> createCollectionIfNotExists(String collectionName) async {
     CollectionReference<Map<String, dynamic>> collectionRef =
         FirebaseFirestore.instance.collection(collectionName);
@@ -188,8 +163,6 @@ class UserRegisterService {
             'role': 'restaurant',
           });
           createTableInfoWhenRegister(id);
-          //createBookingInfo(id);
-          //}
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {

@@ -16,7 +16,7 @@ class CustomerServices {
 
   Future<List<Map<String, dynamic>>> getAllRestaurants() async {
     try {
-      QuerySnapshot restaurantQuerySnapshot = await restaurantCollection.get();
+      QuerySnapshot restaurantQuerySnapshot = await restaurantCollection.where('status', isEqualTo: 'open').get();
 
       List<Map<String, dynamic>> restaurants = [];
 
@@ -378,11 +378,19 @@ class CustomerServices {
 
   Future<void> updateExpiredCoupons() async {
     final now = DateTime.now();
-
-    final couponCollection = FirebaseFirestore.instance.collection('coupons');
-
     final expiredCouponsQuery =
         await couponCollection.where('end_date', isLessThan: now).get();
+
+    for (final couponDoc in expiredCouponsQuery.docs) {
+      await couponDoc.reference.delete();
+      print('Expired coupon ${couponDoc.id} has been deleted');
+    }
+  }
+
+  Future<void> updateBookingQueue() async {
+    final now = DateTime.now();
+    final expiredCouponsQuery =
+        await bookingCollection.where('status', isEqualTo: 'canceled').get();
 
     for (final couponDoc in expiredCouponsQuery.docs) {
       await couponDoc.reference.delete();

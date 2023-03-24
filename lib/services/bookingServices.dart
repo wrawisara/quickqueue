@@ -18,14 +18,12 @@ class BookingServices {
 
   Future<List<Map<String, dynamic>>> getBookingData() async {
     try {
-      QuerySnapshot bookingQuerySnapshot =
-          await bookingCollection.get();
+      QuerySnapshot bookingQuerySnapshot = await bookingCollection.get();
 
       List<Map<String, dynamic>> booking = [];
 
       bookingQuerySnapshot.docs.forEach((doc) {
         String bookingQueue = doc.get('booking_queue');
-        //String previousQueue = doc.get('previous_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
         int guest = doc.get('guest');
@@ -37,7 +35,6 @@ class BookingServices {
 
         booking.add({
           'bookingQueue': bookingQueue,
-          //'previousQueue': previousQueue,
           'c_id': cusId,
           'r_id': resId,
           'guest': guest,
@@ -62,8 +59,10 @@ class BookingServices {
       String cusId) async {
     try {
       QuerySnapshot bookingQuerySnapshot = await bookingCollection
-          .where('c_id', isEqualTo: cusId).where('status', whereIn: ['pending', 'canceled'])
+          .where('c_id', isEqualTo: cusId)
+          .where('status', whereIn: ['pending', 'canceled'])
           .orderBy('created_at', descending: true)
+          .limit(1)
           .get();
 
       List<Map<String, dynamic>> booking = [];
@@ -111,6 +110,7 @@ class BookingServices {
       QuerySnapshot bookingQuerySnapshot = await bookingCollection
           .where('r_id', isEqualTo: resId)
           .where('date', isEqualTo: todayString)
+          .orderBy('status', descending: true)
           .orderBy('created_at')
           .get();
 
@@ -254,122 +254,109 @@ class BookingServices {
     }
   }
 
-    Future<String> getPreviousBookingQueue(
-      String resId, String date, int numOfGuests) async {
+  Future<Map<String, int>> getTotalBookingQueue(List<String> resIds) async {
     try {
-      final QuerySnapshot<Map<String, dynamic>> bookingQueueSnapshot =
-          await bookingCollection
-              .where('r_id', isEqualTo: resId)
-              .where('date', isEqualTo: date)
-              .orderBy('created_at', descending: true)
-              .get() as QuerySnapshot<Map<String, dynamic>>;
+      final Map<String, int> totalQueues = {};
 
-      final bookingCount = bookingQueueSnapshot.docs.length;
+      final now = DateTime.now();
+      final todayString = DateFormat('yyyy-MM-dd').format(now);
 
-      final lastQueueNumber = bookingCount > 0
-          ? bookingQueueSnapshot.docs.first['booking_queue']?.toString()
-          : null;
-
-      final tableType = getTableType(numOfGuests);
-
-      String formattedQueueNumber = '001';
-      if (lastQueueNumber != null) {
-        final lastTableType = lastQueueNumber.substring(0, 1);
-        if (lastTableType == tableType) {
-          final lastQueueNumberInt = int.parse(lastQueueNumber.substring(1));
-          formattedQueueNumber =
-              (lastQueueNumberInt).toString().padLeft(3, '0');
-        }
+      for (final resId in resIds) {
+        final querySnapshot = await bookingCollection
+            .where('r_id', isEqualTo: resId)
+            .where('date', isEqualTo: todayString)
+            .where('status', isEqualTo: 'pending')
+            .get();
+        final count = querySnapshot.docs.length;
+        totalQueues[resId] = count;
       }
 
-      String previousBookingQueue = '$tableType$formattedQueueNumber';
-
-      return previousBookingQueue;
+      return totalQueues;
     } catch (e) {
-      print('Error occurred when get booking queue : $e');
+      print('Error occurred when getting total booking queue: $e');
       throw (e);
     }
   }
 
-
-  Future<Map<String, int>> getTotalBookingQueue(List<String> resIds) async {
-  try {
-    final Map<String, int> totalQueues = {};
-
-final now = DateTime.now();
-    final todayString = DateFormat('yyyy-MM-dd').format(now);
-      
-    for (final resId in resIds) {
-      final querySnapshot =
-          await bookingCollection.where('r_id', isEqualTo: resId).where('date', isEqualTo: todayString).get();
-      final count = querySnapshot.docs.length;
-      totalQueues[resId] = count;
-    }
-
-    return totalQueues;
-  } catch (e) {
-    print('Error occurred when getting total booking queue: $e');
-    throw (e);
-  }
-}
-Future<int> getTotalBookingQueueForOneRes(String resId) async {
-  try {
-    int totalQueue = 0;
-    final now = DateTime.now();
-    final todayString = DateFormat('yyyy-MM-dd').format(now);
-      final querySnapshot =
-          await bookingCollection.where('r_id', isEqualTo: resId).where('date', isEqualTo: todayString).get();
-      final count = querySnapshot.docs.length;
-      totalQueue = count-1;
-
-    return totalQueue;
-  } catch (e) {
-    print('Error occurred when getting total booking queue: $e');
-    throw (e);
-  }
-}
-
-  // Booking
-Future<void> bookTable(String resId, String cusId, String date, String time,
-      int guests, String bookingQueue) async {
+  Future<int> getTotalBookingQueueForOneRes(String resId) async {
     try {
-      if (cusId != '' ){
+      int totalQueue = 0;
       final now = DateTime.now();
       final todayString = DateFormat('yyyy-MM-dd').format(now);
-      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await bookingCollection.where('c_id', isEqualTo: cusId).where('date', isEqualTo: todayString).get()
-              as QuerySnapshot<Map<String, dynamic>>;
+      final querySnapshot = await bookingCollection
+          .where('r_id', isEqualTo: resId)
+          .where('date', isEqualTo: todayString)
+          .where('status', isEqualTo: 'pending')
+          .get();
+      final count = querySnapshot.docs.length;
+      totalQueue = count - 1;
 
-      if (querySnapshot.docs.isNotEmpty) {
-        throw ('Customer already has a booking.');
-       
-      }
+      return totalQueue;
+    } catch (e) {
+      print('Error occurred when getting total booking queue: $e');
+      throw (e);
+    }
+  }
 
-      await FirebaseFirestore.instance.collection('bookings').add({
-        'booking_queue': bookingQueue,
-        //'previous_queue': previousBookingQueue,
-        'created_at': DateTime.now(),
-        'c_id': cusId,
-        'r_id': resId,
-        'date': date,
-        'guest': guests,
-        'status': 'pending',
-        'time': time,
-        'updated_at': DateTime.now(),
-      });
-      } else if (cusId == ''){
-        await FirebaseFirestore.instance.collection('bookings').add({
-        'booking_queue': bookingQueue,
-        //'previous_queue': previousBookingQueue,
-        'created_at': DateTime.now(),
-        'c_id': cusId,
-        'r_id': resId,
-        'date': date,
-        'guest': guests,
-        'status': 'pending',
-        'time': time,
-        'updated_at': DateTime.now(),
-      });
+  // Booking
+  Future<void> bookTable(String resId, String cusId, String date, String time,
+      int guests, String bookingQueue) async {
+    try {
+      if (cusId != '') {
+        final now = DateTime.now();
+        final todayString = DateFormat('yyyy-MM-dd').format(now);
+        final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+            await bookingCollection
+                    .where('c_id', isEqualTo: cusId)
+                    .where('date', isEqualTo: todayString)
+                    .where('status',
+                        whereIn: ['confirmed', 'pending', 'canceled']).get()
+                as QuerySnapshot<Map<String, dynamic>>;
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final bookingData = querySnapshot.docs.first.data();
+          final bookingStatus = bookingData['status'];
+          if (bookingStatus == 'canceled') {
+            // allow the customer to make a new booking
+            await bookingCollection.add({
+              'booking_queue': bookingQueue,
+              'created_at': DateTime.now(),
+              'c_id': cusId,
+              'r_id': resId,
+              'date': date,
+              'guest': guests,
+              'status': 'pending',
+              'time': time,
+              'updated_at': DateTime.now(),
+            });
+          } else {
+            throw ('Customer already has a booking.');
+          }
+        } else {
+          await bookingCollection.add({
+            'booking_queue': bookingQueue,
+            'created_at': DateTime.now(),
+            'c_id': cusId,
+            'r_id': resId,
+            'date': date,
+            'guest': guests,
+            'status': 'pending',
+            'time': time,
+            'updated_at': DateTime.now(),
+          });
+        }
+      } else if (cusId == '') {
+        await bookingCollection.add({
+          'booking_queue': bookingQueue,
+          'created_at': DateTime.now(),
+          'c_id': cusId,
+          'r_id': resId,
+          'date': date,
+          'guest': guests,
+          'status': 'pending',
+          'time': time,
+          'updated_at': DateTime.now(),
+        });
       }
     } catch (e) {
       print('$e');
@@ -377,6 +364,26 @@ Future<void> bookTable(String resId, String cusId, String date, String time,
     }
   }
 
+
+  Future<void> resBookTable(String resId, String cusId, String date, String time,
+      int guests, String bookingQueue) async {
+    try {
+        await bookingCollection.add({
+          'booking_queue': bookingQueue,
+          'created_at': DateTime.now(),
+          'c_id': cusId,
+          'r_id': resId,
+          'date': date,
+          'guest': guests,
+          'status': 'pending',
+          'time': time,
+          'updated_at': DateTime.now(),
+        });
+    } catch (e) {
+      print('$e');
+      throw e;
+    }
+  }
 
   String getTableType(int guests) {
     if (guests > 0 && guests <= 2) {
@@ -387,8 +394,10 @@ Future<void> bookTable(String resId, String cusId, String date, String time,
       return 'C';
     } else if (guests == 8) {
       return 'D';
-    } else {
+    } else if (guests > 8){
       return 'E';
+    } else {
+      return 'W';
     }
   }
 
@@ -411,10 +420,8 @@ Future<void> bookTable(String resId, String cusId, String date, String time,
             bookingCollection.doc(bookingId)
                 as DocumentReference<Map<String, dynamic>>;
 
-        await bookingDoc.update({
-          'status': status,
-          'updated_at': DateTime.now() 
-        });
+        await bookingDoc
+            .update({'status': status, 'updated_at': DateTime.now()});
         print('Booking status updated successfully');
       } else {
         print('No booking found with booking queue: $bookingQueue');
@@ -428,83 +435,91 @@ Future<void> bookTable(String resId, String cusId, String date, String time,
   Future<void> deleteBooking(String cusId) async {
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await bookingCollection.where('c_id', isEqualTo: cusId).get() as QuerySnapshot<Map<String, dynamic>>;
+          await bookingCollection.where('c_id', isEqualTo: cusId).get()
+              as QuerySnapshot<Map<String, dynamic>>;
 
       for (final doc in querySnapshot.docs) {
-      await doc.reference.delete();
-    }
+        await doc.reference.delete();
+      }
 
-    print('Bookings successfully deleted.');
-    
+      print('Bookings successfully deleted.');
     } catch (e) {
       print('Error occurred while deleting booking: $e');
       throw e;
     }
   }
 
-  // to be decided wether to delete or not 
+  // to be decided wether to delete or not
   Future<void> deleteOldBookings() async {
-  final now = DateTime.now();
-  final todayString = DateFormat('yyyy-MM-dd').format(now);
+    final now = DateTime.now();
+    final todayString = DateFormat('yyyy-MM-dd').format(now);
 
-  final oldBookingsQuerySnapshot = await bookingCollection
-      .where('date', isLessThan: todayString)
-      .get() as QuerySnapshot<Map<String, dynamic>>;
+    final oldBookingsQuerySnapshot = await bookingCollection
+        .where('date', isLessThan: todayString)
+        .get() as QuerySnapshot<Map<String, dynamic>>;
 
-  final batch = FirebaseFirestore.instance.batch();
+    final batch = FirebaseFirestore.instance.batch();
 
-  oldBookingsQuerySnapshot.docs.forEach((doc) {
-    batch.delete(doc.reference);
-  });
+    oldBookingsQuerySnapshot.docs.forEach((doc) {
+      batch.delete(doc.reference);
+    });
 
-  await batch.commit();
-}
-
-Future<void> downloadBookingsCsv(String resId) async {
-  try {
-  // Query the bookings collection
-  final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-      await bookingCollection.where('r_id', isEqualTo: resId).get() as QuerySnapshot<Map<String, dynamic>>;
-
-  // Convert the data into a CSV format
-  final List<List<dynamic>> rows = [];
-  rows.add(['booking_id', 'res_id', 'booking_queue','booking_date', 'booking_time', 'guests']); // Add header row
-  for (final QueryDocumentSnapshot<Map<String, dynamic>> document
-      in querySnapshot.docs) {
-    rows.add([
-      document.id,
-      document.data()['r_id'],
-      document.data()['booking_queue'],
-      document.data()['date'],
-      document.data()['time'],
-      document.data()['guest']
-    ]);
+    await batch.commit();
   }
-  final String csvData = const ListToCsvConverter().convert(rows);
 
-  // Save the CSV data to a file on the device
-  final Directory appDocumentsDirectory =
-      await getApplicationDocumentsDirectory();
-  const String csvFileName = 'bookings.csv';
-  final File csvFile = File('${appDocumentsDirectory.path}/$csvFileName');
-  await csvFile.writeAsString(csvData);
+  Future<void> downloadBookingsCsv(String resId) async {
+    try {
+      // Query the bookings collection
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await bookingCollection.where('r_id', isEqualTo: resId).get()
+              as QuerySnapshot<Map<String, dynamic>>;
 
-  // Offer the user the option to download the file
-  await shareFile(csvFile);
-  } catch (e){
-    print('Error during downloading CSV $e');
+      // Convert the data into a CSV format
+      final List<List<dynamic>> rows = [];
+      rows.add([
+        'booking_id',
+        'res_id',
+        'booking_queue',
+        'booking_date',
+        'booking_time',
+        'guests'
+      ]); // Add header row
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> document
+          in querySnapshot.docs) {
+        rows.add([
+          document.id,
+          document.data()['r_id'],
+          document.data()['booking_queue'],
+          document.data()['date'],
+          document.data()['time'],
+          document.data()['guest']
+        ]);
+      }
+      final String csvData = const ListToCsvConverter().convert(rows);
+
+      // Save the CSV data to a file on the device
+      final Directory appDocumentsDirectory =
+          await getApplicationDocumentsDirectory();
+      const String csvFileName = 'bookings.csv';
+      final File csvFile = File('${appDocumentsDirectory.path}/$csvFileName');
+      await csvFile.writeAsString(csvData);
+
+      // Offer the user the option to download the file
+      await shareFile(csvFile);
+    } catch (e) {
+      print('Error during downloading CSV $e');
+    }
   }
-}
 
-Future<void> shareFile(File file) async {
-  final String fileName = file.path.split('/').last;
-  final List<String> paths = file.path.split('/');
-  paths.removeLast();
-  final String directory = paths.join('/');
+  Future<void> shareFile(File file) async {
+    final String fileName = file.path.split('/').last;
+    final List<String> paths = file.path.split('/');
+    paths.removeLast();
+    final String directory = paths.join('/');
 
-   await Share.shareXFiles([XFile(file.path)],
-      text: 'Here is your CSV file: $fileName',
-      subject: 'CSV File',
-      sharePositionOrigin: Rect.fromLTWH(0, 0, 10, 10));
-}
+    await Share.shareXFiles([XFile(file.path)],
+        text: 'Here is your CSV file: $fileName',
+        subject: 'CSV File',
+        sharePositionOrigin: Rect.fromLTWH(0, 0, 10, 10));
+  }
 }

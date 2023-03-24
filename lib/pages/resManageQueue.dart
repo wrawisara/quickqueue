@@ -222,7 +222,9 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                                   .updateBookingStatus(
                                                       booking['bookingQueue'],
                                                       'canceled');
-                                              customerServices.subtractReputation(booking['c_id']);
+                                              if (booking['c_id'] != null){
+                                                customerServices.subtractReputation(booking['c_id']);
+                                              }
                                             },
                                             text: 'Cancel',
                                             iconData: Icons.cancel_outlined,

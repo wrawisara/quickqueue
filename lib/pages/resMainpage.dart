@@ -68,6 +68,7 @@ class _ResMainPageState extends State<ResMainPage> {
                         IconsButton(
                           onPressed: () {
                             //ใส่ action
+                            restaurantServices.updateRestaurantStatus(userId,'Open');
                           },
                           text: 'Open Queue',
                           iconData: Icons.check_circle_outline,
@@ -78,6 +79,7 @@ class _ResMainPageState extends State<ResMainPage> {
                         IconsButton(
                           onPressed: () {
                             //ใส่ action
+                            restaurantServices.updateRestaurantStatus(userId,'Close');
                           },
                           text: 'Close Queue',
                           iconData: Icons.cancel_outlined,
