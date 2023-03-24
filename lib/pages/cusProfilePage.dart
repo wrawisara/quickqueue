@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quickqueue/pages/cusChooseResPage.dart';
+import 'package:quickqueue/pages/cusHomePage.dart';
+import 'package:quickqueue/pages/cusMyCoupon.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/widgets/couponListView.dart';
 import 'package:quickqueue/widgets/customElevatedButton.dart';
@@ -46,10 +49,19 @@ class _CusProfilePageState extends State<CusProfilePage> {
     // print(nameWidth);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            navigateToCusHomePage(context);
+          },
+        ),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
-        // automaticallyImplyLeading: false, // Disable the back icon
+        automaticallyImplyLeading: false, // Disable the back icon
         title: Text(
           "Profile",
           style: TextStyle(color: Colors.white),
@@ -63,6 +75,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Want to go Booking History')));
+              navigateToCusMyCouponPage(context);
             },
           ),
         ],
@@ -92,7 +105,8 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                     color: Colors.white,
                                     alignment: Alignment.center,
                                     child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: <Widget>[
                                           Image.asset(
                                             'assets/img/profile2.png',
@@ -149,15 +163,18 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                               width: nameWidth,
                                               height: 40,
                                               decoration: new BoxDecoration(
-                                                color: Colors.cyan.withOpacity(0.2),
+                                                color: Colors.cyan
+                                                    .withOpacity(0.2),
                                                 border: Border.all(
-                                                    color: Colors.white, width: 3),
+                                                    color: Colors.white,
+                                                    width: 3),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
                                               ),
                                               child: Center(
                                                 child: Text(
-                                                  (userData[0]['firstname'] ?? '') +
+                                                  (userData[0]['firstname'] ??
+                                                          '') +
                                                       (" ") +
                                                       userData[0]['lastname'],
                                                   style: TextStyle(
@@ -184,7 +201,8 @@ class _CusProfilePageState extends State<CusProfilePage> {
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: _couponDataFuture,
                       builder: (BuildContext context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(
                             child: CircularProgressIndicator(),
                           );
@@ -194,40 +212,48 @@ class _CusProfilePageState extends State<CusProfilePage> {
                             child: Text('Error fetching data'),
                           );
                         }
-          
+
                         if (snapshot.data?.isEmpty ?? true) {
                           return Center(
                             child: Text('Currently no coupon available.'),
                           );
                         }
-          
-                        List<Map<String, dynamic>> couponData = snapshot.data ?? [];
-          
+
+                        List<Map<String, dynamic>> couponData =
+                            snapshot.data ?? [];
+
                         return ListView.builder(
                           itemCount: couponData.length,
                           itemBuilder: (BuildContext context, int index) {
                             Map<String, dynamic> coupon = couponData[index];
-                            return Card(
-                              child: ListTile(
-                                title: Text(
-                                  // ใส่ CouponName
-                                  coupon['couponName'],
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                subtitle: Text(
-                                  //ใส่เป็น requied point
-                                  coupon['requiredPoint'].toString() + " point",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                leading: SizedBox(
-                                  width: 50,
-                                  height: 60,
-                                  child: Image.network(
-                                    coupon['img'],
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                onTap: () {
+                            return Container(
+                              height: 100,
+                              // alignment: Alignment.centerLeft,
+                              child: Card(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 10, left: 10),
+                                  child: ListTile(
+                                    title: Text(
+                                      // ใส่ CouponName
+                                      coupon['couponName'],
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    subtitle: Text(
+                                      //ใส่เป็น requied point
+                                      coupon['requiredPoint'].toString() +
+                                          " point",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    leading: SizedBox(
+                                      width: 60,
+                                      height: 70,
+                                      child: Image.network(
+                                        coupon['img'],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    onTap: () {
                                   print('Tapped');
                                   showDialog(
                                     context: context,
@@ -298,11 +324,13 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                             child: Text("CANCEL"),
                                             onPressed: () {},
                                           ),
-                                        ],
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
                             );
                           },
@@ -318,9 +346,28 @@ class _CusProfilePageState extends State<CusProfilePage> {
   }
 }
 
-navigateToCusRedeemCouponPage(BuildContext context, Map<String, dynamic> coupon) {
+navigateToCusRedeemCouponPage(
+    BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return CusRedeemCouponPage(coupon: coupon);
+  }));
+}
+
+navigateToCusMyCouponPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return CusMyCouponPage();
+  }));
+}
+
+navigateToCusChooseResPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return CusChooseResPage();
+  }));
+}
+
+navigateToCusHomePage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return CusHomePage();
   }));
 }
 

@@ -313,9 +313,10 @@ class BookingServices {
 Future<int> getTotalBookingQueueForOneRes(String resId) async {
   try {
     int totalQueue = 0;
-
+    final now = DateTime.now();
+    final todayString = DateFormat('yyyy-MM-dd').format(now);
       final querySnapshot =
-          await bookingCollection.where('r_id', isEqualTo: resId).get();
+          await bookingCollection.where('r_id', isEqualTo: resId).where('date', isEqualTo: todayString).get();
       final count = querySnapshot.docs.length;
       totalQueue = count;
 
@@ -338,7 +339,8 @@ Future<void> bookTable(String resId, String cusId, String date, String time,
               as QuerySnapshot<Map<String, dynamic>>;
 
       if (querySnapshot.docs.isNotEmpty) {
-        throw Exception('Customer already has a booking.');
+        throw ('Customer already has a booking.');
+       
       }
 
       await FirebaseFirestore.instance.collection('bookings').add({

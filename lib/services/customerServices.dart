@@ -60,7 +60,7 @@ class CustomerServices {
 
       String customerTier = querySnapshot.docs[0]['tier'];
 
-      QuerySnapshot couponQuery = await FirebaseFirestore.instance
+   QuerySnapshot couponQuery = await FirebaseFirestore.instance
           .collection('coupons')
           .where('tier', isEqualTo: customerTier)
           .where('status', isEqualTo: 'available')

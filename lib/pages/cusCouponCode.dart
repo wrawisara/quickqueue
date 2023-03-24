@@ -7,20 +7,21 @@ import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:intl/intl.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/model/booking.dart';
+import 'package:quickqueue/pages/cusMyCoupon.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
-class CusRedeemCouponPage extends StatefulWidget {
+class CusCouponCodePage extends StatefulWidget {
   final Map<String, dynamic> coupon;
 
-  const CusRedeemCouponPage({Key? key, required this.coupon}) : super(key: key);
+  const CusCouponCodePage({Key? key, required this.coupon}) : super(key: key);
 
   @override
-  State<CusRedeemCouponPage> createState() => _CusRedeemCouponPageState();
+  State<CusCouponCodePage> createState() => _CusCouponCodePageState();
 }
 
-class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
-  //คำสั่งรับ datenow ยังไม่ได้ใช้
+class _CusCouponCodePageState extends State<CusCouponCodePage> {
+ //คำสั่งรับ datenow ยังไม่ได้ใช้
   String cdate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
 
@@ -64,7 +65,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
           ),
           automaticallyImplyLeading: false,
           title: Text(
-            "Redeem Coupon",
+            widget.coupon['couponName'],
             style: TextStyle(color: Colors.white),
           ),
           actions: [
@@ -74,12 +75,12 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                 color: Colors.white,
               ),
               onPressed: () {
-                navigateToCusProfilePage(context);
+                navigateToCusMyCouponPage(context);
               },
             ),
           ],
         ),
-        body:  SingleChildScrollView(
+        body: SingleChildScrollView(
           child: Stack(
             children: [
              FutureBuilder<List<Map<String, dynamic>>>(
@@ -98,7 +99,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
 
                   if (snapshot.data?.isEmpty ?? true) {
                     return Center(
-                      child: Text('No Coupon found'),
+                      child: Text('No restaurants found'),
                     );
                   }
 
@@ -248,185 +249,12 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
 
 
 
-navigateToCusProfilePage(BuildContext context) {
+navigateToCusMyCouponPage(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusProfilePage();
+    return CusMyCouponPage();
   }));
 }
 
 
 
-
-
-
-
-
-
-//body แบบใส่ futurebuilder รันไม่ได้
-// body: SingleChildScrollView(
-//           child: Stack(
-//             children: [
-//              FutureBuilder<List<Map<String, dynamic>>>(
-//                 future: _couponDataFuture,
-//                 builder: (BuildContext context, snapshot) {
-//                   if (snapshot.connectionState == ConnectionState.waiting) {
-//                     return Center(
-//                       child: CircularProgressIndicator(),
-//                     );
-//                   }
-//                   if (snapshot.hasError) {
-//                     return Center(
-//                       child: Text('Error fetching data'),
-//                     );
-//                   }
-
-//                   if (snapshot.data?.isEmpty ?? true) {
-//                     return Center(
-//                       child: Text('No restaurants found'),
-//                     );
-//                   }
-
-//                   List<Map<String, dynamic>> couponData = snapshot.data ?? [];
-
-//                   return Container(
-//                     padding: EdgeInsets.only(
-//                       left: 15,
-//                       right: 15,
-//                     ),
-//                     child: Column(
-//                       children: <Widget>[
-//                         Column(
-//                           children: <Widget>[
-//                             SizedBox(
-//                               height: 10,
-//                             ),
-//                             Container(
-//                               height: 250,
-//                               child: Card(
-//                                 semanticContainer: true,
-//                                 clipBehavior: Clip.antiAliasWithSaveLayer,
-//                                 child: Image.asset(
-//                                   couponData[0]['img'],
-//                                   scale: 1.5,
-//                                   fit: BoxFit.fill,
-//                                 ),
-//                                 shape: RoundedRectangleBorder(
-//                                   borderRadius: BorderRadius.circular(3.0),
-//                                 ),
-//                                 elevation: 1, 
-//                                 margin: EdgeInsets.all(5),
-//                               ),
-//                             ),
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                               children: <Widget>[
-//                                 Text(
-//                                   couponData[0]['couponName'],
-//                                   style: TextStyle(
-//                                     fontSize: 25,
-//                                     fontWeight: FontWeight.w500,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                             SizedBox(
-//                               height: 10,
-//                             ),
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                               children: [
-//                                 Text(
-//                                   "Expiration Date : \n" + couponData[0]['end_date'].toString(),
-//                                       //formattedEndDate,
-//                                   style: TextStyle(
-//                                     fontSize: 20,
-//                                     fontWeight: FontWeight.w400,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                             SizedBox(
-//                               height: 20,
-//                             ),
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                               children: <Widget>[
-//                                 Text(
-//                                   "Coupon Code",
-//                                   style: TextStyle(
-//                                     fontSize: 20,
-//                                     fontWeight: FontWeight.w500,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                             SizedBox(
-//                               height: 10,
-//                             ),
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                               children: <Widget>[
-//                                 InkWell(
-//                                   onTap: () {},
-//                                   child: Container(
-//                                     width: 200.0,
-//                                     height: 70.0,
-//                                     decoration: new BoxDecoration(
-//                                       color: Colors.cyan.withOpacity(0.7),
-//                                       border: Border.all(color: Colors.white, width: 3),
-//                                       borderRadius: BorderRadius.circular(10.0),
-//                                     ),
-//                                     child: Center(
-//                                       child: Text(
-//                                         couponData[0]['code'], // couponcode จากหน้าทก่อน
-//                                         style: new TextStyle(
-//                                             fontSize: 30,
-//                                             color: Colors.white,
-//                                             fontWeight: FontWeight.w400),
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                             SizedBox(
-//                               height: 10,
-//                             ),
-//                             Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                               children: [
-//                                 Text(
-//                                   "Promo discount coupon code \nfor QuickQueue member only",
-//                                   style: TextStyle(
-//                                     fontSize: 20,
-//                                     fontWeight: FontWeight.w400,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                             SizedBox(
-//                               height: 20,
-//                             ),
-//                             ElevatedButton(
-//                               style: ElevatedButton.styleFrom(
-//                                 minimumSize: Size(160, 50),
-//                                 shape: RoundedRectangleBorder(
-//                                     borderRadius: BorderRadius.circular(32.0)),
-//                               ),
-//                               child: const Text('OK',
-//                                   style: TextStyle(fontSize: 20, color: Colors.white)),
-//                               onPressed: () {},
-//                             )
-//                           ],
-//                         )
-//                       ],
-//                     ),
-//                   );
-//                 }
-//               ),
-//             ],
-//           ),
-//         ));
-//   }
-// }
 
