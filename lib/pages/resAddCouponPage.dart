@@ -322,11 +322,10 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                               child: const Text('Create',
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
-                              onPressed: () {
-                                String defaultImageUrl =
-                                    'gs://quickqueue-17550.appspot.com/images/default.jpg';
+                              onPressed: () async {
                                 File img =
-                                    couponImage ?? File(defaultImageUrl);
+                                    couponImage ?? File('');
+
                                 if (currentUser != null && currentUser.uid != null){
                                     restaurantServices.addCoupon(couponName, menu, discount, requiredPoint, tier, currentUser.uid, img, _expirationDate);
                                 }

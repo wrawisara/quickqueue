@@ -218,8 +218,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
                               onPressed: () { 
-                                String defaultImageUrl = 'gs://quickqueue-17550.appspot.com/images/default.jpg';
-                                File img = logo ?? File(defaultImageUrl);
+                                File img = logo ?? File('');
 
                                 //File img = File('assets/img/default.jpg');
                                 try{
