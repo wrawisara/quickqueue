@@ -264,9 +264,7 @@ class CustomerServices {
         'point_c': newPointsC,
         'reputation_points': newReputation,
       };
-
-      print('Points_C ' + numPersons.toString());
-
+      
       if (currentTier == 'Gold' && currentPointsM > 40) {
         updateData['point_c'] = (newPointsC + (numPersons * 2)) - tmpNum;
       }
