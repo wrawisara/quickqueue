@@ -81,7 +81,7 @@ class CustomerServices {
         String? couponId = doc.get('coupon_id');
 
         coupons.add({
-          'name': couponName,
+          'couponName': couponName,
           'discount': discount,
           'end_date': endDate,
           'start_date': startDate,
@@ -126,7 +126,7 @@ class CustomerServices {
 
         coupons.add({
           'code': code,
-          'name': couponName,
+          'couponName': couponName,
           'c_id': cusId,
           'discount': discount,
           'end_date': endDate,

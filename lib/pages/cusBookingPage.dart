@@ -52,6 +52,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,
@@ -69,6 +70,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
               ),
               child: Column(
                 children: <Widget>[
+                  SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: Container(
@@ -140,7 +142,9 @@ class _CusBookingPageState extends State<CusBookingPage> {
                             return Container(
                                 padding: EdgeInsets.all(3),
                                 decoration: BoxDecoration(
-                                    color: Colors.cyan.withOpacity(0.7),
+                                    color: Color.fromRGBO(
+                                                      72, 210, 157, 1)
+                                                  .withOpacity(0.9),
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(
                                   '${queueNum} queue',
@@ -150,6 +154,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                           }),
                     ],
                   ),
+                  
                   Row(
                     children: [
                       Padding(
@@ -232,7 +237,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(
-                          left: 20,
+                          left: 40,
                         ),
                         child: Text(
                           "Number of persons",
@@ -253,11 +258,11 @@ class _CusBookingPageState extends State<CusBookingPage> {
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        // primary: Colors.green,
+                        primary: Colors.cyan[400],
                         // elevation: 3,
-                        minimumSize: Size(330, 50),
+                        minimumSize: Size(350, 50),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
+                            borderRadius: BorderRadius.circular(10.0)),
                       ),
                       child: const Text('Book',
                           style: TextStyle(fontSize: 20, color: Colors.white)),
@@ -348,23 +353,6 @@ class _NumOfPersonsState extends State<NumOfPersons> {
                 numberPerson = numberPerson > 0 ? numberPerson - 1 : 0;
                 widget.onChanged(numberPerson);
               });
-
-              // numberPerson > 0
-              //     ? setState(() {
-              //         numberPerson--;
-              //       })
-              //     : setState(() {
-              //          numberPerson = 0;
-              //       });
-
-              // widget.onChanged(numberPerson -1);
-              // numberPerson > 0
-              //   ? setState(() {
-              //       numberPerson = numberPerson - 1;
-              //     })
-              //   : setState(() {
-              //       numberPerson = 0;
-              //     });
             },
             icon: Icon(Icons.remove),
             color: Colors.black,
@@ -397,15 +385,6 @@ class _NumOfPersonsState extends State<NumOfPersons> {
                 numberPerson++;
                 widget.onChanged(numberPerson);
               });
-
-              // setState(() {
-              //    numberPerson++;
-              // });
-
-              //  widget.onChanged(numberPerson+1);
-              // setState(() {
-              //   numberPerson = numberPerson + 1;
-              // });
             },
             icon: Icon(Icons.add),
             color: Colors.black,
@@ -416,97 +395,3 @@ class _NumOfPersonsState extends State<NumOfPersons> {
     );
   }
 }
-
-//เพิ่มลดจำนวนคนที่จอง
-// class NumOfPersons extends StatefulWidget {
-//   int numberPerson = 0;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: <Widget>[
-//           IconButton(
-//             onPressed: () {
-//               numberPerson--;
-//             },
-//             icon: Icon(Icons.remove),
-//             color: Colors.black,
-//             iconSize: 30,
-//           ),
-//           InkWell(
-//             onTap: () {},
-//             child: Container(
-//               width: 100.0,
-//               height: 70.0,
-//               decoration: new BoxDecoration(
-//                 color: Colors.cyan.withOpacity(0.7),
-//                 border: Border.all(color: Colors.white, width: 3),
-//                 borderRadius: BorderRadius.circular(10.0),
-//               ),
-//               child: Center(
-//                 child: Text(
-//                   "$numberPerson",
-//                   style: new TextStyle(
-//                       fontSize: 30,
-//                       color: Colors.white,
-//                       fontWeight: FontWeight.w400),
-//                 ),
-//               ),
-//             ),
-//           ),
-//           IconButton(
-//             onPressed: () {
-//               numberPerson++;
-//             },
-//             icon: Icon(Icons.add),
-//             color: Colors.black,
-//             iconSize: 30,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-//  Column(children: [Image.asset(allRestaurantModel.img), Text(allRestaurantModel.name),Text(allRestaurantModel.queueNum.toString())]),
-
-// class CusBookingPage extends StatefulWidget {
-//   const CusBookingPage({super.key});
-
-//   @override
-//   State<CusBookingPage> createState() => _CusBookingPageState();
-// }
-
-// class _CusBookingPageState extends State<CusBookingPage> {
-
-//   final AllRestaurant restaurant;
-//   AllRestaurant(this.restaurant);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Booking', style: TextStyle(color: Colors.white)),
-//       ),
-//       body: Column(children: [
-//         resLogoImage(),
-//       ],)
-//     );
-//   }
-// }
-
-// Stack(
-//         children: [
-//           Positioned(
-//               left: 0,
-//               right: 0,
-//               child: Container(
-//                 width: double.maxFinite,
-//                 height: 350,
-//                 decoration: BoxDecoration(
-//                     image: DecorationImage(
-//                         image: AssetImage("assets/img/onthetable.jpg"))),
-//               )),
-//         ],
-//       ),

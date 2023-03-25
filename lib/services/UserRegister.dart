@@ -51,7 +51,7 @@ class UserRegisterService {
       } catch (e) {
         throw FirebaseAuthException(
             code: 'Somthing wrong',
-            message: 'Unknown error occur: ${e.toString()}');
+            message: 'This email is already use. Please try again.');
       }
     } // Invalid email
     else {
@@ -136,7 +136,7 @@ class UserRegisterService {
         if (restaurantEmailResult.docs.isNotEmpty) {
           throw FirebaseAuthException(
               code: 'email-is-already-in-use',
-              message: 'The email is already use');
+              message: 'This email is already use. Please try again. ');
         } else {
           String imageUrl = "";
           if (image != null) {
@@ -166,9 +166,15 @@ class UserRegisterService {
         if (e.code == 'weak-password') {
           throw FirebaseAuthException(
               code: 'weak-password', message: 'Password is too weak');
+        } else {
+          rethrow;
         }
+        
       } catch (e) {
         print(e.toString());
+        throw FirebaseAuthException(
+            code: 'Somthing wrong',
+            message: 'This email is already use. Please try again.');
       }
     } // Invalid email
     else {

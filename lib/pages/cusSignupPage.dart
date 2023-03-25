@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickqueue/services/userRegister.dart';
 
@@ -155,47 +156,44 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                           child: const Text('Sign In',
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white)),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               try {
-                                registerService
+                                await registerService
                                     .registerCustomerWithEmailAndPassword(email,
                                         firstname, lastname, password, phone);
                                 showDialog<String>(
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
-                                    title: const Text('Sucess'),
+                                    title: const Text('Success'),
                                     content: const Text(
                                         'Your account has been successfully created.'),
                                   ),
                                 );
                               } catch (e) {
-                                showDialog<String>(
+                                print(e);
+                                if (e is FirebaseAuthException) {
+                                  showDialog<String>(
                                     context: context,
                                     builder: (BuildContext context) =>
                                         AlertDialog(
-                                          title: const Text('Error'),
-                                          content: Text("Error : $e"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, 'OK'),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        ));
+                                      title: const Text('Error'),
+                                      content: Text("${e.message}"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  print("Unknown error occurred: $e");
+                                }
                               }
                             }
-
-                            // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
-                            // showDialog<String>(
-                            //   context: context,
-                            //   builder: (BuildContext context) => AlertDialog(
-                            //     title: const Text('Sucess'),
-                            //     content: const Text('Your account has been successfully created.'),
-                            //   ),
-                            // );
                           },
                         ),
                       ],

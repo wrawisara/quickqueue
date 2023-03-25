@@ -269,7 +269,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               child: const Text('Register',
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
-                              onPressed: () {
+                              onPressed: () async {
                                 String defaultImageUrl =
                                     'gs://quickqueue-17550.appspot.com/images/default.jpg';
                                 File img = logo ?? File(defaultImageUrl);
@@ -294,7 +294,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 }
                                else if (_formKey.currentState!.validate()) {
                                   try {
-                                    registerService
+                                    await registerService
                                         .registerRestaurantWithEmailAndPassword(
                                             email,
                                             restaurantName,
@@ -317,12 +317,13 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                     );
                                   } catch (e) {
                                     print(e);
+                                    if (e is FirebaseAuthException) {
                                     showDialog<String>(
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
                                         title: const Text('Error'),
-                                        content: Text('Error $e'),
+                                        content: Text("${e.message}"),
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () =>
@@ -332,6 +333,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                         ],
                                       ),
                                     );
+                                    } else {
+                                  print("Unknown error occurred: $e");
+                                }
                                   }
                                 }
 

@@ -57,6 +57,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,
@@ -88,7 +89,8 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               },
             ),
           ]),
-      body: Column(
+      body:  
+      Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0, left: 20, right: 20),
@@ -100,6 +102,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               onChanged: _onSearchQueryChanged,
             ),
           ),
+          SizedBox(height: 20,),
           Expanded(
               child: _searchResults.isEmpty
                   ? FutureBuilder<List<Map<String, dynamic>>>(
@@ -154,10 +157,18 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                   return Container(
                                     height: 90,
                                     margin: EdgeInsets.only(
-                                        top: 20, left: 10, right: 10),
+                                        top: 10, left: 10, right: 10),
                                     decoration: new BoxDecoration(
-                                      color: Colors.cyan.withOpacity(0.1),
+                                      color: Colors.cyanAccent.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.1),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
                                     ),
                                     child: ListTile(
                                       contentPadding: EdgeInsets.only(
@@ -198,6 +209,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                           height: 90,
                                         ),
                                       ),
+                                       trailing: Icon(Icons.add,color: Colors.cyan[100],),
                                       onTap: () {
                                         try {
                                           Navigator.push(
