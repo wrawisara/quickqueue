@@ -230,7 +230,7 @@ class CustomerServices {
         if (currentReputation < 50) {
           numPersons = 4;
         } else {
-          numPersons = 6;
+          numPersons = 4;
         }
       } else if (type == 'C' || type == 'D' || type == 'E') {
         if (currentReputation < 50) {
@@ -242,13 +242,16 @@ class CustomerServices {
 
       int newPointsM = currentPointsM +
           (numPersons > 2
-              ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2))
-              : 0);
+              ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
+              : 2);
       int newPointsC = currentPointsC +
           (numPersons > 2
-              ? (numPersons > 4 ? 6 : (numPersons > 5 ? 8 : 2))
-              : 0);
+              ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
+              : 2);
       int newReputation = currentReputation;
+      int tmpNum = (numPersons > 2
+              ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
+              : 2);
 
       if (currentReputation < 100) {
         newReputation += numPersons ~/ 2;
@@ -262,8 +265,10 @@ class CustomerServices {
         'reputation_points': newReputation,
       };
 
+      print('Points_C ' + numPersons.toString());
+
       if (currentTier == 'Gold' && currentPointsM > 40) {
-        updateData['point_c'] = newPointsC + (numPersons * 2);
+        updateData['point_c'] = (newPointsC + (numPersons * 2)) - tmpNum;
       }
       await customerDoc.reference.update(updateData);
       updateCustomerTier(cusId, newPointsM);
