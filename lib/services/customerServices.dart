@@ -68,7 +68,7 @@ class CustomerServices {
 
       List<Map<String, dynamic>> coupons = [];
       couponQuery.docs.forEach((doc) {
-        String couponName = doc.get('couponName');
+        String couponName = doc.get('name');
         double discount = doc.get('discount');
         Timestamp endDate = doc.get('end_date');
         Timestamp startDate = doc.get('start_date');
@@ -81,7 +81,7 @@ class CustomerServices {
         String? couponId = doc.get('coupon_id');
 
         coupons.add({
-          'couponName': couponName,
+          'name': couponName,
           'discount': discount,
           'end_date': endDate,
           'start_date': startDate,
@@ -111,7 +111,7 @@ class CustomerServices {
       List<Map<String, dynamic>> coupons = [];
       couponQuery.docs.forEach((doc) {
         String code = doc.get('code');
-        String couponName = doc.get('couponName');
+        String couponName = doc.get('name');
         String? cusId = doc.get('c_id');
         double discount = doc.get('discount');
         Timestamp endDate = doc.get('end_date');
@@ -126,7 +126,7 @@ class CustomerServices {
 
         coupons.add({
           'code': code,
-          'couponName': couponName,
+          'name': couponName,
           'c_id': cusId,
           'discount': discount,
           'end_date': endDate,
@@ -172,7 +172,6 @@ class CustomerServices {
             'point_c': currentUserInfo['point_c'],
             'point_m': currentUserInfo['point_m'],
             'reputation_points': currentUserInfo['reputation_points'],
-            'status': currentUserInfo['status'],
             'email': currentUserInfo['email'],
             'phone': currentUserInfo['phone'],
             'firstname': currentUserInfo['firstname'],
@@ -304,7 +303,6 @@ class CustomerServices {
 
   Future<void> useCoupon(
       String cusId, int requiredPoints, String couponId) async {
-    print(couponId);
     try {
 
     final couponQuerySnapshot = await couponCollection

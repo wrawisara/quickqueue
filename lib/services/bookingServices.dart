@@ -31,7 +31,6 @@ class BookingServices {
         String time = doc.get('time');
         String status = doc.get('status');
         Timestamp createdAt = doc.get('created_at');
-        Timestamp updatedAt = doc.get('updated_at');
 
         booking.add({
           'bookingQueue': bookingQueue,
@@ -42,7 +41,6 @@ class BookingServices {
           'time': time,
           'status': status,
           'created_at': createdAt,
-          'updated_at': updatedAt,
         });
       });
 
@@ -77,7 +75,6 @@ class BookingServices {
         String time = doc.get('time');
         String status = doc.get('status');
         Timestamp createdAt = doc.get('created_at');
-        Timestamp updatedAt = doc.get('updated_at');
 
         booking.add({
           'bookingQueue': bookingQueue,
@@ -89,7 +86,6 @@ class BookingServices {
           'time': time,
           'status': status,
           'created_at': createdAt,
-          'updated_at': updatedAt,
         });
       });
 
@@ -126,7 +122,6 @@ class BookingServices {
         String time = doc.get('time');
         String status = doc.get('status');
         Timestamp createdAt = doc.get('created_at');
-        Timestamp updatedAt = doc.get('updated_at');
 
         booking.add({
           'bookingQueue': bookingQueue,
@@ -138,7 +133,6 @@ class BookingServices {
           'time': time,
           'status': status,
           'created_at': createdAt,
-          'updated_at': updatedAt,
         });
       });
 
@@ -290,6 +284,9 @@ class BookingServices {
           .get();
       final count = querySnapshot.docs.length;
       totalQueue = count - 1;
+      if (totalQueue < 0){
+        totalQueue = 0;
+      }
 
       return totalQueue;
     } catch (e) {
@@ -327,7 +324,6 @@ class BookingServices {
               'guest': guests,
               'status': 'pending',
               'time': time,
-              'updated_at': DateTime.now(),
             });
           } else {
             throw ('Customer already has a booking.');
@@ -342,22 +338,9 @@ class BookingServices {
             'guest': guests,
             'status': 'pending',
             'time': time,
-            'updated_at': DateTime.now(),
           });
         }
-      } else if (cusId == '') {
-        await bookingCollection.add({
-          'booking_queue': bookingQueue,
-          'created_at': DateTime.now(),
-          'c_id': cusId,
-          'r_id': resId,
-          'date': date,
-          'guest': guests,
-          'status': 'pending',
-          'time': time,
-          'updated_at': DateTime.now(),
-        });
-      }
+      } 
     } catch (e) {
       print('$e');
       throw e;
@@ -377,7 +360,6 @@ class BookingServices {
           'guest': guests,
           'status': 'pending',
           'time': time,
-          'updated_at': DateTime.now(),
         });
     } catch (e) {
       print('$e');
@@ -447,24 +429,6 @@ class BookingServices {
       print('Error occurred while deleting booking: $e');
       throw e;
     }
-  }
-
-  // to be decided wether to delete or not
-  Future<void> deleteOldBookings() async {
-    final now = DateTime.now();
-    final todayString = DateFormat('yyyy-MM-dd').format(now);
-
-    final oldBookingsQuerySnapshot = await bookingCollection
-        .where('date', isLessThan: todayString)
-        .get() as QuerySnapshot<Map<String, dynamic>>;
-
-    final batch = FirebaseFirestore.instance.batch();
-
-    oldBookingsQuerySnapshot.docs.forEach((doc) {
-      batch.delete(doc.reference);
-    });
-
-    await batch.commit();
   }
 
   Future<void> downloadBookingsCsv(String resId) async {

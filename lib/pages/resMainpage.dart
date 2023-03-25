@@ -173,9 +173,8 @@ class _ResMainPageState extends State<ResMainPage> {
                           children: tableInfoList.map((tableInfo) {
                             String type = tableInfo['table_type'];
                             int capacity = tableInfo['capacity'];
-                            int available = tableInfo['available'];
                             return BookTableItem(
-                                type, capacity, available, restaurantData);
+                                type, capacity, restaurantData);
                           }).toList(),
                         );
                       },

@@ -34,7 +34,7 @@ class RestaurantServices {
       print(couponName);
 
       await couponCollection.add({
-        'couponName': couponName,
+        'name': couponName,
         'code': null,
         'c_id': null,
         'r_id': resId,
@@ -94,39 +94,31 @@ class RestaurantServices {
     }
   }
 
-  // haven't check
   Future<void> setTableInfo(String resId, Map<String, int> tableInfo) async {
     try {
       final collectionRef = FirebaseFirestore.instance.collection('tableInfo');
       final querySnapshot =
           await collectionRef.where('r_id', isEqualTo: resId).get();
 
-      // Iterate over the documents and update the tableType and capacity attributes
       final batch = FirebaseFirestore.instance.batch();
 
       querySnapshot.docs.forEach((doc) {
         String tableType = '';
         Map<String, dynamic>? data;
 
-        // Check if the document exists and has data
         if (doc.exists && doc.data() != null) {
           data = doc.data();
           tableType = data['table_type'];
         } else {
-          // Handle the case when the document does not exist
-          // or does not have data, e.g. by creating a new document
           data = {
-            'available': 0,
             'capacity': 0,
           };
         }
 
-        // Update the data for the specified table types
         tableInfo.forEach((key, value) {
           if (key == tableType) {
             int capacity = value;
             data!['capacity'] = capacity;
-            data['available'] = capacity;
             batch.set(doc.reference, data);
           }
         });
@@ -162,7 +154,6 @@ class RestaurantServices {
       querySnapshot.docs.forEach((doc) {
         String tableType = '';
         Map<String, dynamic>? data;
-        int capacity;
 
         // Check if the document exists and has data
         if (doc.exists && doc.data() != null) {
@@ -172,7 +163,6 @@ class RestaurantServices {
           // Handle the case when the document does not exist
           // or does not have data, e.g. by creating a new document
           data = {
-            'available': 0,
             'capacity': 0,
           };
         }
@@ -181,7 +171,6 @@ class RestaurantServices {
         tableInfo.forEach((key, value) {
           if (key == tableType) {
             data!['capacity'] = value;
-            data['available'] = eTableNum;
             batch.set(doc.reference, data);
           }
         });
@@ -203,12 +192,10 @@ class RestaurantServices {
       List<Map<String, dynamic>> tableInfo = [];
 
       tableInfoQuery.docs.forEach((doc) {
-        int available = doc.get('available');
         int capacity = doc.get('capacity');
         String tableType = doc.get('table_type');
 
         tableInfo.add({
-          'available': available,
           'capacity': capacity,
           'table_type': tableType,
         });

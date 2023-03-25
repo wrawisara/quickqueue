@@ -43,7 +43,6 @@ class UserRegisterService {
             'tier': 'Bronze',
             'point_m': 10, //  membership points
             'point_c': 10, // coupon points
-            'status': "", // booking status
             'reputation_points': 100, // reputation if cancel = go down
             'role': 'customer',
           });
@@ -111,7 +110,6 @@ class UserRegisterService {
       
       await FirebaseFirestore.instance.collection('tableInfo').add({
             'r_id': resId,
-            'available': 0,
             'capacity': 0,
             'table_type': tableType,
           });

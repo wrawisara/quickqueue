@@ -7,10 +7,9 @@ import 'package:quickqueue/widgets/customElevatedButton.dart';
 class BookTableItem extends StatefulWidget {
   String type;
   int capacity;
-  int available;
   List<Map<String, dynamic>> restaurant;
 
-  BookTableItem(this.type, this.capacity, this.available, this.restaurant,);
+  BookTableItem(this.type, this.capacity, this.restaurant,);
 
   @override
   State<BookTableItem> createState() => _BookTableItemState();
