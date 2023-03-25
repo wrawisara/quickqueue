@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/services/userRegister.dart';
-
 
 //หน้า Register ร้านอาหาร
 class ResRegisterPage extends StatefulWidget {
@@ -25,11 +25,14 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
   String branch = '';
   File? logo;
 
+  //ใช้ check textformfiled
+  final _formKey = GlobalKey<FormState>();
+
   UserRegisterService registerService = UserRegisterService();
 
   @override
   Widget build(BuildContext context) {
-    //ใช้เพื่อ add image ตรง logo  
+    //ใช้เพื่อ add image ตรง logo
     Future getImage() async {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
@@ -44,8 +47,8 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
-            color: Colors.white,
-          ),
+          color: Colors.white,
+        ),
         title: Text('Register', style: TextStyle(color: Colors.white)),
       ),
       body: Column(
@@ -75,9 +78,16 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       child: Form(
+                        key: _formKey,
                         child: Column(
                           children: <Widget>[
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -91,6 +101,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -104,6 +120,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               obscureText: true,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -118,6 +140,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -131,6 +159,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -144,6 +178,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -157,6 +197,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -170,6 +216,12 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(90.0),
@@ -194,7 +246,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 : Image.asset(
                                     'assets/img/quickqueue.jpg',
                                     scale: 5,
-                                  ),  
+                                  ),
                             SizedBox(
                               height: 20.0,
                             ),
@@ -217,42 +269,73 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                               child: const Text('Register',
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white)),
-                              onPressed: () { 
-                                File img = logo ?? File('');
+                              onPressed: () {
+                                String defaultImageUrl =
+                                    'gs://quickqueue-17550.appspot.com/images/default.jpg';
+                                File img = logo ?? File(defaultImageUrl);
 
                                 //File img = File('assets/img/default.jpg');
-                                try{
-                                   registerService.registerRestaurantWithEmailAndPassword(email, restaurantName, password, 
-                                  phone, address, double.parse(latitude), double.parse(longitude), branch, img);
-                                  
-                                  showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Sucess'),
-                                    content: const Text('Your account has been successfully created.'),
-                                  ),
-                                );
-                                } catch(e) {
-                                  print(e);
-                            showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Error'),
-                                content: Text(
-                                    'Error $e'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'OK'),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
+
+                                if (logo == null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Error'),
+                                      content: Text('Please add an image.'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
                                 }
-                               
+                               else if (_formKey.currentState!.validate()) {
+                                  try {
+                                    registerService
+                                        .registerRestaurantWithEmailAndPassword(
+                                            email,
+                                            restaurantName,
+                                            password,
+                                            phone,
+                                            address,
+                                            double.parse(latitude),
+                                            double.parse(longitude),
+                                            branch,
+                                            img);
+
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Sucess'),
+                                        content: const Text(
+                                            'Your account has been successfully created.'),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    print(e);
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Text('Error $e'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'OK'),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+
                                 //** ใส่ที่จะบันทึกข้อมูล */
-                                
                               },
                             ),
                           ],
@@ -296,4 +379,10 @@ Widget CustomButton({
           ],
         )),
   );
+}
+
+navigateToLoginPage(BuildContext context) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return LoginPage();
+  }));
 }

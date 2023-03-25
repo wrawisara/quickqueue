@@ -26,6 +26,10 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
         throw FirebaseAuthException(code: e.code, message: 'Invalid email');
       case 'user-disabled':
         throw FirebaseAuthException(code: e.code, message: 'User is disabled');
+      case 'wrong-password':
+        throw FirebaseAuthException(code: e.code, message: 'Wrong password');
+      case 'too-many-requests':
+        throw FirebaseAuthException(code: e.code, message: 'Please wait');
     }
   } 
 }

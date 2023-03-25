@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:intl/intl.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
 import 'package:quickqueue/services/userRegister.dart';
 import 'package:quickqueue/utils/horizontalLine.dart';
@@ -20,9 +21,8 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   //ใช้ทำ tier dropdown
   final List<String> tierList = <String>['Bronze', 'Silver', 'Gold'];
   String? selectedValue;
-  final _formKey = GlobalKey<FormState>();
-  final RestaurantServices restaurantServices = RestaurantServices();
 
+  final RestaurantServices restaurantServices = RestaurantServices();
   //set unpress textfield
   bool couponMenu = true;
   bool couponDiscount = true;
@@ -53,6 +53,36 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   double discount = 0;
   File? couponImage;
 
+  //check textfield
+  final _formKey = GlobalKey<FormState>();
+  //check radiobox
+  bool isFormValid = false;
+
+  void validateForm() {
+    if ((couponMenu && menu.isNotEmpty) || (couponDiscount && discount > 0)) {
+      setState(() {
+        isFormValid = true;
+      });
+    } else {
+      setState(() {
+        isFormValid = false;
+      });
+    }
+
+    // check if at least one radio button is selected
+    if (!(couponMenu || couponDiscount)) {
+      setState(() {
+        isFormValid = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    validateForm();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -69,13 +99,22 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
       });
     }
 
+    //ใช้กับ text ใน alert
+    final TextEditingController _textFieldController = TextEditingController();
     var dropdownValue;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan,
-        automaticallyImplyLeading: false,
-        title: Text('Add Coupon', style: TextStyle(color: Colors.white)),
-      ),
+          backgroundColor: Colors.cyan,
+          automaticallyImplyLeading: false,
+          title: Text('Add Coupon', style: TextStyle(color: Colors.white)),
+          // actions: <Widget>[
+          //   IconButton(
+          //       icon: const Icon(Icons.redeem_outlined, color: Colors.white),
+          //       onPressed: () {
+          //         showRedeemAlert(context);
+          //       })
+          // ]
+          ),
       body: Column(
         children: <Widget>[
           Container(
@@ -107,6 +146,12 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                         child: Column(
                           children: <Widget>[
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.only(
                                     left: 35.0, top: 20, bottom: 20),
@@ -121,6 +166,12 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter required points';
+                                }
+                                return null;
+                              },
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.only(
@@ -138,6 +189,12 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ),
                             SizedBox(height: 20.0),
                             DropdownButtonFormField2(
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Please select tier';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
@@ -161,7 +218,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         ),
                                       ))
                                   .toList(),
-                               onChanged: (value) {
+                              onChanged: (value) {
                                 setState(() {
                                   tier = value!;
                                 });
@@ -229,6 +286,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         couponMenu = true;
                                         couponDiscount = false;
                                       });
+                                      validateForm();
                                     },
                                   ),
                                 ),
@@ -248,6 +306,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         couponMenu = false;
                                         couponDiscount = true;
                                       });
+                                      validateForm();
                                     },
                                   ),
                                 ),
@@ -264,9 +323,12 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 ),
                                 labelText: 'Menu',
                               ),
-                              // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
+
                               onChanged: (val) {
-                                setState(() => menu = val);
+                                setState(() {
+                                  menu = val;
+                                });
+                                validateForm();
                               },
                             ),
                             SizedBox(height: 20.0),
@@ -282,7 +344,10 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                               onChanged: (val) {
                                 double newDiscount =
                                     double.tryParse(val) ?? 0.0;
-                                setState(() => discount = newDiscount);
+                                setState(() {
+                                  discount = newDiscount;
+                                });
+                                validateForm();
                               },
                             ),
                             SizedBox(height: 20.0),
@@ -313,45 +378,101 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                // primary: Colors.green,
-                                // elevation: 3,
                                 minimumSize: Size(280, 50),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                  borderRadius: BorderRadius.circular(32.0),
+                                ),
                               ),
-                              child: const Text('Create',
-                                  style: TextStyle(
-                                      fontSize: 20, color: Colors.white)),
-                              onPressed: () async {
-                                File img =
-                                    couponImage ?? File('');
+                              child: const Text(
+                                'Create',
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
+                              onPressed: () {
+                                String defaultImageUrl =
+                                    'gs://quickqueue-17550.appspot.com/images/default.jpg';
+                                File img = couponImage ?? File(defaultImageUrl);
 
-                                if (currentUser != null && currentUser.uid != null){
-                                    restaurantServices.addCoupon(couponName, menu, discount, requiredPoint, tier, currentUser.uid, img, _expirationDate);
+                                if (couponImage == null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Error'),
+                                      content: Text('Please add an image.'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else if (_formKey.currentState!.validate()) {
+                                  if ((couponMenu && menu.isNotEmpty) ||
+                                      (couponDiscount && discount > 0)) {
+                                    // Use the isFormValid variable to enable/disable the button
+                                    if (currentUser != null &&
+                                        currentUser.uid != null) {
+                                      try {
+                                        restaurantServices.addCoupon(
+                                          couponName,
+                                          menu,
+                                          discount,
+                                          requiredPoint,
+                                          tier,
+                                          currentUser.uid,
+                                          img,
+                                          _expirationDate,
+                                        );
+                                        showDialog<String>(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              AlertDialog(
+                                            title: const Text('Success'),
+                                            content: const Text(
+                                                'Your coupon has been successfully created.'),
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        print(e);
+                                        showDialog<String>(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              AlertDialog(
+                                            title: const Text('Error'),
+                                            content: Text('Error $e'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, 'OK'),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  } else {
+                                    // Show an alert if no radiobox is selected
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Error'),
+                                        content: const Text(
+                                            'Please select and fill in redeem a menu or a discount.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, 'OK'),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 }
-
-                                //File img = File('assets/img/default.jpg');
-                                // registerService
-                                //     .registerRestaurantWithEmailAndPassword(
-                                //         point,
-                                //         couponName,
-                                //         password,
-                                //         phone,
-                                //         address,
-                                //         double.parse(latitude),
-                                //         double.parse(longitude),
-                                //         branch,
-                                //         img);
-
-                                //** ใส่ที่จะบันทึกข้อมูล */
-                                // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
-                                // showDialog<String>(
-                                //   context: context,
-                                //   builder: (BuildContext context) => AlertDialog(
-                                //     title: const Text('Sucess'),
-                                //     content: const Text('Your account has been successfully created.'),
-                                //   ),
-                                // );
                               },
                             ),
                           ],
@@ -396,3 +517,5 @@ Widget CustomButton({
         )),
   );
 }
+
+

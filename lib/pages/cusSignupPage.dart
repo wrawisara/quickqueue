@@ -17,6 +17,9 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
   String email = '';
   String password = '';
 
+  //ใช้ check textformfiled
+  final _formKey = GlobalKey<FormState>();
+
   UserRegisterService registerService = UserRegisterService();
 
   @override
@@ -33,18 +36,25 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
               Container(
                   padding: const EdgeInsets.fromLTRB(20, 40, 20, 10),
                   child: Text(
-                "Sign Up",
-                style: TextStyle(fontSize: 40, color: Colors.cyan),
-              )),
+                    "Sign Up",
+                    style: TextStyle(fontSize: 40, color: Colors.cyan),
+                  )),
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(children: <Widget>[
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Form(
+                    key: _formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your firstname';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(90.0),
@@ -58,6 +68,12 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your lastname';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(90.0),
@@ -71,6 +87,12 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your phone';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(90.0),
@@ -84,6 +106,12 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(90.0),
@@ -97,6 +125,12 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -122,7 +156,38 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white)),
                           onPressed: () {
-                            registerService.registerCustomerWithEmailAndPassword(email, firstname, lastname, password, phone);
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                registerService
+                                    .registerCustomerWithEmailAndPassword(email,
+                                        firstname, lastname, password, phone);
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text('Sucess'),
+                                    content: const Text(
+                                        'Your account has been successfully created.'),
+                                  ),
+                                );
+                              } catch (e) {
+                                showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                          title: const Text('Error'),
+                                          content: Text("Error : $e"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, 'OK'),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ));
+                              }
+                            }
+
                             // alert แจ้งเตือนบันทึกสำเร็จ ใช้ได้ค่อยเปิด
                             // showDialog<String>(
                             //   context: context,

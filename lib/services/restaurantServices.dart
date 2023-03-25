@@ -7,7 +7,14 @@ import 'package:intl/intl.dart';
 
 class RestaurantServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final CollectionReference couponCollection =
+      FirebaseFirestore.instance.collection('coupons');
+  final CollectionReference restaurantCollection =
+      FirebaseFirestore.instance.collection('restaurant');
+  final CollectionReference tableInfoCollection =
+      FirebaseFirestore.instance.collection('tableInfo');
+  final CollectionReference customerCollection =
+      FirebaseFirestore.instance.collection('customer');
 
   Future<void> addCoupon(
       String couponName,
@@ -26,7 +33,7 @@ class RestaurantServices {
       //check
       print(couponName);
 
-      await _firestore.collection('coupons').add({
+      await couponCollection.add({
         'couponName': couponName,
         'code': null,
         'c_id': null,
@@ -48,8 +55,9 @@ class RestaurantServices {
 
   Future<List<Map<String, dynamic>>> getCurrentRestaurants(String resId) async {
     try {
-      QuerySnapshot restaurantQuerySnapshot =
-          await _firestore.collection('restaurant').where('r_id', isEqualTo: resId).get();
+      QuerySnapshot restaurantQuerySnapshot = await restaurantCollection
+          .where('r_id', isEqualTo: resId)
+          .get();
 
       List<Map<String, dynamic>> restaurants = [];
 
@@ -131,10 +139,9 @@ class RestaurantServices {
     }
   }
 
-   Future<void> updateRestaurantStatus(String resId, String status) async {
+  Future<void> updateRestaurantStatus(String resId, String status) async {
     // Update the customer's tier in the database
-    final customerDocSnapshot = await FirebaseFirestore.instance
-        .collection('restaurant')
+    final customerDocSnapshot = await restaurantCollection
         .where('r_id', isEqualTo: resId)
         .get();
     final customerDoc = customerDocSnapshot.docs[0];
@@ -189,8 +196,7 @@ class RestaurantServices {
 
   Future<List<Map<String, dynamic>>> getAllTableInfo(String resId) async {
     try {
-      QuerySnapshot tableInfoQuery = await _firestore
-          .collection('tableInfo')
+      QuerySnapshot tableInfoQuery = await tableInfoCollection
           .where('r_id', isEqualTo: resId)
           .get();
 
@@ -208,7 +214,7 @@ class RestaurantServices {
         });
       });
       tableInfo.sort((a, b) => a['table_type'].compareTo(b['table_type']));
-      
+
       return tableInfo;
     } catch (e) {
       print('Error fetching data: $e');
@@ -217,42 +223,40 @@ class RestaurantServices {
   }
 
   Future<num> getTotalCapacity(String resId) async {
-  try {
-    final QuerySnapshot querySnapshot =  await _firestore.collection('tableInfo')
-        .where('r_id', isEqualTo: resId)
-        .get();
+    try {
+      final QuerySnapshot querySnapshot = await tableInfoCollection
+          .where('r_id', isEqualTo: resId)
+          .get();
 
-    num totalCapacity = 0;
+      num totalCapacity = 0;
 
-    querySnapshot.docs.forEach((doc) {
-      totalCapacity += doc.get('capacity');
-    });
+      querySnapshot.docs.forEach((doc) {
+        totalCapacity += doc.get('capacity');
+      });
 
-    print('Total Capacity: ' + totalCapacity.toString());
-    return totalCapacity;
-  } catch (e) {
-    print('Error occurred while getting total capacity: $e');
-    throw e;
+      print('Total Capacity: ' + totalCapacity.toString());
+      return totalCapacity;
+    } catch (e) {
+      print('Error occurred while getting total capacity: $e');
+      throw e;
+    }
   }
-}
 
   Future<String> getNumberOfQueue(String resId) async {
     try {
       String numQueue = "0";
-      QuerySnapshot tableInfoQuery = await _firestore
-          .collection('tableInfo')
+      QuerySnapshot tableInfoQuery = await tableInfoCollection
           .where('r_id', isEqualTo: resId)
           .get();
 
       // todo after create booking
-      
+
       return numQueue;
     } catch (e) {
       print('Error fetching data: $e');
       throw e;
     }
   }
-
 
   Future<String> uploadImage(File image) async {
     final String fileName =
@@ -265,4 +269,22 @@ class RestaurantServices {
     return imageUrl;
   }
 
+  Future<void> redeemCustCoupon(String resId, String code) async {
+     try {
+    final couponQuery = await couponCollection
+        .where('r_id', isEqualTo: resId)
+        .where('code', isEqualTo: code)
+        .get();
+
+    if (couponQuery.docs.isNotEmpty) {
+      final couponDocId = couponQuery.docs[0].id;
+      await couponCollection.doc(couponDocId).delete();
+    } else {
+      throw 'Coupon not found';
+    }
+  } catch (e) {
+    print(e.toString());
+    throw 'Failed to redeem coupon';
+  }
+  }
 }

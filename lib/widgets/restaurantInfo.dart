@@ -165,9 +165,13 @@ class _RestaurantInfoState extends State<RestaurantInfo> {
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: ClipRect(
-                              child: Image.network(
-                                restaurantData[0]['res_logo'],
-                                fit: BoxFit.cover,
+                              child: Container(
+                                width: 95,
+                                height: 100,
+                                child: Image.network(
+                                  restaurantData[0]['res_logo'],
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                             ),
                           ),
