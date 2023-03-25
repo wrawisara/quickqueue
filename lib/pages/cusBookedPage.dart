@@ -7,6 +7,7 @@ import 'package:quickqueue/pages/cusHomePage.dart';
 import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/customerServices.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
+import 'package:quickqueue/widgets/customElevatedButton.dart';
 import '../model/Customer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -50,10 +51,11 @@ class _CusBookedPageState extends State<CusBookedPage> {
       _bookingDataFuture =
           bookingServices.getBookingDataForCustomer(currentUser.uid);
       _currentUserInfoFuture = customerServices.getCurrentUserData();
-      _totalQueueData = _bookingDataFuture.then((bookingData){
-      final resId = bookingData.isNotEmpty ? bookingData[0]['r_id'] as String : '';
-      return bookingServices.getTotalBookingQueueForOneRes(resId);
-    });
+      _totalQueueData = _bookingDataFuture.then((bookingData) {
+        final resId =
+            bookingData.isNotEmpty ? bookingData[0]['r_id'] as String : '';
+        return bookingServices.getTotalBookingQueueForOneRes(resId);
+      });
     }
   }
 
@@ -99,30 +101,34 @@ class _CusBookedPageState extends State<CusBookedPage> {
                     }
 
                     List<Map<String, dynamic>> bookingData = snapshot.data!;
-                    _restaurantDataFuture = restaurantServices.getCurrentRestaurants(bookingData[0]['r_id']);
-                    return  FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _restaurantDataFuture,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error fetching data'),
-                      );
-                    }
+                    _restaurantDataFuture = restaurantServices
+                        .getCurrentRestaurants(bookingData[0]['r_id']);
+                    return FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _restaurantDataFuture,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<Map<String, dynamic>>>
+                                snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Error fetching data'),
+                            );
+                          }
 
-                    if (snapshot.data?.isEmpty ?? true) {
-                      return Center(
-                        child: Text('No restaurant data found'),
-                      );
-                    }
+                          if (snapshot.data?.isEmpty ?? true) {
+                            return Center(
+                              child: Text('No restaurant data found'),
+                            );
+                          }
 
-                    List<Map<String, dynamic>> restaurantData = snapshot.data!;
-                        _totalQueueData =
+                          List<Map<String, dynamic>> restaurantData =
+                              snapshot.data!;
+                          _totalQueueData =
                               _bookingDataFuture.then((bookingData) {
                             final resId = bookingData.isNotEmpty
                                 ? bookingData[0]['r_id'] as String
@@ -130,112 +136,183 @@ class _CusBookedPageState extends State<CusBookedPage> {
                             return bookingServices
                                 .getTotalBookingQueueForOneRes(resId);
                           });
-                        return Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 300,
-                              width: 300,
-                              margin: EdgeInsets.only(top: 20, left: 10, right: 10),
-                              // padding: EdgeInsets.symmetric(horizontal: 10),
-                              decoration: new BoxDecoration(
-                                color: Colors.cyan.withOpacity(0.6),
-                                border: Border.all(color: Colors.white, width: 3),
-                                borderRadius: BorderRadius.circular(20.0),
+                          return Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 10,
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 3),
-                                    child: Container(
-                                      height: 260,
-                                      child: Image.network(
-                                        restaurantData[0]['res_logo'],
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                         restaurantData[0]['username'],
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
+                              Padding(
+                                      padding: const EdgeInsets.all(15),
+                                      child: Container(
+                                        height: 250,
+                                        width: 250,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                restaurantData[0]['res_logo']),
+                                            fit: BoxFit.fill,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.cyan[200],
                                         ),
                                       ),
-                                    ],
-                                  )
+                                    ),
+                              Text(
+                                restaurantData[0]['username'],
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                               FutureBuilder<List<Map<String, dynamic>>>(
+                                  future: _currentUserInfoFuture,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<Map<String, dynamic>>>
+                                          snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text(
+                                            'Error fetching data userdata'),
+                                      );
+                                    }
+
+                                    if (snapshot.data?.isEmpty ?? true) {
+                                      return Center(
+                                        child: Text('No user found'),
+                                      );
+                                    }
+
+                                    List<Map<String, dynamic>> userData =
+                                        snapshot.data!;
+                                    return Row(
+                                      children: <Widget>[
+                                        Padding(
+                                     padding: const EdgeInsets.only(
+                                      left: 30,
+                                    ),
+                                     child: Icon(Icons.person , color:  Color.fromRGBO(72, 206, 210, 1)
+                                                  .withOpacity(0.9),),
+                                   ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 30,
+                                          ),
+                                          child: Text(
+                                            (userData[0]['firstname'] ?? '') +
+                                                " " +
+                                                (userData[0]['lastname'] ?? ''),
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                   Padding(
+                                     padding: const EdgeInsets.only(
+                                      left: 30,
+                                    ),
+                                     child: Icon(Icons.access_alarms_rounded , color: Color.fromRGBO(72, 206, 210, 1)
+                                                  .withOpacity(0.9),),
+                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 30,
+                                    ),
+                                    child: Text(
+                                      bookingData[0]['time'],
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Text(
-                                  "Booking Code ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  "Previous Queue",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {},
-                                  child: Container(
-                                    width: 100.0,
-                                    height: 70.0,
-                                    decoration: new BoxDecoration(
-                                      color: Colors.cyan.withOpacity(0.7),
-                                      border:
-                                          Border.all(color: Colors.white, width: 3),
-                                      borderRadius: BorderRadius.circular(10.0),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Text(
+                                    "Booking Code ",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    child:  Center(
+                                  ),
+                                  Text(
+                                    "Previous Queue",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                        width: 100.0,
+                                        height: 70.0,
+                                        decoration: new BoxDecoration(
+                                          color: Colors.cyan.withOpacity(0.7),
+                                          border: Border.all(
+                                              color: Colors.white, width: 3),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: Center(
                                           child: Text(
-                                            bookingData[0]['bookingQueue'] ?? '',
+                                            bookingData[0]['bookingQueue'] ??
+                                                '',
                                             style: new TextStyle(
                                                 fontSize: 30,
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w400),
                                           ),
-                                        )
-                                      
+                                        )),
                                   ),
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Container(
-                                    width: 100.0,
-                                    height: 70.0,
-                                    decoration: new BoxDecoration(
-                                      color: Colors.cyan.withOpacity(0.7),
-                                      border:
-                                          Border.all(color: Colors.white, width: 3),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: FutureBuilder<int>(
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      width: 100.0,
+                                      height: 70.0,
+                                      decoration: new BoxDecoration(
+                                        color: Colors.cyan.withOpacity(0.7),
+                                        border: Border.all(
+                                            color: Colors.white, width: 3),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: FutureBuilder<int>(
                                           future: _totalQueueData,
                                           builder:
                                               (BuildContext context, snapshot) {
@@ -253,130 +330,75 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                               );
                                             }
                                             int queueData = snapshot.data!;
-                                        return Center(
-                                          child: Text(
-                                            queueData.toString(),
-                                            style: new TextStyle(
-                                                fontSize: 30,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        );
-                                      }
+                                            return Center(
+                                              child: Text(
+                                                queueData.toString(),
+                                                style: new TextStyle(
+                                                    fontSize: 30,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                            );
+                                          }),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Text(
-                                  "Guest : ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Text(
-                                  widget.numberPerson.toString(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            FutureBuilder<List<Map<String, dynamic>>>(
-                                future: _currentUserInfoFuture,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<Map<String, dynamic>>>
-                                        snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text('Error fetching data userdata'),
-                                    );
-                                  }
-                    
-                                  if (snapshot.data?.isEmpty ?? true) {
-                                    return Center(
-                                      child: Text('No user found'),
-                                    );
-                                  }
-                    
-                                  List<Map<String, dynamic>> userData =
-                                      snapshot.data!;
-                                  return Row(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 75,
-                                        ),
-                                        child: Text(
-                                          (userData[0]['firstname'] ?? '') +
-                                              " " +
-                                              (userData[0]['lastname'] ?? ''),
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 75,
-                                  ),
-                                  child: Text(
-                                    bookingData[0]['time'],
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(160, 50),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                ],
                               ),
-                              child: const Text('OK',
-                                  style:
-                                      TextStyle(fontSize: 20, color: Colors.white)),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => CusHomePage()));
-                              },
-                            )
-                          ],
-                        );
-                      }
-                    );
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      "Guest : ",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 120,),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right:35),
+                                    child: Text(
+                                      widget.numberPerson.toString(),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                             
+                              
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.cyan[400],
+                                  minimumSize: Size(350, 50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                ),
+                                child: const Text('OK',
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white)),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => CusHomePage()));
+                                },
+                              )
+                            ],
+                          );
+                        });
                   })
             ],
           ),
