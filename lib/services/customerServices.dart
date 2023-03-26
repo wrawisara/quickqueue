@@ -194,7 +194,6 @@ class CustomerServices {
   Future<void> updateCustomerTier(String cusId, int points) async {
     String tier;
 
-    // Determine the customer's new tier based on their points
     if (points >= 20 && points < 30) {
       tier = 'Silver';
     } else if (points >= 30 && points > 20) {
@@ -202,7 +201,7 @@ class CustomerServices {
     } else {
       tier = 'Bronze';
     }
-    // Update the customer's tier in the database
+
     final customerDocSnapshot = await FirebaseFirestore.instance
         .collection('customer')
         .where('c_id', isEqualTo: cusId)

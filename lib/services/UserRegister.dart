@@ -60,30 +60,6 @@ class UserRegisterService {
     }
   }
 
-  // create with no coupon
-  Future<void> createCouponsCollection(String uid) async {
-    final CollectionReference<Map<String, dynamic>> couponsCollection =
-        FirebaseFirestore.instance.collection('coupons');
-    final DocumentReference<Map<String, dynamic>> customerDocRef =
-        FirebaseFirestore.instance.collection('customer').doc(uid);
-    final DocumentReference<Map<String, dynamic>> couponsDocRef =
-        couponsCollection.doc(uid);
-
-    try {
-      // Get user data
-      final DocumentSnapshot<Map<String, dynamic>> customerData =
-          await customerDocRef.get();
-
-      // Create coupons collection with user data
-      await couponsDocRef.set({
-        'user': customerDocRef,
-        'email': customerData.get('email'),
-        'coupons': [],
-      });
-    } catch (e) {
-      print('Error creating coupons collection: $e');
-    }
-  }
 
   Future<void> createCollectionIfNotExists(String collectionName) async {
     CollectionReference<Map<String, dynamic>> collectionRef =
@@ -184,7 +160,6 @@ class UserRegisterService {
   }
 
   Future<String> uploadImage(File image) async {
-    // uploading code
     final String fileName =
         '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
     final Reference firebaseStorageRef =

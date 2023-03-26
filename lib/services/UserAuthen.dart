@@ -16,7 +16,6 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
     );
     return userCredential.user;
     }
-    // Exception 
      on FirebaseAuthException catch (e) {
     print(e.code);
     switch (e.code) {
@@ -34,31 +33,6 @@ Future<User?> userSignInWithEmailAndPassword({required String email, required St
   } 
 }
 
-// not used anymore
-Future<bool> isPasswordCorrect(String email, String password, String collectionName) async{
-  QuerySnapshot<Map<String, dynamic>> collectionQuery =
-      await FirebaseFirestore.instance
-          .collection(collectionName)
-          .where('email', isEqualTo: email)
-          .limit(1)
-          .get();
-
-
-    // Get the hashed password for the user from the document
-    String hashedPassword = collectionQuery.docs[0].data()['password'];
-
-    // Hash the login password
-    String salt = collectionQuery.docs[0].data()['salt'];
-    String hashedLoginPassword = sha256.convert(utf8.encode(password + salt)).toString();
-    
-
-    // Check if the hashed login password matches the hashed password in the database
-    if (hashedPassword != hashedLoginPassword) {
-      return false;
-    } else {
-      return true;
-    }
-}
 
 Future<String> getUserType(String email, String password) async {
   List<String> collectionName = ['customer', 'restaurant'];
