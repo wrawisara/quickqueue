@@ -42,6 +42,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
       _couponDataFuture =
           customerServices.getCurrentCustomerCoupon(currentUser.uid);
       currentUserInfoFuture = customerServices.getCurrentUserData();
+   
     }
   }
 
@@ -50,14 +51,8 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
     //final currentUser = FirebaseAuth.instance.currentUser;
     Timestamp endDateTimestamp = widget.coupon['end_date'];
 
-// Convert Timestamp to DateTime
-    //DateTime endDate = endDateTimestamp.toDate();
-
-// Format DateTime to display date and time as string
-    //String formattedEndDate =
-        //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
-
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,

@@ -45,6 +45,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: Colors.white,

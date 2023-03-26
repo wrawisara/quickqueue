@@ -59,6 +59,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
         //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,

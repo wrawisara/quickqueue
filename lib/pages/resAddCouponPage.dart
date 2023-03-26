@@ -110,6 +110,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
     final TextEditingController _textFieldController = TextEditingController();
     var dropdownValue;
     return Scaffold(
+       backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.cyan,
           automaticallyImplyLeading: false,
