@@ -57,6 +57,11 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   final _formKey = GlobalKey<FormState>();
   //check radiobox
   bool isFormValid = false;
+  //เอาไว้ clear textfoemfield
+  String discountText = '';
+  TextEditingController menuController = TextEditingController();
+  TextEditingController discountController = TextEditingController();
+
 
   void validateForm() {
     if ((couponMenu && menu.isNotEmpty) || (couponDiscount && discount > 0)) {
@@ -98,6 +103,8 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
         this.couponImage = imageTemporary;
       });
     }
+
+
 
     //ใช้กับ text ใน alert
     final TextEditingController _textFieldController = TextEditingController();
@@ -285,6 +292,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         couponType = value!;
                                         couponMenu = true;
                                         couponDiscount = false;
+                                        discountController.clear();
                                       });
                                       validateForm();
                                     },
@@ -305,6 +313,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         couponType = value!;
                                         couponMenu = false;
                                         couponDiscount = true;
+                                        menuController.clear(); 
                                       });
                                       validateForm();
                                     },
@@ -316,6 +325,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ]),
                             TextFormField(
                               // obscureText: true,
+                              controller: couponMenu ? menuController : null,
                               decoration: InputDecoration(
                                 enabled: couponMenu,
                                 border: OutlineInputBorder(
@@ -333,6 +343,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
+                              controller: couponDiscount ? discountController : null,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 enabled: couponDiscount,
@@ -349,6 +360,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 });
                                 validateForm();
                               },
+                              
                             ),
                             SizedBox(height: 20.0),
                             SizedBox(

@@ -4,6 +4,7 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/customerServices.dart';
+import 'package:quickqueue/utils/color.dart';
 import 'cusBookingPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -89,8 +90,7 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               },
             ),
           ]),
-      body:  
-      Column(
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0, left: 20, right: 20),
@@ -102,7 +102,9 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
               onChanged: _onSearchQueryChanged,
             ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           Expanded(
               child: _searchResults.isEmpty
                   ? FutureBuilder<List<Map<String, dynamic>>>(
@@ -155,11 +157,15 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                   final queueNum =
                                       queueData[restaurant['r_id']] ?? 0;
                                   return Container(
-                                    height: 90,
+                                    height: 100,
                                     margin: EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
+                                        top: 0, left: 10, right: 10),
                                     decoration: new BoxDecoration(
-                                      color: Colors.cyanAccent.withOpacity(0.1),
+                                      // border: Border.all(
+                                      //   color: Colors.black.withOpacity(0.4),
+                                      //   width: 1,
+                                      // ),
+                                      // color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(20.0),
                                       boxShadow: [
                                         BoxShadow(
@@ -170,67 +176,121 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                         ),
                                       ],
                                     ),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.only(
-                                          top: 10, left: 15, right: 20),
-                                      title: Text(
-                                        restaurant['username'],
-                                        style: TextStyle(fontSize: 22),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      subtitle: Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(5),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                      72, 210, 157, 1)
-                                                  .withOpacity(0.9),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
+                                      color: cyanPrimaryLight,
+                                      child: ListTile(
+                                        contentPadding: EdgeInsets.only(
+                                            top: 10, left: 15, right: 20),
+                                        title: Text(
+                                          restaurant['username'],
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black),
+                                        ),
+                                        subtitle: Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(3),
+                                              // decoration: BoxDecoration(
+                                              //   color: Color.fromRGBO(
+                                              //           72, 210, 157, 1)
+                                              //       .withOpacity(0.9),
+                                              //   borderRadius:
+                                              //       BorderRadius.circular(5),
+                                              // ),
+                                              child: Text(
+                                                '${queueNum} QUEUE',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color:
+                                                Color.fromRGBO(22, 197, 130, 1).withOpacity(0.8),
+                                                      // Color.fromARGB(255, 18, 182, 157),
+                                                      // Color.fromRGBO(47, 212, 149, 1).withOpacity(0.9),
+                                                ),
+                                              ),
                                             ),
-                                            child: Text(
-                                              '${queueNum} queue',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white,
+                                          ],
+                                        ),
+                                        leading: Container(
+                                          decoration: new BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: NetworkImage(
+                                                    restaurant['res_logo']),
+                                              )),
+                                          width: 60,
+                                          height: 90,
+                                          // height: MediaQuery.of(context)
+                                          //     .size
+                                          //     .height,
+                                          // child: Image.network(
+                                          //   restaurant['res_logo'],
+                                          //   fit: BoxFit.contain,
+                                          //   width: 90,
+                                          //   height: 90,
+                                          // ),
+                                        ),
+                                        trailing: InkWell(
+                                          onTap: () {},
+                                          child: Container(
+                                            width: 60.0,
+                                            height: 40.0,
+                                            decoration: new BoxDecoration(
+                                              color:
+                                              Color.fromRGBO(
+                                                              47, 212, 149, 1).withOpacity(0.7),
+                                                  // Colors.cyan.withOpacity(0.7),
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 3),
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Book",
+                                                style: new TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.w400),
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                      leading: Container(
-                                        width: 90,
-                                        height:
-                                            MediaQuery.of(context).size.height,
-                                        child: Image.network(
-                                          restaurant['res_logo'],
-                                          fit: BoxFit.contain,
-                                          width: 90,
-                                          height: 90,
                                         ),
+
+                                        // Icon(
+                                        //   Icons.add,
+                                        //   color: Colors
+                                        //       .grey, // set color of icon here
+                                        // ),
+                                        onTap: () {
+                                          try {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CusBookingPage(
+                                                            restaurant:
+                                                                restaurant)));
+                                          } catch (e) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: Text(e.toString()),
+                                                  actions: [],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
                                       ),
-                                       trailing: Icon(Icons.add,color: Colors.cyan[100],),
-                                      onTap: () {
-                                        try {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      CusBookingPage(
-                                                          restaurant:
-                                                              restaurant)));
-                                        } catch (e) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                content: Text(e.toString()),
-                                                actions: [],
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
                                     ),
                                   );
                                 },

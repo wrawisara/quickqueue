@@ -53,6 +53,7 @@ class _ResManageQueueState extends State<ResManageQueue> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
           backgroundColor: Colors.cyan,
           automaticallyImplyLeading: false,

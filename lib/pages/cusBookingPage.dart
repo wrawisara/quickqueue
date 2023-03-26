@@ -144,7 +144,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(
                                                       72, 210, 157, 1)
-                                                  .withOpacity(0.9),
+                                                  .withOpacity(0.8),
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(
                                   '${queueNum} queue',

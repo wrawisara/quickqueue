@@ -142,22 +142,21 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                 height: 10,
                               ),
                               Padding(
-                                      padding: const EdgeInsets.all(15),
-                                      child: Container(
-                                        height: 250,
-                                        width: 250,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                                restaurantData[0]['res_logo']),
-                                            fit: BoxFit.fill,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.cyan[200],
-                                        ),
-                                      ),
+                                padding: const EdgeInsets.all(15),
+                                child: Container(
+                                  height: 250,
+                                  width: 250,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          restaurantData[0]['res_logo']),
+                                      fit: BoxFit.fill,
                                     ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.cyan[200],
+                                  ),
+                                ),
+                              ),
                               Text(
                                 restaurantData[0]['username'],
                                 style: TextStyle(
@@ -169,7 +168,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                               SizedBox(
                                 height: 20,
                               ),
-                               FutureBuilder<List<Map<String, dynamic>>>(
+                              FutureBuilder<List<Map<String, dynamic>>>(
                                   future: _currentUserInfoFuture,
                                   builder: (BuildContext context,
                                       AsyncSnapshot<List<Map<String, dynamic>>>
@@ -198,12 +197,16 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                     return Row(
                                       children: <Widget>[
                                         Padding(
-                                     padding: const EdgeInsets.only(
-                                      left: 30,
-                                    ),
-                                     child: Icon(Icons.person , color:  Color.fromRGBO(72, 206, 210, 1)
-                                                  .withOpacity(0.9),),
-                                   ),
+                                          padding: const EdgeInsets.only(
+                                            left: 30,
+                                          ),
+                                          child: Icon(
+                                            Icons.person,
+                                            color:
+                                                Color.fromRGBO(72, 206, 210, 1)
+                                                    .withOpacity(0.9),
+                                          ),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.only(
                                             left: 30,
@@ -226,13 +229,16 @@ class _CusBookedPageState extends State<CusBookedPage> {
                               ),
                               Row(
                                 children: <Widget>[
-                                   Padding(
-                                     padding: const EdgeInsets.only(
+                                  Padding(
+                                    padding: const EdgeInsets.only(
                                       left: 30,
                                     ),
-                                     child: Icon(Icons.access_alarms_rounded , color: Color.fromRGBO(72, 206, 210, 1)
-                                                  .withOpacity(0.9),),
-                                   ),
+                                    child: Icon(
+                                      Icons.access_alarms_rounded,
+                                      color: Color.fromRGBO(72, 206, 210, 1)
+                                          .withOpacity(0.9),
+                                    ),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       left: 30,
@@ -349,8 +355,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                 height: 10,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(left: 15),
@@ -362,9 +367,11 @@ class _CusBookedPageState extends State<CusBookedPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 120,),
+                                  SizedBox(
+                                    width: 120,
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right:35),
+                                    padding: const EdgeInsets.only(right: 35),
                                     child: Text(
                                       widget.numberPerson.toString(),
                                       style: TextStyle(
@@ -378,8 +385,6 @@ class _CusBookedPageState extends State<CusBookedPage> {
                               SizedBox(
                                 height: 30,
                               ),
-                             
-                              
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.cyan[400],
