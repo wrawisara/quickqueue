@@ -114,7 +114,6 @@ class BookingServices {
 
       bookingQuerySnapshot.docs.forEach((doc) {
         String bookingQueue = doc.get('booking_queue');
-        //String previousQueue = doc.get('previous_queue');
         String cusId = doc.get('c_id');
         String resId = doc.get('r_id');
         int guest = doc.get('guest');
@@ -125,7 +124,6 @@ class BookingServices {
 
         booking.add({
           'bookingQueue': bookingQueue,
-          //'previousQueue': previousQueue,
           'c_id': cusId,
           'r_id': resId,
           'guest': guest,
@@ -307,7 +305,7 @@ class BookingServices {
                     .where('c_id', isEqualTo: cusId)
                     .where('date', isEqualTo: todayString)
                     .where('status',
-                        whereIn: ['confirmed', 'pending', 'canceled']).get()
+                        whereIn: ['pending', 'canceled']).get()
                 as QuerySnapshot<Map<String, dynamic>>;
 
         if (querySnapshot.docs.isNotEmpty) {
@@ -403,7 +401,7 @@ class BookingServices {
                 as DocumentReference<Map<String, dynamic>>;
 
         await bookingDoc
-            .update({'status': status, 'updated_at': DateTime.now()});
+            .update({'status': status});
         print('Booking status updated successfully');
       } else {
         print('No booking found with booking queue: $bookingQueue');

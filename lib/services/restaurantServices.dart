@@ -27,11 +27,8 @@ class RestaurantServices {
       DateTime expiredDate) async {
     try {
       DateTime now = DateTime.now();
-      //DateTime expiredDate = now.add(Duration(days: 7));
       String imageUrl = await uploadImage(image);
       String couponId = Uuid().v4();
-      //check
-      print(couponName);
 
       await couponCollection.add({
         'name': couponName,

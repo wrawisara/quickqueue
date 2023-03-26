@@ -201,11 +201,15 @@ class _ResManageQueueState extends State<ResManageQueue> {
                                           IconsButton(
                                             onPressed: () {
                                               //ใส่ action
+                                              try {
                                               bookingServices
                                                   .updateBookingStatus(
                                                       booking['bookingQueue'],
                                                       'confirmed');
                                               customerServices.updatePointsOnCheckIn(booking['c_id'], booking['bookingQueue']);
+                                              } catch (e){
+                                                print(e.toString());
+                                              }
                                             },
                                             text: 'Confirm Queue',
                                             iconData:

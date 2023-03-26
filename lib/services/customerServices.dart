@@ -212,8 +212,6 @@ class CustomerServices {
 
   Future<void> updatePointsOnCheckIn(String cusId, String bookingQueue) async {
     try {
-      final now = DateTime.now();
-      final todayString = DateFormat('yyyy-MM-dd').format(now);
       final customerDocs =
           await customerCollection.where('c_id', isEqualTo: cusId).get();
       final customerDoc = customerDocs.docs.first;
