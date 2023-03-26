@@ -114,11 +114,12 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 10,
+                              height: 30,
                             ),
                             Container(
                               height: 250,
                               child: Card(
+                                
                                 semanticContainer: true,
                                 clipBehavior: Clip.antiAliasWithSaveLayer,
                                 child: Image.network(
@@ -127,7 +128,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                                   fit: BoxFit.fill,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3.0),
+                                  borderRadius: BorderRadius.circular(15.0),
                                 ),
                                 elevation: 1, 
                                 margin: EdgeInsets.all(5),
@@ -225,9 +226,10 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                minimumSize: Size(160, 50),
+                                primary: Colors.cyan[400],
+                                minimumSize: Size(350, 50),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                    borderRadius: BorderRadius.circular(10.0)),
                               ),
                               child: const Text('OK',
                                   style: TextStyle(fontSize: 20, color: Colors.white)),

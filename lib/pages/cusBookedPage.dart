@@ -62,6 +62,7 @@ class _CusBookedPageState extends State<CusBookedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,

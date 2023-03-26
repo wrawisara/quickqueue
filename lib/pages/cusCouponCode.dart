@@ -83,6 +83,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
         body: SingleChildScrollView(
           child: Stack(
             children: [
+             
              FutureBuilder<List<Map<String, dynamic>>>(
                 future: _couponDataFuture,
                 builder: (BuildContext context, snapshot) {
@@ -115,7 +116,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 10,
+                              height: 30,
                             ),
                             Container(
                               height: 250,
@@ -224,16 +225,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                             SizedBox(
                               height: 20,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(160, 50),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
-                              ),
-                              child: const Text('OK',
-                                  style: TextStyle(fontSize: 20, color: Colors.white)),
-                              onPressed: () {},
-                            )
+                            
                           ],
                         )
                       ],

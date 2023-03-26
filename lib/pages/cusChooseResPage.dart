@@ -124,7 +124,14 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
 
                         if (snapshot.data?.isEmpty ?? true) {
                           return Center(
-                            child: Text('No restaurants found'),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                                  'assets/img/noData.png',
+                                                  scale: 22,
+                                                ),
+                              ],
+                            ),
                           );
                         }
                         List<Map<String, dynamic>> restaurantData =
@@ -242,9 +249,9 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                             height: 40.0,
                                             decoration: new BoxDecoration(
                                               color:
-                                              Color.fromRGBO(
-                                                              47, 212, 149, 1).withOpacity(0.7),
-                                                  // Colors.cyan.withOpacity(0.7),
+                                              // Color.fromRGBO(
+                                              //                 47, 212, 149, 1).withOpacity(0.7),
+                                                  Colors.cyan.withOpacity(0.7),
                                               border: Border.all(
                                                   color: Colors.white,
                                                   width: 3),
