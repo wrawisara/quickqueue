@@ -77,7 +77,6 @@ class CustomerServices {
         int requiredPoint = doc.get('required_point');
         String? resId = doc.get('r_id');
         String tier = doc.get('tier');
-        // to be changed
         String? couponId = doc.get('coupon_id');
 
         coupons.add({
@@ -94,7 +93,6 @@ class CustomerServices {
         });
       });
 
-      // Return the list of coupon documents
       return coupons;
     } catch (e) {
       print('Error fetching data: $e');
