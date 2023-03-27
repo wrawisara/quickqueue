@@ -67,7 +67,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
           ),
           automaticallyImplyLeading: false,
           title: Text(
-            'My Coupon',
+            'Coupon Code',
             style: TextStyle(color: Colors.white),
           ),
           actions: [
