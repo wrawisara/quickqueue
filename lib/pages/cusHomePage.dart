@@ -21,11 +21,8 @@ class CusHomePage extends StatefulWidget {
 }
 
 class _CusHomePageState extends State<CusHomePage> {
-  int _currentIndex = 0;
-  late PageController _pageController;
-
-  //เรียกข้อมูลมาใช้
-
+  // int _currentIndex = 0;
+  // late PageController _pageController;
 
   int _selectedIndex = 0;
   final List<Widget> _pages = [

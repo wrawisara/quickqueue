@@ -348,7 +348,9 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                             ),
                                             TextButton(
                                               child: Text("CANCEL"),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pop(context, false);
+                                              },
                                             ),
                                               ],
                                             );

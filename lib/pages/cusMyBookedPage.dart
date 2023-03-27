@@ -86,8 +86,17 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                       return Container(
                         height: MediaQuery.of(context).size.width * 1.5,
                         child: Center(
-                          child: Text('You have not book any restaurant yet.'),
-                        ),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/img/noData.png',
+                                  scale: 22,
+                                ),
+                              ],
+                            ),
+                          )
+                        
+                        
                       );
                     }
 
@@ -144,7 +153,7 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                           return Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(15),
@@ -391,12 +400,39 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                                 ],
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
+                              ),
+                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 43),
+                                    child: Text(
+                                      "Status : ",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 85,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 35),
+                                    child: Text(
+                                      bookingData[0]['status'].toString(),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               
-                              SizedBox(
-                                height: 20,
-                              ),
+                             
                             ],
                           );
                         });

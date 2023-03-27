@@ -124,15 +124,8 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
 
                         if (snapshot.data?.isEmpty ?? true) {
                           return Center(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                                  'assets/img/noData.png',
-                                                  scale: 22,
-                                                ),
-                              ],
-                            ),
-                          );
+                          child: Text('No restaurant data was found'),
+                        );
                         }
                         List<Map<String, dynamic>> restaurantData =
                             snapshot.data ?? [];
@@ -201,21 +194,13 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                           children: [
                                             Container(
                                               padding: EdgeInsets.all(3),
-                                              // decoration: BoxDecoration(
-                                              //   color: Color.fromRGBO(
-                                              //           72, 210, 157, 1)
-                                              //       .withOpacity(0.9),
-                                              //   borderRadius:
-                                              //       BorderRadius.circular(5),
-                                              // ),
                                               child: Text(
                                                 '${queueNum} QUEUE',
                                                 style: TextStyle(
                                                   fontSize: 16,
-                                                  color:
-                                                Color.fromRGBO(22, 197, 130, 1).withOpacity(0.8),
-                                                      // Color.fromARGB(255, 18, 182, 157),
-                                                      // Color.fromRGBO(47, 212, 149, 1).withOpacity(0.9),
+                                                  color: Color.fromRGBO(
+                                                          22, 197, 130, 1)
+                                                      .withOpacity(0.8),
                                                 ),
                                               ),
                                             ),
@@ -232,15 +217,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                               )),
                                           width: 60,
                                           height: 90,
-                                          // height: MediaQuery.of(context)
-                                          //     .size
-                                          //     .height,
-                                          // child: Image.network(
-                                          //   restaurant['res_logo'],
-                                          //   fit: BoxFit.contain,
-                                          //   width: 90,
-                                          //   height: 90,
-                                          // ),
                                         ),
                                         trailing: InkWell(
                                           onTap: () {},
@@ -249,8 +225,8 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                             height: 40.0,
                                             decoration: new BoxDecoration(
                                               color:
-                                              // Color.fromRGBO(
-                                              //                 47, 212, 149, 1).withOpacity(0.7),
+                                                  // Color.fromRGBO(
+                                                  //                 47, 212, 149, 1).withOpacity(0.7),
                                                   Colors.cyan.withOpacity(0.7),
                                               border: Border.all(
                                                   color: Colors.white,
@@ -270,12 +246,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                             ),
                                           ),
                                         ),
-
-                                        // Icon(
-                                        //   Icons.add,
-                                        //   color: Colors
-                                        //       .grey, // set color of icon here
-                                        // ),
                                         onTap: () {
                                           try {
                                             Navigator.push(

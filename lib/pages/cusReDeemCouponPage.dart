@@ -219,17 +219,17 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                             SizedBox(
                               height: 20,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.cyan[400],
-                                minimumSize: Size(350, 50),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0)),
-                              ),
-                              child: const Text('OK',
-                                  style: TextStyle(fontSize: 20, color: Colors.white)),
-                              onPressed: () {},
-                            )
+                            // ElevatedButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //     primary: Colors.cyan[400],
+                            //     minimumSize: Size(350, 50),
+                            //     shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(10.0)),
+                            //   ),
+                            //   child: const Text('OK',
+                            //       style: TextStyle(fontSize: 20, color: Colors.white)),
+                            //   onPressed: () {},
+                            // )
                           ],
                         )
                       ],

@@ -85,7 +85,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your restaurant name';
                                 }
                                 return null;
                               },
@@ -95,7 +95,6 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 ),
                                 labelText: 'Restaurant Name',
                               ),
-                              // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
                               onChanged: (val) {
                                 setState(() => restaurantName = val);
                               },
@@ -104,7 +103,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your email';
                                 }
                                 return null;
                               },
@@ -114,7 +113,6 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 ),
                                 labelText: 'Email',
                               ),
-                              // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
                               onChanged: (val) {
                                 setState(() => email = val);
                               },
@@ -123,7 +121,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your password';
                                 }
                                 return null;
                               },
@@ -143,7 +141,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your phone';
                                 }
                                 return null;
                               },
@@ -162,7 +160,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your address';
                                 }
                                 return null;
                               },
@@ -181,7 +179,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your latitude';
                                 }
                                 return null;
                               },
@@ -200,7 +198,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your longitude';
                                 }
                                 return null;
                               },
@@ -219,7 +217,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                             TextFormField(
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter some text';
+                                  return 'Please enter your branch';
                                 }
                                 return null;
                               },
@@ -292,8 +290,7 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                       ],
                                     ),
                                   );
-                                }
-                               else if (_formKey.currentState!.validate()) {
+                                } else if (_formKey.currentState!.validate()) {
                                   try {
                                     await registerService
                                         .registerRestaurantWithEmailAndPassword(
@@ -319,24 +316,24 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                   } catch (e) {
                                     print(e);
                                     if (e is FirebaseAuthException) {
-                                    showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text('Error'),
-                                        content: Text("${e.message}"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, 'OK'),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                                      showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Text('Error'),
+                                          content: Text("${e.message}"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, 'OK'),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
                                     } else {
-                                  print("Unknown error occurred: $e");
-                                }
+                                      print("Unknown error occurred: $e");
+                                    }
                                   }
                                 }
 
