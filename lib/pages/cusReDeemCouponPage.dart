@@ -21,14 +21,6 @@ class CusRedeemCouponPage extends StatefulWidget {
 }
 
 class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
-  //คำสั่งรับ datenow ยังไม่ได้ใช้
-  String cdate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-  String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
-
-  //เรียกข้อมูลมาใช้
-  //final booking = Booking.generateBooking();
-  //final customer = Customer.generateCustomer();
-  //final coupon = Coupon.generateCoupon();
   final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _couponDataFuture;
   late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
