@@ -12,9 +12,10 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
 class CusCouponCodePage extends StatefulWidget {
-  final Map<String, dynamic> coupon;
+  //final Map<String, dynamic> coupon;
+  final String couponId;
 
-  const CusCouponCodePage({Key? key, required this.coupon}) : super(key: key);
+  const CusCouponCodePage({Key? key, required this.couponId}) : super(key: key);
 
   @override
   State<CusCouponCodePage> createState() => _CusCouponCodePageState();
@@ -41,7 +42,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
       _couponDataFuture =
-          customerServices.getCurrentCustomerCoupon(currentUser.uid);
+          customerServices.getCouponById(currentUser.uid, widget.couponId);
       currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
@@ -49,7 +50,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
   @override
   Widget build(BuildContext context) {
     //final currentUser = FirebaseAuth.instance.currentUser;
-    Timestamp endDateTimestamp = widget.coupon['end_date'];
+    //Timestamp endDateTimestamp = widget.coupon['end_date'];
 
 // Convert Timestamp to DateTime
     //DateTime endDate = endDateTimestamp.toDate();
@@ -66,7 +67,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
           ),
           automaticallyImplyLeading: false,
           title: Text(
-            widget.coupon['couponName'],
+            'My Coupon',
             style: TextStyle(color: Colors.white),
           ),
           actions: [

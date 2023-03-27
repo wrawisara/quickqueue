@@ -293,7 +293,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                             ),
                                             SizedBox(width: 15,),
                                             // ใส่ CouponName
-                                            Text(coupon['couponName'])
+                                             Flexible(child: Text(coupon['couponName'],overflow: TextOverflow.ellipsis,))
                                           ]),
                                           content: Text(
                                               "Are you sure you want to redeem coupon?"),
@@ -378,7 +378,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
 navigateToCusRedeemCouponPage(
     BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusRedeemCouponPage(coupon: coupon);
+    return CusRedeemCouponPage(couponId: coupon['coupon_id']);
   }));
 }
 

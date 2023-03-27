@@ -88,10 +88,12 @@ class _CusMyBookedPageState extends State<CusMyBookedPage> {
                         child: Center(
                             child: Column(
                               children: [
+                                SizedBox(height: 120,),
                                 Image.asset(
                                   'assets/img/noData.png',
-                                  scale: 22,
+                                  scale: 7,
                                 ),
+                                Text("You haven't book any restaurant yet.")
                               ],
                             ),
                           )

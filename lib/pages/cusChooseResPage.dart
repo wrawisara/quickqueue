@@ -161,11 +161,6 @@ class _CusChooseResPageState extends State<CusChooseResPage> {
                                     margin: EdgeInsets.only(
                                         top: 0, left: 10, right: 10),
                                     decoration: new BoxDecoration(
-                                      // border: Border.all(
-                                      //   color: Colors.black.withOpacity(0.4),
-                                      //   width: 1,
-                                      // ),
-                                      // color: Colors.transparent,
                                       borderRadius: BorderRadius.circular(20.0),
                                       boxShadow: [
                                         BoxShadow(

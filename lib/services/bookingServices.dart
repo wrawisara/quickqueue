@@ -56,9 +56,12 @@ class BookingServices {
   Future<List<Map<String, dynamic>>> getBookingDataForCustomer(
       String cusId) async {
     try {
+      final now = DateTime.now();
+      final todayString = DateFormat('yyyy-MM-dd').format(now);
       QuerySnapshot bookingQuerySnapshot = await bookingCollection
           .where('c_id', isEqualTo: cusId)
           .where('status', whereIn: ['pending', 'canceled'])
+          .where('date', isEqualTo: todayString)
           .orderBy('created_at', descending: true)
           .limit(1)
           .get();
@@ -281,7 +284,7 @@ class BookingServices {
           .where('status', isEqualTo: 'pending')
           .get();
       final count = querySnapshot.docs.length;
-      totalQueue = count - 1;
+      totalQueue = count;
       if (totalQueue < 0){
         totalQueue = 0;
       }

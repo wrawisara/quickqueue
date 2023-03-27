@@ -160,7 +160,8 @@ class _ResMainPageState extends State<ResMainPage> {
                               borderRadius: BorderRadius.circular(20.0)),
                         ),
                         child: const Text('Book',
-                            style: TextStyle(fontSize: 20, color: Colors.white)),
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white)),
                         onPressed: () async {
                           DateTime now = DateTime.now();
                           String date = DateFormat('yyyy-MM-dd').format(now);
@@ -238,135 +239,6 @@ class _ResMainPageState extends State<ResMainPage> {
             ),
           ),
         ]))
-
-        //  Container(
-        //   // width: MediaQuery.of(context).size.width,
-        //   height: 800,
-        //   child: Column(
-        //     children: <Widget>[
-
-        //               RestaurantInfo(),
-
-        // FutureBuilder<num>(
-        //   future: _totalCapacityFuture,
-        //   builder: (context, totalCapacitySnapshot) {
-        //     if (totalCapacitySnapshot.connectionState ==
-        //         ConnectionState.waiting) {
-        //       // Show a loading spinner while waiting for the future to complete
-        //       return CircularProgressIndicator();
-        //     }
-
-        //     final num? totalCapacity = totalCapacitySnapshot.data!;
-
-        //     if (totalCapacity == null) {
-        //       // Show an error message if the data is null
-        //       return Text('Total capacity data is null');
-        //     }
-
-        //     return FutureBuilder<List<Map<String, dynamic>>>(
-        //       future: _restaurantDataFuture,
-        //       builder: (context, restaurantDataSnapshot) {
-        //         if (restaurantDataSnapshot.connectionState ==
-        //             ConnectionState.waiting) {
-        //           // Show a loading spinner while waiting for the future to complete
-        //           return CircularProgressIndicator();
-        //         }
-
-        //         final List<Map<String, dynamic>> restaurantData =
-        //             restaurantDataSnapshot.data!;
-
-        //         print(restaurantData[0]['username']);
-        //         print(totalCapacity);
-        //         print(restaurantData[0]['branch']);
-        //         print(restaurantData[0]['status']);
-        //         print(restaurantData[0]['res_logo']);
-
-        //         return RestaurantInfo(
-        //           restaurantData[0]['name'] ?? "",
-        //           totalCapacity,
-        //           restaurantData[0]['branch'] ?? "",
-        //           restaurantData[0]['status'] ?? "",
-        //           restaurantData[0]['res_logo'] ?? "",
-        //         );
-        //       },
-        //     );
-        //   },
-        // ),
-
-        // SingleChildScrollView(
-        //   child: Container(
-        // child: Column(
-        //   children: <Widget>[
-        //     NumberOfQueue(),
-        //     SizedBox(
-        //       height: 40,
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.only(right: 170),
-        //       child: Text(
-        //         "Table Reservation",
-        //         style: TextStyle(
-        //             color: Colors.black,
-        //             fontSize: 22,
-        //             fontWeight: FontWeight.bold),
-        //       ),
-        //     ),
-        //     FutureBuilder<List<Map<String, dynamic>>>(
-        //     future: _restaurantDataFuture,
-        //     builder: (context, restaurantSnapshot) {
-        //       if (restaurantSnapshot.connectionState ==
-        //           ConnectionState.waiting) {
-        //         // Show a loading spinner while waiting for the future to complete
-        //         return CircularProgressIndicator();
-        //       }
-
-        //       final List<Map<String, dynamic>> restaurantData = restaurantSnapshot.data!;
-
-        //       if (restaurantData == null) {
-        //         // Show an error message if the data is null
-        //         return Text('Total restaurant data is null');
-        //       }
-
-        //     return FutureBuilder<List<Map<String, dynamic>>>(
-        //       future: _tableDataFuture,
-        //       builder: (BuildContext context, snapshot) {
-        //         if (snapshot.connectionState == ConnectionState.waiting) {
-        //           return Center(
-        //             child: CircularProgressIndicator(),
-        //           );
-        //         }
-        //         if (snapshot.hasError) {
-        //           return Center(
-        //             child: Text('Error fetching data'),
-        //           );
-        //         }
-
-        //         if (snapshot.data?.isEmpty ?? true) {
-        //           return Center(
-        //             child: Text('No restaurants found'),
-        //           );
-        //         }
-
-        //         final tableInfoList = snapshot.data?.toList() ?? [];
-        //         return Column(
-        //           children: tableInfoList.map((tableInfo) {
-        //             String type = tableInfo['table_type'];
-        //             int capacity = tableInfo['capacity'];
-        //             int available = tableInfo['available'];
-        //             return BookTableItem(type, capacity, available, restaurantData);
-        //           }).toList(),
-        //         );
-        //       },
-        //     );
-        //     },
-        //     ),
-        //   ],
-        // ),
-        //   ),
-        // ),
-        //     ],
-        // ),
-        // ),
         );
   }
 }

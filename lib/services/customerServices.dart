@@ -147,6 +147,52 @@ class CustomerServices {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getCouponById(String cusId, String couponId) async {
+    try {
+      QuerySnapshot couponQuery =
+          await couponCollection.where('status', isEqualTo: 'collected').where('c_id', isEqualTo: cusId).where('coupon_id', isEqualTo: couponId).get();
+
+      List<Map<String, dynamic>> coupons = [];
+      couponQuery.docs.forEach((doc) {
+        String code = doc.get('code');
+        String couponName = doc.get('name');
+        String? cusId = doc.get('c_id');
+        double discount = doc.get('discount');
+        Timestamp endDate = doc.get('end_date');
+        Timestamp startDate = doc.get('start_date');
+        String img = doc.get('img');
+        String menu = doc.get('menu');
+        int requiredPoint = doc.get('required_point');
+        String? resId = doc.get('r_id');
+        String tier = doc.get('tier');
+        String status = doc.get('status');
+        String? couponId = doc.get('coupon_id');
+
+        coupons.add({
+          'code': code,
+          'couponName': couponName,
+          'c_id': cusId,
+          'discount': discount,
+          'end_date': endDate,
+          'start_date': startDate,
+          'img': img,
+          'requiredPoint': requiredPoint,
+          'r_id': resId,
+          'coupon_id': couponId,
+          'menu': menu,
+          'tier': tier,
+          'status': status,
+        });
+      });
+
+      // Return the list of coupon documents
+      return coupons;
+    } catch (e) {
+      print('Error fetching data: $e');
+      throw e;
+    }
+  }
+
   Future<QuerySnapshot<Map<String, dynamic>>> getUserInfo(String uid) async {
     final collectionRef = FirebaseFirestore.instance.collection('customer');
     final querySnapshot =

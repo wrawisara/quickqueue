@@ -11,9 +11,10 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
 class CusRedeemCouponPage extends StatefulWidget {
-  final Map<String, dynamic> coupon;
+  //final Map<String, dynamic> coupon;
+  final String couponId;
 
-  const CusRedeemCouponPage({Key? key, required this.coupon}) : super(key: key);
+  const CusRedeemCouponPage({Key? key, required this.couponId}) : super(key: key);
 
   @override
   State<CusRedeemCouponPage> createState() => _CusRedeemCouponPageState();
@@ -40,7 +41,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
       _couponDataFuture =
-          customerServices.getCurrentCustomerCoupon(currentUser.uid);
+          customerServices.getCouponById(currentUser.uid, widget.couponId);
       currentUserInfoFuture = customerServices.getCurrentUserData();
    
     }
@@ -49,7 +50,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
   @override
   Widget build(BuildContext context) {
     //final currentUser = FirebaseAuth.instance.currentUser;
-    Timestamp endDateTimestamp = widget.coupon['end_date'];
+    //Timestamp endDateTimestamp = widget.coupon['end_date'];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -190,7 +191,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        couponData[0]['code'], // couponcode จากหน้าทก่อน
+                                        couponData[0]['code'], 
                                         style: new TextStyle(
                                             fontSize: 30,
                                             color: Colors.white,

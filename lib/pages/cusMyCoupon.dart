@@ -152,7 +152,7 @@ navigateToCusProfilePage(BuildContext context) {
 
 navigateToCusCouponCodePage(BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusCouponCodePage(coupon: coupon);
+    return CusCouponCodePage(couponId: coupon['coupon_id']);
   }));
 }
 

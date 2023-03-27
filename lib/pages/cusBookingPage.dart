@@ -39,8 +39,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
   void initState() {
     super.initState();
     _restaurantDataFuture = customerServices.getAllRestaurants();
-    _searchResults = [];
-
+   
     _queueDataFuture = _restaurantDataFuture.then((restaurantData) {
       final resId =
           restaurantData.map<String>((res) => res['r_id'] as String).toList();
