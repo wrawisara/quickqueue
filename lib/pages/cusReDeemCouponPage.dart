@@ -11,9 +11,10 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
 class CusRedeemCouponPage extends StatefulWidget {
-  final Map<String, dynamic> coupon;
+  //final Map<String, dynamic> coupon;
+  final String couponId;
 
-  const CusRedeemCouponPage({Key? key, required this.coupon}) : super(key: key);
+  const CusRedeemCouponPage({Key? key, required this.couponId}) : super(key: key);
 
   @override
   State<CusRedeemCouponPage> createState() => _CusRedeemCouponPageState();
@@ -40,24 +41,19 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
       _couponDataFuture =
-          customerServices.getCurrentCustomerCoupon(currentUser.uid);
+          customerServices.getCouponById(currentUser.uid, widget.couponId);
       currentUserInfoFuture = customerServices.getCurrentUserData();
+   
     }
   }
 
   @override
   Widget build(BuildContext context) {
     //final currentUser = FirebaseAuth.instance.currentUser;
-    Timestamp endDateTimestamp = widget.coupon['end_date'];
-
-// Convert Timestamp to DateTime
-    //DateTime endDate = endDateTimestamp.toDate();
-
-// Format DateTime to display date and time as string
-    //String formattedEndDate =
-        //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
+    //Timestamp endDateTimestamp = widget.coupon['end_date'];
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,
@@ -114,11 +110,12 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 10,
+                              height: 30,
                             ),
                             Container(
                               height: 250,
                               child: Card(
+                                
                                 semanticContainer: true,
                                 clipBehavior: Clip.antiAliasWithSaveLayer,
                                 child: Image.network(
@@ -127,7 +124,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                                   fit: BoxFit.fill,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3.0),
+                                  borderRadius: BorderRadius.circular(15.0),
                                 ),
                                 elevation: 1, 
                                 margin: EdgeInsets.all(5),
@@ -194,7 +191,7 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        couponData[0]['code'], // couponcode จากหน้าทก่อน
+                                        couponData[0]['code'], 
                                         style: new TextStyle(
                                             fontSize: 30,
                                             color: Colors.white,
@@ -225,9 +222,10 @@ class _CusRedeemCouponPageState extends State<CusRedeemCouponPage> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                minimumSize: Size(160, 50),
+                                primary: Colors.cyan[400],
+                                minimumSize: Size(350, 50),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
+                                    borderRadius: BorderRadius.circular(10.0)),
                               ),
                               child: const Text('OK',
                                   style: TextStyle(fontSize: 20, color: Colors.white)),

@@ -28,18 +28,32 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         body: Center(
+          
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-              padding: const EdgeInsets.fromLTRB(20, 220, 20, 20),
+              height: 330,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32.0),
+                color: const Color(0xff7c94b6),
+                image: const DecorationImage(
+                  image: AssetImage('assets/img/login5.jpeg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.fromLTRB(80, 270, 20, 20),
+
+              // color: Colors.cyan,
               child: Text(
                 "Quick Queue",
                 style: TextStyle(
                     fontSize: 40,
-                    color: Colors.cyan,
+                    color: Colors.cyan[500],
                     fontWeight: FontWeight.w500),
               )),
           Expanded(
@@ -51,50 +65,53 @@ class _LoginPageState extends State<LoginPage> {
                   child: Form(
                     key: _formKey,
                     child: Column(children: <Widget>[
-                      TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
+                      SizedBox(height: 20,),
+                      Container(
+                        width: 300,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Email',
                           ),
-                          labelText: 'Email',
+                          // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
+                          onChanged: (val) {
+                            setState(() => email = val);
+                          },
                         ),
-                        // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
                       ),
-                      SizedBox(height: 20.0),
-                      TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          return null;
-                        },
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(90.0),
+                      SizedBox(height: 10.0),
+                      Container(
+                        width: 300,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Password',
                           ),
-                          labelText: 'Password',
+                          // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
+                          onChanged: (val) {
+                            setState(() => password = val);
+                          },
                         ),
-                        // validator: (val) => val.isEmpty ? 'Firstname' : null, //ตัวแปรที่รับเข้ามาเป็น null ไม่ได้อยู่แล้ว
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
                       ),
-                      SizedBox(height: 20.0),
+                      SizedBox(height: 50.0),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             // primary: Colors.green,
                             // elevation: 3,
-                            minimumSize: Size(280, 50),
+                            minimumSize: Size(260, 50),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32.0)),
                           ),
@@ -110,18 +127,18 @@ class _LoginPageState extends State<LoginPage> {
                             child:
                             Text('Submit');
                           }),
-                      SizedBox(height: 20.0),
+                      SizedBox(height: 15.0),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          // primary: Colors.green,
+                          primary: Colors.white,
                           // elevation: 3,
-                          minimumSize: Size(280, 50),
+                          minimumSize: Size(260, 50),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0)),
+                              borderRadius: BorderRadius.circular(32.0),
+                              side: BorderSide(width: 2, color: Colors.cyan)),
                         ),
                         child: const Text('Sign Up',
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.white)),
+                            style: TextStyle(fontSize: 20, color: Colors.cyan)),
                         onPressed: () {
                           //** ใส่ที่จะ check ข้อมูล */
                           Navigator.of(context).push(MaterialPageRoute(
@@ -129,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 5,
                       ),
                       TextButton(
                         onPressed: () {
@@ -174,7 +191,9 @@ Future<void> loginChecker(
     }
   } on FirebaseAuthException catch (e) {
     print("Login error: ${e.message}");
-    if (e.code == 'invalid-email' || e.code == 'wrong-password' || e.code =='too-many-requests' ) {
+    if (e.code == 'invalid-email' ||
+        e.code == 'wrong-password' ||
+        e.code == 'too-many-requests') {
       print("Invalid email or password!");
       showDialog<String>(
           context: context,
@@ -204,7 +223,7 @@ Future<void> loginChecker(
                   ),
                 ],
               ));
-    } 
+    }
   }
 }
 

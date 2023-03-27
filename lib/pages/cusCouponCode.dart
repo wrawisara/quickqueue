@@ -12,9 +12,10 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
 class CusCouponCodePage extends StatefulWidget {
-  final Map<String, dynamic> coupon;
+  //final Map<String, dynamic> coupon;
+  final String couponId;
 
-  const CusCouponCodePage({Key? key, required this.coupon}) : super(key: key);
+  const CusCouponCodePage({Key? key, required this.couponId}) : super(key: key);
 
   @override
   State<CusCouponCodePage> createState() => _CusCouponCodePageState();
@@ -41,7 +42,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.uid != null) {
       _couponDataFuture =
-          customerServices.getCurrentCustomerCoupon(currentUser.uid);
+          customerServices.getCouponById(currentUser.uid, widget.couponId);
       currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
@@ -49,7 +50,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
   @override
   Widget build(BuildContext context) {
     //final currentUser = FirebaseAuth.instance.currentUser;
-    Timestamp endDateTimestamp = widget.coupon['end_date'];
+    //Timestamp endDateTimestamp = widget.coupon['end_date'];
 
 // Convert Timestamp to DateTime
     //DateTime endDate = endDateTimestamp.toDate();
@@ -59,13 +60,14 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
         //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
           automaticallyImplyLeading: false,
           title: Text(
-            widget.coupon['couponName'],
+            'My Coupon',
             style: TextStyle(color: Colors.white),
           ),
           actions: [
@@ -83,6 +85,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
         body: SingleChildScrollView(
           child: Stack(
             children: [
+             
              FutureBuilder<List<Map<String, dynamic>>>(
                 future: _couponDataFuture,
                 builder: (BuildContext context, snapshot) {
@@ -115,7 +118,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 10,
+                              height: 30,
                             ),
                             Container(
                               height: 250,
@@ -224,16 +227,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                             SizedBox(
                               height: 20,
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(160, 50),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0)),
-                              ),
-                              child: const Text('OK',
-                                  style: TextStyle(fontSize: 20, color: Colors.white)),
-                              onPressed: () {},
-                            )
+                            
                           ],
                         )
                       ],

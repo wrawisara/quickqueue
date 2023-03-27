@@ -2,13 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:intl/intl.dart';
 import 'package:material_dialogs/widgets/buttons/icon_button.dart';
 import 'package:quickqueue/model/Customer.dart';
 import 'package:quickqueue/pages/loginPage.dart';
 import 'package:quickqueue/pages/resConfigTable.dart';
+import 'package:quickqueue/services/bookingServices.dart';
 import 'package:quickqueue/services/restaurantServices.dart';
+import 'package:quickqueue/utils/horizontalLine.dart';
 import 'package:quickqueue/widgets/bookTableItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quickqueue/widgets/customElevatedButton.dart';
 import 'package:quickqueue/widgets/numberOfQueue.dart';
 import 'package:quickqueue/widgets/restaurantInfo.dart';
 import 'package:material_dialogs/material_dialogs.dart';
@@ -45,6 +49,15 @@ class _ResMainPageState extends State<ResMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final BookingServices bookingServices = BookingServices();
+    late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+
+    @override
+    void initState() {
+      super.initState();
+      _bookingDataFuture = bookingServices.getBookingData();
+    }
+
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.cyan,
@@ -55,10 +68,10 @@ class _ResMainPageState extends State<ResMainPage> {
             automaticallyImplyLeading: false, // Disable the back icon
             actions: <Widget>[
               IconButton(
-                icon: const Icon(Icons.redeem_outlined, color: Colors.white),
-                onPressed: () {
-                  showRedeemAlert(context, userId, restaurantServices);
-                }),
+                  icon: const Icon(Icons.redeem_outlined, color: Colors.white),
+                  onPressed: () {
+                    showRedeemAlert(context, userId, restaurantServices);
+                  }),
               IconButton(
                 icon: const Icon(Icons.power_settings_new_outlined,
                     color: Colors.white),
@@ -73,7 +86,8 @@ class _ResMainPageState extends State<ResMainPage> {
                         IconsButton(
                           onPressed: () {
                             //ใส่ action
-                            restaurantServices.updateRestaurantStatus(userId,'open');
+                            restaurantServices.updateRestaurantStatus(
+                                userId, 'open');
                           },
                           text: 'Open Queue',
                           iconData: Icons.check_circle_outline,
@@ -84,7 +98,8 @@ class _ResMainPageState extends State<ResMainPage> {
                         IconsButton(
                           onPressed: () {
                             //ใส่ action
-                            restaurantServices.updateRestaurantStatus(userId,'close');
+                            restaurantServices.updateRestaurantStatus(
+                                userId, 'close');
                           },
                           text: 'Close Queue',
                           iconData: Icons.cancel_outlined,
@@ -130,6 +145,42 @@ class _ResMainPageState extends State<ResMainPage> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
+                SizedBox(
+                  height: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 110),
+                  child: Row(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.cyan[400],
+                          minimumSize: Size(180, 50),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                        child: const Text('Book',
+                            style: TextStyle(fontSize: 20, color: Colors.white)),
+                        onPressed: () async {
+                          DateTime now = DateTime.now();
+                          String date = DateFormat('yyyy-MM-dd').format(now);
+                          String time = DateFormat('hh:mm a').format(now);
+                          String bookingQueue = await bookingServices
+                              .getBookingQueue(userId, date, -1);
+                          bookingServices.resBookTable(
+                              userId, '', date, time, -1, bookingQueue);
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                // HorizontalLine(),
+                SizedBox(
+                  height: 10,
+                ),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: _restaurantDataFuture,
                   builder: (context, restaurantSnapshot) {
@@ -174,7 +225,9 @@ class _ResMainPageState extends State<ResMainPage> {
                             String type = tableInfo['table_type'];
                             int capacity = tableInfo['capacity'];
                             return BookTableItem(
-                                type, capacity, restaurantData);
+                              type,
+                              capacity,
+                            );
                           }).toList(),
                         );
                       },
@@ -329,7 +382,9 @@ navigateToLoginPage(BuildContext context) {
     return LoginPage();
   }));
 }
-void showRedeemAlert(BuildContext context, String userId, RestaurantServices restaurantServices) {
+
+void showRedeemAlert(BuildContext context, String userId,
+    RestaurantServices restaurantServices) {
   final TextEditingController _textFieldController = TextEditingController();
   showDialog(
       context: context,
@@ -346,12 +401,10 @@ void showRedeemAlert(BuildContext context, String userId, RestaurantServices res
                 String redeemCode = _textFieldController.text;
                 // do something with the redeem code
                 Navigator.of(context).pop();
-                try{
+                try {
                   restaurantServices.redeemCustCoupon(userId, redeemCode);
-                } catch(e){
-                  if (e.toString() == 'Failed to redeem coupon'){
-                    
-                  }
+                } catch (e) {
+                  if (e.toString() == 'Failed to redeem coupon') {}
                 }
               },
               text: 'Redeem',
@@ -370,7 +423,6 @@ void showRedeemAlert(BuildContext context, String userId, RestaurantServices res
               textStyle: TextStyle(color: Colors.white),
               iconColor: Colors.white,
             ),
-            
           ],
         );
       });

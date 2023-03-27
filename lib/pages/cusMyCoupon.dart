@@ -6,6 +6,7 @@ import 'package:quickqueue/pages/cusCouponCode.dart';
 import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/pages/cusReDeemCouponPage.dart';
 import 'package:quickqueue/services/customerServices.dart';
+import 'package:quickqueue/utils/color.dart';
 
 class CusMyCouponPage extends StatefulWidget {
   const CusMyCouponPage({Key? key}) : super(key: key);
@@ -15,26 +16,26 @@ class CusMyCouponPage extends StatefulWidget {
 }
 
 class _CusMyCouponPageState extends State<CusMyCouponPage> {
-
   //เรียกข้อมูล Coupon ของ Customer มาใช้
   final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _couponDataFuture;
   late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
-  
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     final currentUser = FirebaseAuth.instance.currentUser;
-    if(currentUser != null && currentUser.uid != null){
-      _couponDataFuture  =
-        customerServices.getCurrentCustomerCoupon(currentUser.uid);
+    if (currentUser != null && currentUser.uid != null) {
+      _couponDataFuture =
+          customerServices.getCurrentCustomerCoupon(currentUser.uid);
       currentUserInfoFuture = customerServices.getCurrentUserData();
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: Colors.white,
@@ -85,30 +86,52 @@ class _CusMyCouponPageState extends State<CusMyCouponPage> {
                     itemCount: couponData.length,
                     itemBuilder: (BuildContext context, int index) {
                       Map<String, dynamic> coupon = couponData[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(
-                            // ใส่ CouponName
-                            coupon['couponName'],
-                            style: TextStyle(fontSize: 20),
+                      return Padding(
+                        padding: const EdgeInsets.only(top:20.0),
+                        child: Container(
+                          height: 100,
+                          margin: EdgeInsets.only(top: 0, left: 10, right: 10),
+                          decoration: new BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(20.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.1),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
                           ),
-                          subtitle: Text(
-                            //ใส่เป็น requied point
-                            coupon['status'],
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          leading: SizedBox(
-                            width: 50,
-                            height: 60,
-                            child: Image.network(
-                              coupon['img'],
-                              fit: BoxFit.cover,
+                          child: Card(
+                            color: cyanPrimaryLight,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.only(
+                                              top: 10, left: 15, right: 20),
+                              title: Text(
+                                // ใส่ CouponName
+                                coupon['couponName'],
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              subtitle: Text(
+                                //ใส่เป็น requied point
+                                coupon['status'],
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              leading: SizedBox(
+                                width: 50,
+                                height: 60,
+                                child: Image.network(
+                                  coupon['img'],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              onTap: () async {
+                                // * ไปหน้า CouponCode
+                                navigateToCusCouponCodePage(context, coupon);
+                              },
                             ),
                           ),
-                          onTap: () async {
-                            // * ไปหน้า CouponCode
-                           navigateToCusCouponCodePage(context,coupon);
-                          },
                         ),
                       );
                     },
@@ -127,10 +150,9 @@ navigateToCusProfilePage(BuildContext context) {
   }));
 }
 
-navigateToCusCouponCodePage(
-    BuildContext context, Map<String, dynamic> coupon) {
+navigateToCusCouponCodePage(BuildContext context, Map<String, dynamic> coupon) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return CusCouponCodePage(coupon: coupon);
+    return CusCouponCodePage(couponId: coupon['coupon_id']);
   }));
 }
 

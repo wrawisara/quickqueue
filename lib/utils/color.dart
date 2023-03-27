@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const cyanPrimary = Color.fromARGB(255, 104, 213, 227);
+const cyanPrimaryLight =Color.fromARGB(255, 246, 254, 255);
 const cyanGreen = Color.fromARGB(255, 162, 227, 230);
 
 // const purpleSecondary = Color.fromARGB(255, 236, 230, 255);

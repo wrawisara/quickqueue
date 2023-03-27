@@ -26,7 +26,11 @@ class _CusSignUpPageState extends State<CusSignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
           title: Text('Sign Up', style: TextStyle(color: Colors.white)),
         ),
         body: Center(
