@@ -320,7 +320,7 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                                       builder: (BuildContext context) {
                                                         return AlertDialog(
                                                           title: Text("Error"),
-                                                          content: Text(e.toString()),
+                                                          content: Text('Insufficient points to use this coupon'),
                                                           actions: [
                                                             TextButton(
                                                               child: Text("OK"),
@@ -332,12 +332,23 @@ class _CusProfilePageState extends State<CusProfilePage> {
                                                         );
                                                       },
                                                     );
+                                                  } else if(e.toString() == 'Exception: You already collected this coupon'){
+                                                    
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          content: Text('You already collected this coupon'),
+                                                          actions: [],
+                                                        );
+                                                      },
+                                                    );
                                                   } else {
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext context) {
                                                         return AlertDialog(
-                                                          content: Text(e.toString()),
+                                                          content: Text('$e'),
                                                           actions: [],
                                                         );
                                                       },

@@ -61,7 +61,7 @@ class _CusBookingPageState extends State<CusBookingPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: ClipRRect(
+        body: SingleChildScrollView(
           child: Container(
               padding: EdgeInsets.only(
                 left: 15,
@@ -339,7 +339,7 @@ class NumOfPersons extends StatefulWidget {
 }
 
 class _NumOfPersonsState extends State<NumOfPersons> {
-  int numberPerson = 0;
+  int numberPerson = 1;
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -349,7 +349,7 @@ class _NumOfPersonsState extends State<NumOfPersons> {
           IconButton(
             onPressed: () {
               setState(() {
-                numberPerson = numberPerson > 0 ? numberPerson - 1 : 0;
+                numberPerson = numberPerson > 1 ? numberPerson - 1 : 1;
                 widget.onChanged(numberPerson);
               });
             },

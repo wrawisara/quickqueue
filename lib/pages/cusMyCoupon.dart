@@ -76,7 +76,7 @@ class _CusMyCouponPageState extends State<CusMyCouponPage> {
 
                   if (snapshot.data?.isEmpty ?? true) {
                     return Center(
-                      child: Text('No restaurants found'),
+                      child: Text('No coupon found'),
                     );
                   }
 

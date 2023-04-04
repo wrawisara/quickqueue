@@ -137,6 +137,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                                 margin: EdgeInsets.all(5),
                               ),
                             ),
+                            SizedBox(height: 20,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[

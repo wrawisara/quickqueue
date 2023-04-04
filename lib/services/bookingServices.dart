@@ -16,42 +16,42 @@ class BookingServices {
   final CollectionReference restaurantCollection =
       FirebaseFirestore.instance.collection('restaurant');
 
-  Future<List<Map<String, dynamic>>> getBookingData() async {
-    try {
-      QuerySnapshot bookingQuerySnapshot = await bookingCollection.get();
+  // Future<List<Map<String, dynamic>>> getBookingData() async {
+  //   try {
+  //     QuerySnapshot bookingQuerySnapshot = await bookingCollection.get();
 
-      List<Map<String, dynamic>> booking = [];
+  //     List<Map<String, dynamic>> booking = [];
 
-      bookingQuerySnapshot.docs.forEach((doc) {
-        String bookingQueue = doc.get('booking_queue');
-        String cusId = doc.get('c_id');
-        String resId = doc.get('r_id');
-        int guest = doc.get('guest');
-        String date = doc.get('date');
-        String time = doc.get('time');
-        String status = doc.get('status');
-        Timestamp createdAt = doc.get('created_at');
+  //     bookingQuerySnapshot.docs.forEach((doc) {
+  //       String bookingQueue = doc.get('booking_queue');
+  //       String cusId = doc.get('c_id');
+  //       String resId = doc.get('r_id');
+  //       int guest = doc.get('guest');
+  //       String date = doc.get('date');
+  //       String time = doc.get('time');
+  //       String status = doc.get('status');
+  //       Timestamp createdAt = doc.get('created_at');
 
-        booking.add({
-          'bookingQueue': bookingQueue,
-          'c_id': cusId,
-          'r_id': resId,
-          'guest': guest,
-          'date': date,
-          'time': time,
-          'status': status,
-          'created_at': createdAt,
-        });
-      });
+  //       booking.add({
+  //         'bookingQueue': bookingQueue,
+  //         'c_id': cusId,
+  //         'r_id': resId,
+  //         'guest': guest,
+  //         'date': date,
+  //         'time': time,
+  //         'status': status,
+  //         'created_at': createdAt,
+  //       });
+  //     });
 
-      print(booking);
+  //     print(booking);
 
-      return booking;
-    } catch (e) {
-      print('Error fetching data: $e');
-      throw e;
-    }
-  }
+  //     return booking;
+  //   } catch (e) {
+  //     print('Error fetching data: $e');
+  //     throw e;
+  //   }
+  // }
 
   Future<List<Map<String, dynamic>>> getBookingDataForCustomer(
       String cusId) async {

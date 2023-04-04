@@ -51,7 +51,7 @@ class UserRegisterService {
       } catch (e) {
         throw FirebaseAuthException(
             code: 'Somthing wrong',
-            message: 'This email is already use. Please try again.');
+            message: '$e');
       }
     } // Invalid email
     else {
@@ -150,7 +150,7 @@ class UserRegisterService {
         print(e.toString());
         throw FirebaseAuthException(
             code: 'Somthing wrong',
-            message: 'This email is already use. Please try again.');
+            message: '$e');
       }
     } // Invalid email
     else {

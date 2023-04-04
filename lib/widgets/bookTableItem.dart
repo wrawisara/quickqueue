@@ -17,13 +17,13 @@ class BookTableItem extends StatefulWidget {
 
 class _BookTableItemState extends State<BookTableItem> {
   final BookingServices bookingServices = BookingServices();
-  late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+  // late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
-  @override
-  void initState() {
-    super.initState();
-    _bookingDataFuture = bookingServices.getBookingData();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _bookingDataFuture = bookingServices.getBookingData();
+  // }
 
   //final TableInfo tableInfo = TableInfo.generateTableInfo();
 
@@ -131,7 +131,6 @@ class _BookTableItemState extends State<BookTableItem> {
             ],
           ),
         ),
-        // HorizontalLine(),
       ],
     );
   }

@@ -266,10 +266,14 @@ class CustomerServices {
       String type = bookingQueue.substring(0, 1);
       int numPersons = 0;
       if (type == 'A') {
-        numPersons = 2;
+        if (currentReputation < 50) {
+          numPersons = 1;
+        } else {
+          numPersons = 2;
+        }
       } else if (type == 'B') {
         if (currentReputation < 50) {
-          numPersons = 4;
+          numPersons = 2;
         } else {
           numPersons = 4;
         }
@@ -284,15 +288,15 @@ class CustomerServices {
       int newPointsM = currentPointsM +
           (numPersons > 2
               ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
-              : 2);
+              : 1);
       int newPointsC = currentPointsC +
           (numPersons > 2
               ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
-              : 2);
+              : 1);
       int newReputation = currentReputation;
       int tmpNum = (numPersons > 2
               ? (numPersons >= 3 ? 6 : (numPersons > 4 ? 8 : 2))
-              : 2);
+              : 1);
 
       if (currentReputation < 100) {
         newReputation += numPersons ~/ 2;
@@ -355,7 +359,11 @@ class CustomerServices {
         .get();
 
     if (couponQuerySnapshot.size > 0) {
-      throw Exception('You already collected this coupon');
+      print("couponsss");
+      throw Exception(
+     
+        'You already collected this coupon');
+      // throw e;
     } else {
       // There are no existing documents with the specified 'c_id' and 'coupon_id'
 
@@ -392,7 +400,9 @@ class CustomerServices {
     await customerDoc.reference.update(updateDataCustomer);
     }
     } catch (e){
-      throw('You already collected this coupon.');
+      print("couponsss uuuu");
+      throw e;
+      // throw('You already collected this coupon.');
     }
   }
 

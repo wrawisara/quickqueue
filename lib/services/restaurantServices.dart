@@ -47,6 +47,7 @@ class RestaurantServices {
       });
     } catch (e) {
       print('Error adding coupon: $e');
+      throw e;
     }
   }
 

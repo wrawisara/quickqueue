@@ -50,13 +50,13 @@ class _ResMainPageState extends State<ResMainPage> {
   @override
   Widget build(BuildContext context) {
     final BookingServices bookingServices = BookingServices();
-    late Future<List<Map<String, dynamic>>> _bookingDataFuture;
+    // late Future<List<Map<String, dynamic>>> _bookingDataFuture;
 
-    @override
-    void initState() {
-      super.initState();
-      _bookingDataFuture = bookingServices.getBookingData();
-    }
+    // @override
+    // void initState() {
+    //   super.initState();
+    //   _bookingDataFuture = bookingServices.getBookingData();
+    // }
 
     return Scaffold(
         appBar: AppBar(

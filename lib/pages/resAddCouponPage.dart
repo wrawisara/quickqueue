@@ -62,7 +62,6 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
   TextEditingController menuController = TextEditingController();
   TextEditingController discountController = TextEditingController();
 
-
   void validateForm() {
     if ((couponMenu && menu.isNotEmpty) || (couponDiscount && discount > 0)) {
       setState(() {
@@ -104,25 +103,23 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
       });
     }
 
-
-
     //ใช้กับ text ใน alert
     final TextEditingController _textFieldController = TextEditingController();
     var dropdownValue;
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.cyan,
-          automaticallyImplyLeading: false,
-          title: Text('Add Coupon', style: TextStyle(color: Colors.white)),
-          // actions: <Widget>[
-          //   IconButton(
-          //       icon: const Icon(Icons.redeem_outlined, color: Colors.white),
-          //       onPressed: () {
-          //         showRedeemAlert(context);
-          //       })
-          // ]
-          ),
+        backgroundColor: Colors.cyan,
+        automaticallyImplyLeading: false,
+        title: Text('Add Coupon', style: TextStyle(color: Colors.white)),
+        // actions: <Widget>[
+        //   IconButton(
+        //       icon: const Icon(Icons.redeem_outlined, color: Colors.white),
+        //       onPressed: () {
+        //         showRedeemAlert(context);
+        //       })
+        // ]
+      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -314,7 +311,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         couponType = value!;
                                         couponMenu = false;
                                         couponDiscount = true;
-                                        menuController.clear(); 
+                                        menuController.clear();
                                       });
                                       validateForm();
                                     },
@@ -344,7 +341,8 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
-                              controller: couponDiscount ? discountController : null,
+                              controller:
+                                  couponDiscount ? discountController : null,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 enabled: couponDiscount,
@@ -361,7 +359,6 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 });
                                 validateForm();
                               },
-                              
                             ),
                             SizedBox(height: 20.0),
                             SizedBox(
@@ -401,7 +398,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 style: TextStyle(
                                     fontSize: 20, color: Colors.white),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 String defaultImageUrl =
                                     'gs://quickqueue-17550.appspot.com/images/default.jpg';
                                 File img = couponImage ?? File(defaultImageUrl);
@@ -424,11 +421,10 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                 } else if (_formKey.currentState!.validate()) {
                                   if ((couponMenu && menu.isNotEmpty) ||
                                       (couponDiscount && discount > 0)) {
-                                    // Use the isFormValid variable to enable/disable the button
                                     if (currentUser != null &&
                                         currentUser.uid != null) {
                                       try {
-                                        restaurantServices.addCoupon(
+                                        await restaurantServices.addCoupon(
                                           couponName,
                                           menu,
                                           discount,
@@ -438,6 +434,7 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                           img,
                                           _expirationDate,
                                         );
+
                                         showDialog<String>(
                                           context: context,
                                           builder: (BuildContext context) =>
@@ -449,21 +446,43 @@ class _ResAddCouponPageState extends State<ResAddCouponPage> {
                                         );
                                       } catch (e) {
                                         print(e);
+                                        if (e is FirebaseAuthException) {
+                                          showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                              title: const Text('Error'),
+                                              content: Text('Error $e'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'OK'),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          print("Unknow error occured: $e");
+                                         
                                         showDialog<String>(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              AlertDialog(
-                                            title: const Text('Error'),
-                                            content: Text('Error $e'),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    context, 'OK'),
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
-                                          ),
-                                        );
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                              title: const Text('Error'),
+                                              content: Text('Error $e'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'OK'),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
                                       }
                                     }
                                   } else {
@@ -530,5 +549,3 @@ Widget CustomButton({
         )),
   );
 }
-
-

@@ -143,6 +143,9 @@ class _ResRegisterPageState extends State<ResRegisterPage> {
                                 if (value!.isEmpty) {
                                   return 'Please enter your phone';
                                 }
+                                if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                  return 'Please enter a valid phone number';
+                                }
                                 return null;
                               },
                               decoration: InputDecoration(
