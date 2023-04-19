@@ -109,7 +109,6 @@ class _CusMyCouponPageState extends State<CusMyCouponPage> {
                               contentPadding: EdgeInsets.only(
                                               top: 10, left: 15, right: 20),
                               title: Text(
-                                // ใส่ CouponName
                                 coupon['couponName'],
                                 style: TextStyle(fontSize: 20),
                               ),
@@ -156,9 +155,3 @@ navigateToCusCouponCodePage(BuildContext context, Map<String, dynamic> coupon) {
   }));
 }
 
-// navigateToCusPage(
-//     BuildContext context, Map<String, dynamic> coupon) {
-//   Navigator.push(context, MaterialPageRoute(builder: (context) {
-//     return CusRedeemCouponPage(coupon: coupon);
-//   }));
-// }

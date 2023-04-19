@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,7 +10,7 @@ import 'package:quickqueue/pages/cusProfilePage.dart';
 import 'package:quickqueue/services/customerServices.dart';
 
 class CusCouponCodePage extends StatefulWidget {
-  //final Map<String, dynamic> coupon;
+
   final String couponId;
 
   const CusCouponCodePage({Key? key, required this.couponId}) : super(key: key);
@@ -27,9 +25,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
   String tdata = DateFormat("HH:mm:ss").format(DateTime.now());
 
   //เรียกข้อมูลมาใช้
-  //final booking = Booking.generateBooking();
-  //final customer = Customer.generateCustomer();
-  //final coupon = Coupon.generateCoupon();
+ 
   final CustomerServices customerServices = CustomerServices();
   late Future<List<Map<String, dynamic>>> _couponDataFuture;
   late Future<List<Map<String, dynamic>>> currentUserInfoFuture;
@@ -49,16 +45,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
 
   @override
   Widget build(BuildContext context) {
-    //final currentUser = FirebaseAuth.instance.currentUser;
-    //Timestamp endDateTimestamp = widget.coupon['end_date'];
-
-// Convert Timestamp to DateTime
-    //DateTime endDate = endDateTimestamp.toDate();
-
-// Format DateTime to display date and time as string
-    //String formattedEndDate =
-        //DateFormat("MMMM dd, yyyy hh:mm a 'UTC'Z").format(endDate);
-
+ 
     return Scaffold(
       backgroundColor: Colors.white,
         appBar: AppBar(
@@ -118,7 +105,7 @@ class _CusCouponCodePageState extends State<CusCouponCodePage> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 30,
+                              height: 40,
                             ),
                             Container(
                               height: 250,

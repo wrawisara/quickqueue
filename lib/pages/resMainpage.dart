@@ -50,13 +50,6 @@ class _ResMainPageState extends State<ResMainPage> {
   @override
   Widget build(BuildContext context) {
     final BookingServices bookingServices = BookingServices();
-    // late Future<List<Map<String, dynamic>>> _bookingDataFuture;
-
-    // @override
-    // void initState() {
-    //   super.initState();
-    //   _bookingDataFuture = bookingServices.getBookingData();
-    // }
 
     return Scaffold(
         appBar: AppBar(
@@ -85,7 +78,6 @@ class _ResMainPageState extends State<ResMainPage> {
                       actions: [
                         IconsButton(
                           onPressed: () {
-                            //ใส่ action
                             restaurantServices.updateRestaurantStatus(
                                 userId, 'open');
                           },
@@ -97,7 +89,6 @@ class _ResMainPageState extends State<ResMainPage> {
                         ),
                         IconsButton(
                           onPressed: () {
-                            //ใส่ action
                             restaurantServices.updateRestaurantStatus(
                                 userId, 'close');
                           },
@@ -178,7 +169,6 @@ class _ResMainPageState extends State<ResMainPage> {
                 SizedBox(
                   height: 30,
                 ),
-                // HorizontalLine(),
                 SizedBox(
                   height: 10,
                 ),
@@ -238,8 +228,7 @@ class _ResMainPageState extends State<ResMainPage> {
               ],
             ),
           ),
-        ]))
-        );
+        ])));
   }
 }
 
@@ -271,12 +260,38 @@ void showRedeemAlert(BuildContext context, String userId,
             IconsButton(
               onPressed: () {
                 String redeemCode = _textFieldController.text;
-                // do something with the redeem code
                 Navigator.of(context).pop();
                 try {
                   restaurantServices.redeemCustCoupon(userId, redeemCode);
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Success'),
+                      content: Text("Successfully redeemed the coupon"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                 } catch (e) {
-                  if (e.toString() == 'Failed to redeem coupon') {}
+                  if (e.toString() == 'Failed to redeem coupon') {
+                    showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Error'),
+                        content: Text(e.toString()),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'OK'),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 }
               },
               text: 'Redeem',
